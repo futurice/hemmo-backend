@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/db.js"],"names":[],"mappings":"AAAA;;;;;;AAEA;;;;AACA;;;;;;kBAEe,oBAAK;AAClB,UAAQ,IADU;AAElB,cAAY,iBAAO,EAAP,CAAU;AAFJ,CAAL,C","file":"db.js","sourcesContent":["'use strict';\n\nimport config from './config';\nimport knex from 'knex';\n\nexport default knex({\n  client: 'pg',\n  connection: config.db.url\n});\n"]}

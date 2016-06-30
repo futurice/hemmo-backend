@@ -1,0 +1,63 @@
+{
+  "name": "PepperoniApiTemplate",
+  "author": "Futurice",
+  "description": "Node Api Starter Kit for Backend",
+  "license": "MIT",
+  "homepage": "http://getpepperoni.com",
+  "bugs": "https://github.com/futurice/pepperoni-api-kit/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/futurice/pepperoni-api-kit.git"
+  },
+  "engines": {
+    "node": "6.2.0"
+  },
+  "keywords": [
+    "Node",
+    "Postgres",
+    "Auth0",
+    "Knex",
+    "Mocha"
+  ],
+  "scripts": {
+    "start": "node dist/server.js",
+    "postinstall": "npm run build",
+    "build": "mkdir -p dist && babel src --out-dir dist --source-maps",
+    "watch": "nodemon --exec babel-node src/server.js",
+    "watch-tests": "./test/runner.sh test:reload",
+    "test": "./test/runner.sh test:all",
+    "test:all": "lab --transform node_modules/lab-babel --sourcemaps --ignore '__core-js_shared__'",
+    "test:reload": "npm run test:all && chokidar '**/*.js' -c 'npm run test:all'",
+    "db:init": "knex migrate:latest && knex seed:run",
+    "db:migrate": "knex migrate:latest",
+    "db:rollback": "knex migrate:rollback"
+  },
+  "version": "0.0.1",
+  "main": "src/server.js",
+  "private": true,
+  "dependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.9.1",
+    "boom": "^3.2.2",
+    "dotenv": "^2.0.0",
+    "hapi": "^13.4.1",
+    "joi": "^8.4.2",
+    "json-rpc2": "^1.0.2",
+    "knex": "^0.11.5",
+    "lodash": "^4.13.1",
+    "moment": "^2.13.0",
+    "moment-timezone": "^0.5.4",
+    "pg": "^5.0.0",
+    "underscore.string": "^3.3.4",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
+    "babel-preset-node6": "^11.0.0"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^1.2.0",
+    "code": "^3.0.1",
+    "eslint": "^2.11.1",
+    "lab": "^10.8.2",
+    "lab-babel": "^1.1.1",
+    "nodemon": "^1.9.2"
+  }
+}
