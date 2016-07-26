@@ -1,6 +1,7 @@
 import Hapi from 'hapi';
-import routes from './routes';
+//import routes from './routes';
 import config from './config';
+import knex from './db'
 
 process.env.TZ = 'UTC';
 
@@ -18,13 +19,32 @@ server.connection({
 // Add the route
 server.route({
   method: 'GET',
-  path: '/hello',
-  handler: function handler(request, reply) {
-    return reply('hello world');
+  path: '/adduser',
+  handler: function (request, reply) {
+    knex('users').insert({
+      username: 'Pekka',
+      token: 'akkajfksjdfkdfkjdf'
+    })
+    .then(function(shit) {
+      console.log(shit);
+    });
+    return reply('Added user');
   }
 });
 
-server.route(routes);
+server.route({
+  method: 'GET',
+  path: '/',
+  handler: function (request, reply) {
+
+    var users = knex.select('name').from('users')
+    .then(function(rows) {
+      return reply(rows);
+    });
+  }
+});
+
+//server.route(routes);
 
 // Start the server
 server.start((err) => {
