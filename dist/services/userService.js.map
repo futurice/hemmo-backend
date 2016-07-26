@@ -1,1 +1,0 @@
-{"version":3,"sources":["../../src/services/userService.js"],"names":[],"mappings":";;;;;QAEgB,Y,GAAA,Y;;AAFhB;;;;;;AAEO,SAAS,YAAT,CAAsB,MAAtB,EAA8B;AACnC,SAAO,yBAAS,OAAT,EAAkB,MAAlB,CAAP;AACD","file":"userService.js","sourcesContent":["import findById from '../utils/queryUtil';\n\nexport function findUserById(userId) {\n  return findById('users', userId);\n}\n"]}
