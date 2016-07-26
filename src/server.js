@@ -29,6 +29,36 @@ server.route({
 
 server.route({
   method: 'POST',
+  path: '/session',
+  handler: function(request, reply) {
+    var token = request.headers['token'];
+    console.log(request.headers);
+    console.log(token);
+    knex.select('id').from('users').where('token', token)
+    .then(function(rows) {
+      var user_id = rows[0].id;
+      var timestamp = knex.fn.now();
+      require('crypto').randomBytes(48, function(err, buffer) {
+        var session_id = buffer.toString('hex');
+
+        knex('sessions').insert({
+          session_id: session_id,
+          user_id: user_id,
+          started_at: timestamp
+        })
+        .then(function(res) {
+          console.log(res);
+          return reply({
+            session_id: session_id
+          });
+        });
+      });
+    });
+  }
+});
+
+server.route({
+  method: 'POST',
   path: '/register',
   handler: function (request, reply) {
     var name = request.payload['name'];
