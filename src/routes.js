@@ -5,11 +5,12 @@ import Boom from 'boom';
 import Promise from 'bluebird';
 import _ from 'lodash';
 import Joi from 'joi';
-import letterCaseUtil from './utils/letterCaseUtil.js';
+import crypto from 'crypto';
+import uuid from 'node-uuid';
+
 const authUtil = require('./utils/authUtil');
 
-
-var randomBytes = Promise.promisify(require("crypto").randomBytes);
+let randomBytes = Promise.promisify(crypto.randomBytes);
 
 let routes = [];
 
@@ -28,7 +29,6 @@ routes.push({
   config: {
     auth: {
       strategy: 'jwt',
-      scope: 'employee'
     }
   }
 });
@@ -49,12 +49,9 @@ routes.push({
         startedAt: knex.fn.now()
       };
 
-      return randomBytes(48);
-    })
-    .then(function(bytes) {
-      this.session.sessionId = bytes.toString('hex');
+      this.session.sessionId = uuid.v4();
 
-      return knex('sessions').insert(letterCaseUtil.underscoreKeys(this.session));
+      return knex('sessions').insert(this.session);
     })
     .then(function(res) {
       return reply({
@@ -68,13 +65,112 @@ routes.push({
   config: {
     validate: {
       headers: Joi.object({
-        authorization: Joi.string().required()
+        authorization: Joi.string().length(96).required()
       }).options({ allowUnknown: true })
     }
   }
 });
 
-// Register app user, only name required, returns token
+let getUserSession = function(authToken, sessionId) {
+  return knex.select('id').from('users').where('token', authToken).bind({})
+  .then(function(users) {
+    if (!users.length) {
+      throw new Error('User not found');
+    }
+
+    this.userId = users[0].id;
+    this.sessionId = sessionId;
+
+    return knex.select('sessionId').from('sessions').where({
+      'userId': this.userId,
+      'sessionId': this.sessionId
+    });
+  })
+}
+
+routes.push({
+  method: 'POST',
+  path: '/content',
+  handler: function(request, reply) {
+    // Find user session by auth token and sessionId
+    getUserSession(request.headers.authorization, request.headers.session)
+    .then(function(sessions) {
+      if (!sessions.length) {
+        throw new Error('Session not found');
+      }
+
+      this.contentId = uuid.v4();
+
+      return knex('content').insert(_.merge(request.payload, {
+        contentId: this.contentId,
+        sessionId: this.sessionId,
+      }))
+    })
+
+    .then(function() {
+      return reply({
+        contentId: this.contentId
+      });
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest(err));
+    });
+  },
+  config: {
+    validate: {
+      headers: Joi.object({
+        authorization: Joi.string().length(96).required(),
+        session: Joi.string().length(36).required()
+      }).options({ allowUnknown: true }),
+      payload: {
+        contentType: Joi.string().required(),
+        question: Joi.string().optional()
+      }
+    }
+  }
+});
+
+routes.push({
+  method: 'PUT',
+  path: '/content/{contentId}',
+  handler: function(request, reply) {
+    // Find user session by auth token and sessionId
+    getUserSession(request.headers.authorization, request.headers.session)
+    .then(function(sessions) {
+      if (!sessions.length) {
+        throw new Error('Session not found');
+      }
+
+      this.contentId = request.params.contentId;
+      this.sessionId = request.headers.session;
+
+      return knex('content').where({
+        'contentId': this.contentId,
+        'sessionId': this.sessionId
+      }).update(_.omit(request.payload, ['contentId', 'sessionId']));
+    })
+    .then(function() {
+      return reply({
+        contentId: this.contentId
+      });
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest(err));
+    });
+  },
+  config: {
+    validate: {
+      headers: Joi.object({
+        authorization: Joi.string().length(96).required(),
+        session: Joi.string().length(36).required()
+      }).options({ allowUnknown: true }),
+      params: {
+        contentId: Joi.string().length(36).required()
+      }
+    }
+  }
+});
+
 routes.push({
   method: 'POST',
   path: '/register',
