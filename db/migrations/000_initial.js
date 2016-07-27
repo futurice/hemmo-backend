@@ -15,20 +15,20 @@ exports.up = function(knex) {
     })
 
     .createTable('sessions', function(table) {
-      table.string('session_id').primary();
-      table.integer('assignee_id').references('id').inTable('employees');
-      table.integer('user_id').references('id').inTable('users').notNullable();
+      table.string('sessionId').primary();
+      table.integer('assigneeId').references('id').inTable('employees');
+      table.integer('userId').references('id').inTable('users').notNullable();
       table.boolean('reviewed').defaultTo(false);
-      table.timestamp('started_at').defaultTo(knex.fn.now());
+      table.timestamp('startedAt').defaultTo(knex.fn.now());
     })
 
     .createTable('content', function(table) {
-      table.string('content_id').primary();
+      table.string('contentId').primary();
       table.string('question');
       table.string('contentType').notNullable();
       table.string('contentPath');
-      table.timestamp('created_at').defaultTo(knex.fn.now());
-      table.string('session_id').references('session_id').inTable('sessions').notNullable();
+      table.timestamp('createdAt').defaultTo(knex.fn.now());
+      table.string('sessionId').references('sessionId').inTable('sessions').notNullable();
     })
 
     .then(function() {
