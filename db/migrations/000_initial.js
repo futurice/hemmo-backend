@@ -16,7 +16,7 @@ exports.up = function(knex) {
 
     .createTable('sessions', function(table) {
       table.string('session_id').primary();
-      table.integer('assignee_id').references('id').inTable('employees').notNullable();
+      table.integer('assignee_id').references('id').inTable('employees');
       table.integer('user_id').references('id').inTable('users').notNullable();
       table.boolean('reviewed').defaultTo(false);
       table.timestamp('started_at').defaultTo(knex.fn.now());
