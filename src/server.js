@@ -24,36 +24,38 @@ server.connection({
 // handlebars is the template engine module
 // templates are found in templates-directory
 server.register(require('vision'), (err) => {
-
   Hoek.assert(!err, err);
 
   server.views({
-      engines: {
-          html: require('handlebars')
-      },
-      relativeTo: __dirname,
-      path: 'templates'
+    engines: {
+      html: require('handlebars')
+    },
+    relativeTo: __dirname,
+    path: 'templates'
   });
 });
 
 // Register authentication stuff (for employees login)
 server.register(require('hapi-auth-jwt'), (err) => {
+  Hoek.assert(!err, err);
 
-    Hoek.assert(!err, err);
-
-    server.auth.strategy('jwt', 'jwt', {
-      key: config.auth.secret,
-      verifyOptions: { algorithms: ['HS256'] }
-    });
-
+  server.auth.strategy('jwt', 'jwt', {
+    key: config.auth.secret,
+    verifyOptions: { algorithms: ['HS256'] }
+  });
 });
 
-server.route(routes);
+// Register file sending plugin
+server.register(require('inert'), (err) => {
+  Hoek.assert(!err, err);
+
+  server.route(routes);
+});
+
 
 // Start the server
 server.start((err) => {
-  if (err) {
-    throw err;
-  }
+  Hoek.assert(!err, err);
+
   console.log('Server running at:', server.info.uri);
 });

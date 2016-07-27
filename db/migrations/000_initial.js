@@ -27,6 +27,7 @@ exports.up = function(knex) {
     .createTable('content', function(table) {
       table.string('contentId').primary();
       table.string('question');
+      table.string('answer');
       table.string('contentType').notNullable();
       table.string('contentPath');
       table.timestamp('createdAt').defaultTo(knex.fn.now());

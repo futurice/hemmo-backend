@@ -5,12 +5,18 @@ import Boom from 'boom';
 import Promise from 'bluebird';
 import _ from 'lodash';
 import Joi from 'joi';
-import crypto from 'crypto';
 import uuid from 'node-uuid';
+import fs from 'fs';
+import path from 'path';
 
-const authUtil = require('./utils/authUtil');
+import {
+  hashPassword,
+  createToken,
+  verifyCredentials
+} from './utils/authUtil';
 
-let randomBytes = Promise.promisify(crypto.randomBytes);
+let randomBytes = Promise.promisify(require('crypto').randomBytes);
+let mkdirp = Promise.promisify(require('mkdirp'));
 
 let routes = [];
 
@@ -124,7 +130,8 @@ routes.push({
       }).options({ allowUnknown: true }),
       payload: {
         contentType: Joi.string().required(),
-        question: Joi.string().optional()
+        question: Joi.string().optional(),
+        answer: Joi.string().optional()
       }
     }
   }
@@ -167,6 +174,88 @@ routes.push({
       params: {
         contentId: Joi.string().length(36).required()
       }
+    }
+  }
+});
+ 
+// TODO: authentication!
+routes.push({
+  method: 'GET',
+  path: '/attachment/{contentId}',
+  handler:  {
+    directory: {
+      path: path.join(process.env.HOME, 'hemmo', 'uploads')
+    }
+  }
+});
+
+routes.push({
+  method: 'PUT',
+  path: '/attachment/{contentId}',
+  handler: function(request, reply) {
+    let dir = path.join(process.env.HOME, 'hemmo', 'uploads');
+
+    // Find user session by auth token and sessionId
+    getUserSession(request.headers.authorization, request.headers.session)
+    .then(function(sessions) {
+      if (!sessions.length) {
+        throw new Error('Session not found');
+      }
+
+      this.contentId = request.params.contentId;
+      this.sessionId = request.headers.session;
+
+      return mkdirp(dir);
+    })
+    .then(function() {
+      return new Promise((resolve, reject) => {
+        let file = fs.createWriteStream(path.join(dir, this.contentId));
+        file.on('error', function (err) { 
+          reject(err);
+        });
+
+        var data = request.payload;
+        if (!data.file) {
+          throw new Error('Payload missing');
+        }
+
+        data.file.pipe(file);
+
+        data.file.on('end', function (err) { 
+          resolve();
+        });
+      });
+    })
+    .then(function() {
+      return knex('content').where({
+        contentId: this.contentId,
+        sessionId: this.sessionId
+      }).update({
+        contentPath: path.join(dir, this.contentId)
+      });
+    })
+    .then(function() {
+      return reply({
+        contentId: this.contentId
+      });
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest(err));
+    });
+  },
+  config: {
+    payload: {
+      output: 'stream'
+    },
+    validate: {
+      headers: Joi.object({
+        authorization: Joi.string().length(96).required(),
+        session: Joi.string().length(36).required()
+      }).options({ allowUnknown: true }),
+      params: {
+        contentId: Joi.string().length(36).required()
+      },
+      payload: Joi.any().required()
     }
   }
 });
@@ -215,7 +304,7 @@ routes.push({
     var email = request.payload['email'];
     var password = request.payload['password'];
 
-    authUtil.hashPassword(password)
+    hashPassword(password)
     .then(function(hashed) {
       return knex('employees').insert({
         name: name,
@@ -225,7 +314,7 @@ routes.push({
     })
     .then(function(id) {
       console.log(id);
-      var token = authUtil.createToken(id, name);
+      var token = createToken(id, name);
       return reply({token: token});
     })
     .catch(function(err) {
@@ -248,7 +337,7 @@ routes.push({
   path: '/employees/authenticate',
   handler: function (request, reply) {
     // If password was incorrect, error is issued from the pre method verifyCredentials
-    var token = authUtil.createToken(request.pre.user.id, request.pre.user.name);
+    var token = createToken(request.pre.user.id, request.pre.user.name);
     reply({token: token});
   },
   config: {
@@ -259,7 +348,7 @@ routes.push({
       }
     },
     pre: [
-      { method: authUtil.verifyCredentials, assign: 'user' }
+      { method: verifyCredentials, assign: 'user' }
     ],
   }
 });
