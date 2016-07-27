@@ -2,6 +2,9 @@ import Hapi from 'hapi';
 import routes from './routes';
 import config from './config';
 
+import Hoek from 'hoek';
+
+
 
 process.env.TZ = 'UTC';
 
@@ -15,6 +18,25 @@ server.connection({
     cors: true
   }
 });
+
+// Register templating engines
+//
+// vision adds template rendering support
+// handlebars is the template engine module
+// templates are found in templates-directory
+server.register(require('vision'), (err) => {
+
+    Hoek.assert(!err, err);
+
+    server.views({
+        engines: {
+            html: require('handlebars')
+        },
+        relativeTo: __dirname,
+        path: 'templates'
+    });
+});
+
 
 server.route(routes);
 

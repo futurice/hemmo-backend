@@ -3,6 +3,7 @@
 import knex from './db'
 import Boom from 'boom';
 import Promise from 'bluebird';
+import _ from 'lodash';
 
 var randomBytes = Promise.promisify(require("crypto").randomBytes);
 
@@ -14,7 +15,10 @@ routes.push({
   handler: function (request, reply) {
     var users = knex.select('name').from('users')
     .then(function(rows) {
-      return reply(rows);
+      var data = _.map(rows, function(row) {
+        return row.name;
+      })
+      return reply.view('index', {users: data});
     });
   }
 });
