@@ -12,6 +12,8 @@ exports.up = function(knex) {
     .createTable('employees', function(table) {
       table.increments('id').primary();
       table.string('name').notNullable();
+      table.string('password').notNullable();
+      table.string('email').notNullable().unique();
     })
 
     .createTable('sessions', function(table) {

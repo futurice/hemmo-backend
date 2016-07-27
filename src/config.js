@@ -12,11 +12,13 @@ const requiredEnvironmentVariables = [
   'SBM_KEY',
   'SBM_ORG',
   'SBM_USER',
-  'SBM_USER_PWD'
+  'SBM_USER_PWD',
+  'SECRET',
 ];
 
 requiredEnvironmentVariables.forEach(key => {
   if (!env[key]) {
+    console.log(key);
     throw new Error(`Environment variable ${key} not set.`);
   }
 });
@@ -35,5 +37,8 @@ export default Object.freeze({
     org: env.SBM_ORG,
     user: env.SBM_USER,
     password: env.SBM_USER_PWD
+  },
+  auth: {
+    secret: env.SECRET
   }
 });

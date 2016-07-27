@@ -6,6 +6,8 @@ import Promise from 'bluebird';
 import _ from 'lodash';
 import Joi from 'joi';
 import letterCaseUtil from './utils/letterCaseUtil.js';
+const authUtil = require('./utils/authUtil');
+
 
 var randomBytes = Promise.promisify(require("crypto").randomBytes);
 
@@ -22,6 +24,12 @@ routes.push({
       })
       return reply.view('index', {users: data});
     });
+  },
+  config: {
+    auth: {
+      strategy: 'jwt',
+      scope: 'employee'
+    }
   }
 });
 
@@ -66,6 +74,7 @@ routes.push({
   }
 });
 
+// Register app user, only name required, returns token
 routes.push({
   method: 'POST',
   path: '/register',
@@ -97,6 +106,65 @@ routes.push({
         name: Joi.string().required()
       }
     }
+  }
+});
+
+// Register for employees, post with email, name and password
+routes.push({
+  method: 'POST',
+  path: '/employees/register',
+  handler: function (request, reply) {
+    console.log(request.payload);
+    var name = request.payload['name'];
+    var email = request.payload['email'];
+    var password = request.payload['password'];
+
+    authUtil.hashPassword(password)
+    .then(function(hashed) {
+      return knex('employees').insert({
+        name: name,
+        email: email,
+        password: hashed
+      }).returning('id');
+    })
+    .then(function(id) {
+      console.log(id);
+      var token = authUtil.createToken(id, name);
+      return reply({token: token});
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest(err));
+    });
+  },
+  config: {
+    validate: {
+      payload: {
+        name: Joi.string().required(),
+        password: Joi.string().min(6).required(),
+        email: Joi.string().required()
+      }
+    }
+  }
+});
+
+routes.push({
+  method: 'POST',
+  path: '/employees/authenticate',
+  handler: function (request, reply) {
+    // If password was incorrect, error is issued from the pre method verifyCredentials
+    var token = authUtil.createToken(request.pre.user.id, request.pre.user.name);
+    reply({token: token});
+  },
+  config: {
+    validate: {
+      payload: {
+        email: Joi.string().required(),
+        password: Joi.string().min(6).required(),
+      }
+    },
+    pre: [
+      { method: authUtil.verifyCredentials, assign: 'user' }
+    ],
   }
 });
 
