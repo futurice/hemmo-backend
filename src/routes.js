@@ -3,6 +3,8 @@
 import knex from './db'
 import Boom from 'boom';
 import Promise from 'bluebird';
+import Joi from 'joi';
+import letterCaseUtil from './utils/letterCaseUtil.js';
 
 var randomBytes = Promise.promisify(require("crypto").randomBytes);
 
@@ -23,33 +25,40 @@ routes.push({
   method: 'POST',
   path: '/session',
   handler: function(request, reply) {
-    var token = request.headers['token'];
-    var sessionDictionary = {};
 
-    knex.select('id').from('users').where('token', token)
+    knex.select('id').from('users').where('token', request.headers.authorization).bind({})
     .then(function(rows) {
-      var user_id = rows[0].id;
-      var timestamp = knex.fn.now();
+      if (!rows.length) {
+        throw new Error('User not found');
+      }
 
-      sessionDictionary['user_id'] = user_id;
-      sessionDictionary['started_at'] = timestamp;
+      this.session = {
+        userId: rows[0].id,
+        startedAt: knex.fn.now()
+      };
 
       return randomBytes(48);
     })
     .then(function(bytes) {
-      var session_id = bytes.toString('hex');
-      sessionDictionary['session_id'] = session_id;
+      this.session.sessionId = bytes.toString('hex');
 
-      return knex('sessions').insert(sessionDictionary);
+      return knex('sessions').insert(letterCaseUtil.underscoreKeys(this.session));
     })
     .then(function(res) {
       return reply({
-        session_id: sessionDictionary['session_id']
+        sessionId: this.session.sessionId
       });
     })
     .catch(function(err) {
       return reply(Boom.badRequest(err));
     });
+  },
+  config: {
+    validate: {
+      headers: Joi.object({
+        authorization: Joi.string().required()
+      }).options({ allowUnknown: true })
+    }
   }
 });
 
@@ -57,29 +66,33 @@ routes.push({
   method: 'POST',
   path: '/register',
   handler: function (request, reply) {
-    var name = request.payload['name'];
-    var userDictionary = {};
-    randomBytes(48)
+    // Generate random 48 byte token
+    randomBytes(48).bind({})
     .then(function(bytes) {
-      var token = bytes.toString('hex');
-      if (name === undefined || name.length === 0) {
-        throw new Error('Invalid name');
-      }
+      this.token = bytes.toString('hex');
 
-      userDictionary = {
-        name: name,
-        token: token
-      };
-      return knex('users').insert(userDictionary);
+      // Store token in DB
+      return knex('users').insert({
+        name: request.payload['name'],
+        token: this.token
+      });
     })
     .then(function(res) {
+      // Reply with token
       return reply({
-        token: userDictionary['token']
+        token: this.token
       });
     })
     .catch(function(err) {
       return reply(Boom.badRequest(err));
     });
+  },
+  config: {
+    validate: {
+      payload: {
+        name: Joi.string().required()
+      }
+    }
   }
 });
 
