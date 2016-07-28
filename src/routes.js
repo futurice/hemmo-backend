@@ -18,7 +18,9 @@ import {
 } from './utils/authUtil';
 
 import {
-  employeeAuthenticationConfig
+  employeeAuthenticationConfig,
+  employeeRegistrationConfig,
+  userRegistrationConfig
 } from './routeConfigs/authRoutes'
 
 let mkdirp = Promise.promisify(require('mkdirp'));
@@ -296,69 +298,14 @@ routes.push({
 routes.push({
   method: 'POST',
   path: '/register',
-  handler: function (request, reply) {
-    var name = request.payload['name'];
-    knex('users').insert({
-      name: name
-    })
-    .returning('id')
-    .then(function(id) {
-      var token = createToken(id, name, 'user');
-      // Reply with token
-      return reply({
-        token: token
-      });
-    })
-    .catch(function(err) {
-      return reply(Boom.badRequest(err));
-    });
-  },
-  config: {
-    validate: {
-      payload: {
-        name: Joi.string().required()
-      }
-    }
-  }
+  config: userRegistrationConfig
 });
 
 // TODO: add pre function to check if name is available
-// Register for employees, post with email, name and password
 routes.push({
   method: 'POST',
   path: '/employees/register',
-  handler: function (request, reply) {
-    console.log(request.payload);
-    var name = request.payload['name'];
-    var email = request.payload['email'];
-    var password = request.payload['password'];
-
-    hashPassword(password)
-    .then(function(hashed) {
-      return knex('employees').insert({
-        name: name,
-        email: email,
-        password: hashed
-      }).returning('id');
-    })
-    .then(function(id) {
-      console.log(id);
-      var token = createToken(id, name, 'employee');
-      return reply({token: token});
-    })
-    .catch(function(err) {
-      return reply(Boom.badRequest(err));
-    });
-  },
-  config: {
-    validate: {
-      payload: {
-        name: Joi.string().required(),
-        password: Joi.string().min(6).required(),
-        email: Joi.string().required()
-      }
-    },
-  }
+  config: employeeRegistrationConfig
 });
 
 routes.push({

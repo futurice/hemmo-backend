@@ -61,7 +61,7 @@ export function bindEmployeeData(req, res) {
     var decoded = jwt.verify(bearerToken, secret, {
       ignoreExpiration: false
     });
-    var employeeId = decoded.id;
+    var employeeId = decoded.id[0];
     var name = decoded.name;
 
     knex.first('id', 'name', 'email').from('employees').where({id: employeeId, name: name})
@@ -90,7 +90,7 @@ export function bindUserData(req, res) {
     var decoded = jwt.verify(bearerToken, secret, {
       ignoreExpiration: true
     });
-    var userId = decoded.id[0];  // No idea why this is needed here but not in employee bind???
+    var userId = decoded.id[0];
     var name = decoded.name;
     knex.first('id', 'name').from('users').where({id: userId, name: name})
     .then(function(user) {
