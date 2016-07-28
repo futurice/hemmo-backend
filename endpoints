@@ -1,0 +1,90 @@
+All of these endpoints require employee authorization jwt
+-----------------------------------------------------------------
+PUT /session/{sessionId}
+
+Update session.
+
+payload
+{
+  employeeId: (Integer, optional) id of employee who will be assigned,
+  reviewed: (Boolean, optional)
+}
+
+returns status code (200, 400) representing the outcome.
+-----------------------------------------------------------------
+GET /employees/{employeeId}
+
+Get data about an employee.
+
+returns
+{
+  name: (String), employee name (?)
+  email: (String), employee email
+}
+
+Discussion:
+  Are name and email needed? At least name can already be found from the jwt, email too if needed.
+  Assignees could also be a list of dictionaries that contain the user's name and id.
+  Who could access this?
+
+-----------------------------------------------------------------
+GET /users/{userId}
+
+Fetch data about user, including sessions
+
+returns
+{
+  name: (String), user's name
+  sessions: (Array), list of session ids.
+  assignee: (?), assignee id or dictionary? (meaning employee)
+}
+
+Discussion:
+  Should sessions array be a list of dictionaries containing information about the
+  session? It might be easier to then list the data in a table instead of calling
+  an endpoint for individual session data for every session. Or perhaps some simple
+  data here and more in depth in an endpoint /sessions/{sessionId}
+
+-----------------------------------------------------------------
+GET /sessions/{sessionId}
+
+Fetch data about a session
+
+returns
+{
+  sessionId,
+  assigneeId,
+  userId,
+  reviewed,
+  startedAt,
+  content (List), list of content id's or dictionaries including dictionary data
+}
+
+Discussion:
+  This data could be included in the endpoint above /sessions/{userId} perhaps?
+  Should content be included? And if so, is it a list of content id's or a complete
+  dictionary about the data? Or perhaps some simple data?
+
+-----------------------------------------------------------------
+GET /content/{contentId}
+
+Get data about the content
+
+returns
+{
+  contentId,
+  sessionId,
+  question,
+  contentType,
+  contentPath,
+  createdAt
+}
+
+-----------------------------------------------------------------
+GET /attachment/{contentId}
+
+Fetch attachment with contentId
+
+returns the file or 404
+
+-----------------------------------------------------------------
