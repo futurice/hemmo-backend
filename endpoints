@@ -1,6 +1,6 @@
 All of these endpoints require employee authorization jwt
 -----------------------------------------------------------------
-PUT /api/v1/session/{sessionId}
+PUT /session/{sessionId} - Implemented
 
 Update session.
 
@@ -12,7 +12,7 @@ payload
 
 returns status code (200, 400) representing the outcome.
 -----------------------------------------------------------------
-GET /api/v1/employees/{employeeId}
+GET /employees/{employeeId} - Implemented
 
 Get data about an employee.
 
@@ -28,7 +28,7 @@ Discussion:
   Who could access this?
 
 -----------------------------------------------------------------
-GET /api/v1/users/{userId}
+GET /users/{userId} - Implemented
 
 Fetch data about user, including sessions
 
@@ -45,7 +45,7 @@ Discussion:
   data here and more in depth in an endpoint /sessions/{sessionId}
 
 -----------------------------------------------------------------
-GET /api/v1/sessions/{sessionId}
+GET /sessions/{sessionId}
 
 Fetch data about a session
 
@@ -59,7 +59,6 @@ returns
   content (List), dictionary in this form
   {
     contentId,
-    sessionId,
     question,
     contentType,
     contentPath,
@@ -73,7 +72,7 @@ Discussion:
   dictionary about the data? Or perhaps some simple data?
 
 -----------------------------------------------------------------
-GET /api/v1/attachment/{contentId}
+GET /attachment/{contentId} - Implemented
 
 Fetch attachment with contentId
 

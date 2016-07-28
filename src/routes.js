@@ -8,7 +8,6 @@ import {
 
 import {
   attachmentUploadConfig,
-  getAttachmentConfig,
   updateContentConfig,
   newContentConfig,
   newSessionConfig
@@ -16,7 +15,11 @@ import {
 
 import {
   getIndexConfig,
-  updateSessionData
+  updateSessionData,
+  getAttachmentConfig,
+  getEmployeeDataConfig,
+  getUserDataConfig,
+  getSessionDataConfig
 } from './routeConfigs/externalApiRoutes';
 
 const routes = [];
@@ -83,6 +86,24 @@ routes.push({
   method: 'PUT',
   path: '/session/{sessionId}',
   config: updateSessionData
+});
+
+routes.push({
+  method: 'GET',
+  path: '/employees/{employeeId}',
+  config: getEmployeeDataConfig
+});
+
+routes.push({
+  method: 'GET',
+  path: '/users/{userId}',
+  config: getUserDataConfig
+});
+
+routes.push({
+  method: 'GET',
+  path: '/sessions/{sessionId}',
+  config: getSessionDataConfig
 });
 
 export default routes;

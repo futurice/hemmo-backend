@@ -126,35 +126,6 @@ exports.updateContentConfig = {
   }
 };
 
-exports.getAttachmentConfig = {
-  validate: {
-    params: {
-      contentId: Joi.string().length(36).required()
-    }
-  },
-  auth: {
-    strategy: 'jwt',
-    scope: 'employee'
-  },
-  handler: function(request, reply) {
-    knex('content').where({
-      contentId: request.params.contentId
-    }).select('contentPath')
-    .then((results) => {
-      if (!results.length) {
-        throw new Error('Attachment not found');
-      }
-
-      return reply.file(results[0].contentPath, {
-        confine: uploadPath
-      });
-    })
-    .catch((err) => {
-      return reply(Boom.badRequest(err));
-    });
-  }
-};
-
 exports.attachmentUploadConfig = {
   payload: {
     output: 'stream',
