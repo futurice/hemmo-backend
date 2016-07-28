@@ -15,7 +15,8 @@ import {
 } from './routeConfigs/sessionRoutes';
 
 import {
-  getIndexConfig
+  getIndexConfig,
+  updateSessionData
 } from './routeConfigs/externalApiRoutes';
 
 const routes = [];
@@ -45,12 +46,6 @@ routes.push({
 });
 
 routes.push({
-  method: 'GET',
-  path: '/attachment/{contentId}',
-  config: getAttachmentConfig
-});
-
-routes.push({
   method: 'PUT',
   path: '/attachment/{contentId}',
   config: attachmentUploadConfig
@@ -72,6 +67,22 @@ routes.push({
   method: 'POST',
   path: '/employees/authenticate',
   config: employeeAuthenticationConfig
+});
+
+/*
+---------------------------------------------------------
+  External api endpoints
+*/
+routes.push({
+  method: 'GET',
+  path: '/attachment/{contentId}',
+  config: getAttachmentConfig
+});
+
+routes.push({
+  method: 'PUT',
+  path: '/session/{sessionId}',
+  config: updateSessionData
 });
 
 export default routes;

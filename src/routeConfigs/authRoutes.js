@@ -38,7 +38,6 @@ exports.employeeRegistrationConfig = {
     {method: checkIfEmailAvailable}
   ],
   handler: function(request, reply) {
-    console.log(request.payload);
     const name = request.payload['name'];
     const email = request.payload['email'];
     const password = request.payload['password'];
@@ -52,7 +51,6 @@ exports.employeeRegistrationConfig = {
       }).returning('id');
     })
     .then(function(id) {
-      console.log(id);
       const token = createToken(id, name, 'employee');
       return reply({token: token});
     })
