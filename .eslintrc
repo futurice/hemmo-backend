@@ -30,7 +30,7 @@
         "prefer-const": 1,
         "no-trailing-spaces": [2, {"skipBlankLines": false}],
         "one-var": [2, "never"],
-        "func-names": 2,
+        "func-names": 0,
         "key-spacing": [2, {
           "beforeColon": false,
           "afterColon": true
