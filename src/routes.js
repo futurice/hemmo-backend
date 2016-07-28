@@ -23,6 +23,9 @@ import {
 
 let mkdirp = Promise.promisify(require('mkdirp'));
 
+let uploadPath = path.join(process.env.HOME, 'hemmo', 'uploads');
+let sizeLimit = 1024 * 1024 * 10; // 10 MB
+
 let routes = [];
 
 routes.push({
@@ -174,9 +177,28 @@ routes.push({
 routes.push({
   method: 'GET',
   path: '/attachment/{contentId}',
-  handler:  {
-    directory: {
-      path: path.join(process.env.HOME, 'hemmo', 'uploads')
+  handler: function(request, reply) {
+    knex('content').where({
+      contentId: request.params.contentId
+    }).select('contentPath')
+    .then((results) => {
+      if (!results.length) {
+        throw new Error('Attachment not found');
+      }
+
+      return reply.file(results[0].contentPath, {
+        confine: uploadPath
+      });
+    })
+    .catch((err) => {
+      return reply(Boom.badRequest(err));
+    })
+  },
+  config: {
+    validate: {
+      params: {
+        contentId: Joi.string().length(36).required()
+      }
     }
   },
   config: {
@@ -191,7 +213,12 @@ routes.push({
   method: 'PUT',
   path: '/attachment/{contentId}',
   handler: function(request, reply) {
-    let dir = path.join(process.env.HOME, 'hemmo', 'uploads');
+    let filename = request.payload.file.hapi.filename;
+    let ext = '';
+
+    if (filename && filename.lastIndexOf('.') !== -1) {
+      ext = filename.substring(filename.lastIndexOf('.') + 1);
+    }
 
     // Find user session by auth token and sessionId
     getUserSession(request.pre.user.id, request.headers.session).bind({})
@@ -203,11 +230,16 @@ routes.push({
       this.contentId = request.params.contentId;
       this.sessionId = request.headers.session;
 
-      return mkdirp(dir);
+      return mkdirp(uploadPath);
     })
     .then(function() {
       return new Promise((resolve, reject) => {
-        let file = fs.createWriteStream(path.join(dir, this.contentId));
+        this.filePath = path.join(uploadPath, this.contentId);
+        if (ext) {
+          this.filePath += '.' + ext;
+        }
+
+        let file = fs.createWriteStream(this.filePath);
         file.on('error', function (err) {
           reject(err);
         });
@@ -229,7 +261,7 @@ routes.push({
         contentId: this.contentId,
         sessionId: this.sessionId
       }).update({
-        contentPath: path.join(dir, this.contentId)
+        contentPath: this.filePath
       });
     })
     .then(function() {
@@ -243,7 +275,8 @@ routes.push({
   },
   config: {
     payload: {
-      output: 'stream'
+      output: 'stream',
+      maxBytes: sizeLimit
     },
     validate: {
       headers: Joi.object({
