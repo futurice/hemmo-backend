@@ -2,19 +2,33 @@ const bcrypt = require('bcrypt');
 import Promise from 'bluebird';
 const jwt = require('jsonwebtoken');
 import config from '../config';
-import knex from '../db'
+import knex from '../db';
 const secret = config.auth.secret;
 import Boom from 'boom';
 
+export function checkIfEmailAvailable(req, res) {
+  const email = req.payload.email;
+  knex.select('id').from('employees').where('email', email)
+  .then(function(rows) {
+    if (!rows.length) {
+      res();
+    } else {
+      res(Boom.badRequest('Email already in use!'));
+    }
+  });
+}
 
 export function hashPassword(password) {
   // Generate a salt at level 10 strength
-  var promise = new Promise(
+  const promise = new Promise(
     function(resolve, reject) {
       bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(password, salt, (err, hash) => {
-          if (err) {
-            reject(err);
+        if (err) {
+          reject(err);
+        }
+        bcrypt.hash(password, salt, (error, hash) => {
+          if (error) {
+            reject(error);
           } else {
             resolve(hash);
           }
@@ -28,7 +42,7 @@ export function hashPassword(password) {
 // Crate a json web token for user id and name
 export function createToken(id, name, scope) {
   // Sign the JWT
-  return jwt.sign({ id: id, name: name, scope: scope }, secret, { algorithm: 'HS256', expiresIn: "5h" } );
+  return jwt.sign({id: id, name: name, scope: scope}, secret, {algorithm: 'HS256', expiresIn: '5h'});
 }
 
 // Verify authentication request credentials
@@ -41,7 +55,7 @@ export function verifyCredentials(req, res) {
     if (!rows.length) {
       res(Boom.badRequest('Incorrect email!'));
     }
-    var user = rows[0];
+    const user = rows[0];
     bcrypt.compare(password, user.password, (err, isValid) => {
       if (isValid) {
         res(user);
@@ -57,12 +71,12 @@ export function verifyCredentials(req, res) {
 // DO NOT USE THIS TO GET MOBILE USER DATA!
 export function bindEmployeeData(req, res) {
   try {
-    var bearerToken = req.headers.authorization.slice(7);
-    var decoded = jwt.verify(bearerToken, secret, {
+    const bearerToken = req.headers.authorization.slice(7);
+    const decoded = jwt.verify(bearerToken, secret, {
       ignoreExpiration: false
     });
-    var employeeId = decoded.id[0];
-    var name = decoded.name;
+    const employeeId = decoded.id[0];
+    const name = decoded.name;
 
     knex.first('id', 'name', 'email').from('employees').where({id: employeeId, name: name})
     .then(function(employee) {
@@ -76,7 +90,7 @@ export function bindEmployeeData(req, res) {
       console.log(err);
       res(Boom.unauthorized('Invalid token'));
     });
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     res(Boom.unauthorized('Invalid token'));
   }
@@ -86,12 +100,12 @@ export function bindEmployeeData(req, res) {
 // Note that checking for expiration is ignored as we want to use the same token foreveeeer
 export function bindUserData(req, res) {
   try {
-    var bearerToken = req.headers.authorization.slice(7);
-    var decoded = jwt.verify(bearerToken, secret, {
+    const bearerToken = req.headers.authorization.slice(7);
+    const decoded = jwt.verify(bearerToken, secret, {
       ignoreExpiration: true
     });
-    var userId = decoded.id[0];
-    var name = decoded.name;
+    const userId = decoded.id[0];
+    const name = decoded.name;
     knex.first('id', 'name').from('users').where({id: userId, name: name})
     .then(function(user) {
       if (!user) {
@@ -104,7 +118,7 @@ export function bindUserData(req, res) {
       console.log(err);
       res(Boom.unauthorized('Invalid token'));
     });
-  } catch(e) {
+  } catch (e) {
     res(Boom.unauthorized('Invalid token'));
   }
 }

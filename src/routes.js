@@ -62,7 +62,6 @@ routes.push({
   config: userRegistrationConfig
 });
 
-// TODO: add pre function to check if name is available
 routes.push({
   method: 'POST',
   path: '/employees/register',
