@@ -1,6 +1,6 @@
 All of these endpoints require employee authorization jwt
 -----------------------------------------------------------------
-PUT /session/{sessionId}
+PUT /api/v1/session/{sessionId}
 
 Update session.
 
@@ -12,7 +12,7 @@ payload
 
 returns status code (200, 400) representing the outcome.
 -----------------------------------------------------------------
-GET /employees/{employeeId}
+GET /api/v1/employees/{employeeId}
 
 Get data about an employee.
 
@@ -28,15 +28,14 @@ Discussion:
   Who could access this?
 
 -----------------------------------------------------------------
-GET /users/{userId}
+GET /api/v1/users/{userId}
 
 Fetch data about user, including sessions
 
 returns
 {
   name: (String), user's name
-  sessions: (Array), list of session ids.
-  assignee: (?), assignee id or dictionary? (meaning employee)
+  sessions: (Array), list of dictionaries containing (startedAt, reviewed)
 }
 
 Discussion:
@@ -46,7 +45,7 @@ Discussion:
   data here and more in depth in an endpoint /sessions/{sessionId}
 
 -----------------------------------------------------------------
-GET /sessions/{sessionId}
+GET /api/v1/sessions/{sessionId}
 
 Fetch data about a session
 
@@ -57,7 +56,15 @@ returns
   userId,
   reviewed,
   startedAt,
-  content (List), list of content id's or dictionaries including dictionary data
+  content (List), dictionary in this form
+  {
+    contentId,
+    sessionId,
+    question,
+    contentType,
+    contentPath,
+    createdAt
+  }
 }
 
 Discussion:
@@ -66,25 +73,9 @@ Discussion:
   dictionary about the data? Or perhaps some simple data?
 
 -----------------------------------------------------------------
-GET /content/{contentId}
-
-Get data about the content
-
-returns
-{
-  contentId,
-  sessionId,
-  question,
-  contentType,
-  contentPath,
-  createdAt
-}
-
------------------------------------------------------------------
-GET /attachment/{contentId}
+GET /api/v1/attachment/{contentId}
 
 Fetch attachment with contentId
 
 returns the file or 404
-
 -----------------------------------------------------------------
