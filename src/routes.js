@@ -17,6 +17,10 @@ import {
   bindUserData
 } from './utils/authUtil';
 
+import {
+  employeeAuthenticationConfig
+} from './routeConfigs/authRoutes'
+
 let mkdirp = Promise.promisify(require('mkdirp'));
 
 let routes = [];
@@ -327,22 +331,7 @@ routes.push({
 routes.push({
   method: 'POST',
   path: '/employees/authenticate',
-  handler: function (request, reply) {
-    // If password was incorrect, error is issued from the pre method verifyCredentials
-    var token = createToken(request.pre.user.id, request.pre.user.name, 'employee');
-    reply({token: token});
-  },
-  config: {
-    validate: {
-      payload: {
-        email: Joi.string().required(),
-        password: Joi.string().min(6).required(),
-      }
-    },
-    pre: [
-      { method: verifyCredentials, assign: 'user' }
-    ],
-  }
+  config: employeeAuthenticationConfig
 });
 
 export default routes;
