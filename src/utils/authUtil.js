@@ -62,14 +62,14 @@ export function bindEmployeeData(req, res) {
       ignoreExpiration: false
     });
     var employeeId = decoded.id;
+    var name = decoded.name;
 
-    knex.select('*').from('employees').where('id', employeeId)
-    .then(function(rows) {
-      if (!rows.length) {
+    knex.first('id', 'name', 'email').from('employees').where({id: employeeId, name: name})
+    .then(function(employee) {
+      if (!employee) {
         res(Boom.unauthorized('Invalid token'));
       } else {
-        var user = rows[0];
-        res(user);
+        res(employee);
       }
     })
     .catch(function(err) {
@@ -91,12 +91,12 @@ export function bindUserData(req, res) {
       ignoreExpiration: true
     });
     var userId = decoded.id[0];  // No idea why this is needed here but not in employee bind???
-    knex.select('*').from('users').where('id', userId)
-    .then(function(rows) {
-      if (!rows.length) {
+    var name = decoded.name;
+    knex.first('id', 'name').from('users').where({id: userId, name: name})
+    .then(function(user) {
+      if (!user) {
         res(Boom.unauthorized('Invalid token'));
       } else {
-        var user = rows[0];
         res(user);
       }
     })
