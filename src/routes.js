@@ -12,10 +12,11 @@ import path from 'path';
 import {
   hashPassword,
   createToken,
-  verifyCredentials
+  verifyCredentials,
+  bindEmployeeData,
+  bindUserData
 } from './utils/authUtil';
 
-let randomBytes = Promise.promisify(require('crypto').randomBytes);
 let mkdirp = Promise.promisify(require('mkdirp'));
 
 let routes = [];
@@ -24,6 +25,7 @@ routes.push({
   method: 'GET',
   path: '/',
   handler: function (request, reply) {
+    console.log(request.pre.user.name);
     var users = knex.select('name').from('users')
     .then(function(rows) {
       var data = _.map(rows, function(row) {
@@ -35,7 +37,11 @@ routes.push({
   config: {
     auth: {
       strategy: 'jwt',
-    }
+      scope: 'employee'
+    },
+    pre: [
+      { method: bindEmployeeData, assign: 'user' }
+    ]
   }
 });
 
@@ -43,25 +49,15 @@ routes.push({
   method: 'POST',
   path: '/session',
   handler: function(request, reply) {
-
-    knex.select('id').from('users').where('token', request.headers.authorization).bind({})
-    .then(function(rows) {
-      if (!rows.length) {
-        throw new Error('User not found');
-      }
-
-      this.session = {
-        userId: rows[0].id,
-        startedAt: knex.fn.now()
-      };
-
-      this.session.sessionId = uuid.v4();
-
-      return knex('sessions').insert(this.session);
+    var sessionId = uuid.v4();
+    knex('sessions').insert({
+      userId: request.pre.user.id,
+      startedAt: knex.fn.now(),
+      sessionId: sessionId
     })
     .then(function(res) {
       return reply({
-        sessionId: this.session.sessionId
+        sessionId: sessionId
       });
     })
     .catch(function(err) {
@@ -69,50 +65,38 @@ routes.push({
     });
   },
   config: {
-    validate: {
-      headers: Joi.object({
-        authorization: Joi.string().length(96).required()
-      }).options({ allowUnknown: true })
-    }
+    pre: [
+      { method: bindUserData, assign: 'user' }
+    ]
   }
 });
 
-let getUserSession = function(authToken, sessionId) {
-  return knex.select('id').from('users').where('token', authToken).bind({})
-  .then(function(users) {
-    if (!users.length) {
-      throw new Error('User not found');
-    }
-
-    this.userId = users[0].id;
-    this.sessionId = sessionId;
-
-    return knex.select('sessionId').from('sessions').where({
-      'userId': this.userId,
-      'sessionId': this.sessionId
-    });
-  })
+let getUserSession = function(userId, sessionId) {
+  return knex.first('sessionId').from('sessions').where({
+    'userId': userId,
+    'sessionId': sessionId
+  });
 }
 
 routes.push({
   method: 'POST',
   path: '/content',
   handler: function(request, reply) {
-    // Find user session by auth token and sessionId
-    getUserSession(request.headers.authorization, request.headers.session)
-    .then(function(sessions) {
-      if (!sessions.length) {
+    // Check that the user actually owns the session requested
+    getUserSession(request.pre.user.id, request.headers.session).bind({})
+    .then(function(session) {
+      if (!session) {
         throw new Error('Session not found');
       }
-
+      this.sessionId = session.sessionId;
       this.contentId = uuid.v4();
 
       return knex('content').insert(_.merge(request.payload, {
         contentId: this.contentId,
         sessionId: this.sessionId,
+        createdAt: knex.fn.now()
       }))
     })
-
     .then(function() {
       return reply({
         contentId: this.contentId
@@ -125,15 +109,17 @@ routes.push({
   config: {
     validate: {
       headers: Joi.object({
-        authorization: Joi.string().length(96).required(),
         session: Joi.string().length(36).required()
       }).options({ allowUnknown: true }),
-      payload: {
+      payload: {  // TODO: VALIDATE CONTENT TYPE!!!
         contentType: Joi.string().required(),
         question: Joi.string().optional(),
         answer: Joi.string().optional()
       }
-    }
+    },
+    pre: [
+      { method: bindUserData, assign: 'user' }
+    ]
   }
 });
 
@@ -142,14 +128,14 @@ routes.push({
   path: '/content/{contentId}',
   handler: function(request, reply) {
     // Find user session by auth token and sessionId
-    getUserSession(request.headers.authorization, request.headers.session)
-    .then(function(sessions) {
-      if (!sessions.length) {
+    getUserSession(request.pre.user.id, request.headers.session).bind({})
+    .then(function(session) {
+      if (!session) {
         throw new Error('Session not found');
       }
 
       this.contentId = request.params.contentId;
-      this.sessionId = request.headers.session;
+      this.sessionId = session.sessionId;
 
       return knex('content').where({
         'contentId': this.contentId,
@@ -162,29 +148,37 @@ routes.push({
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest(err));
     });
   },
   config: {
     validate: {
       headers: Joi.object({
-        authorization: Joi.string().length(96).required(),
         session: Joi.string().length(36).required()
       }).options({ allowUnknown: true }),
       params: {
         contentId: Joi.string().length(36).required()
       }
-    }
+    },
+    pre: [
+      { method: bindUserData, assign: 'user' }
+    ]
   }
 });
- 
-// TODO: authentication!
+
 routes.push({
   method: 'GET',
   path: '/attachment/{contentId}',
   handler:  {
     directory: {
       path: path.join(process.env.HOME, 'hemmo', 'uploads')
+    }
+  },
+  config: {
+    auth: {
+      strategy: 'jwt',
+      scope: 'employee'
     }
   }
 });
@@ -196,9 +190,9 @@ routes.push({
     let dir = path.join(process.env.HOME, 'hemmo', 'uploads');
 
     // Find user session by auth token and sessionId
-    getUserSession(request.headers.authorization, request.headers.session)
-    .then(function(sessions) {
-      if (!sessions.length) {
+    getUserSession(request.pre.user.id, request.headers.session).bind({})
+    .then(function(session) {
+      if (!session) {
         throw new Error('Session not found');
       }
 
@@ -210,7 +204,7 @@ routes.push({
     .then(function() {
       return new Promise((resolve, reject) => {
         let file = fs.createWriteStream(path.join(dir, this.contentId));
-        file.on('error', function (err) { 
+        file.on('error', function (err) {
           reject(err);
         });
 
@@ -221,7 +215,7 @@ routes.push({
 
         data.file.pipe(file);
 
-        data.file.on('end', function (err) { 
+        data.file.on('end', function (err) {
           resolve();
         });
       });
@@ -249,14 +243,16 @@ routes.push({
     },
     validate: {
       headers: Joi.object({
-        authorization: Joi.string().length(96).required(),
         session: Joi.string().length(36).required()
       }).options({ allowUnknown: true }),
       params: {
         contentId: Joi.string().length(36).required()
       },
       payload: Joi.any().required()
-    }
+    },
+    pre: [
+      { method: bindUserData, assign: 'user' }
+    ]
   }
 });
 
@@ -264,21 +260,16 @@ routes.push({
   method: 'POST',
   path: '/register',
   handler: function (request, reply) {
-    // Generate random 48 byte token
-    randomBytes(48).bind({})
-    .then(function(bytes) {
-      this.token = bytes.toString('hex');
-
-      // Store token in DB
-      return knex('users').insert({
-        name: request.payload['name'],
-        token: this.token
-      });
+    var name = request.payload['name'];
+    knex('users').insert({
+      name: name
     })
-    .then(function(res) {
+    .returning('id')
+    .then(function(id) {
+      var token = createToken(id, name, 'user');
       // Reply with token
       return reply({
-        token: this.token
+        token: token
       });
     })
     .catch(function(err) {
@@ -294,6 +285,7 @@ routes.push({
   }
 });
 
+// TODO: add pre function to check if name is available
 // Register for employees, post with email, name and password
 routes.push({
   method: 'POST',
@@ -314,7 +306,7 @@ routes.push({
     })
     .then(function(id) {
       console.log(id);
-      var token = createToken(id, name);
+      var token = createToken(id, name, 'employee');
       return reply({token: token});
     })
     .catch(function(err) {
@@ -328,7 +320,7 @@ routes.push({
         password: Joi.string().min(6).required(),
         email: Joi.string().required()
       }
-    }
+    },
   }
 });
 
@@ -337,7 +329,7 @@ routes.push({
   path: '/employees/authenticate',
   handler: function (request, reply) {
     // If password was incorrect, error is issued from the pre method verifyCredentials
-    var token = createToken(request.pre.user.id, request.pre.user.name);
+    var token = createToken(request.pre.user.id, request.pre.user.name, 'employee');
     reply({token: token});
   },
   config: {
