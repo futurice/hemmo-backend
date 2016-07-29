@@ -109,12 +109,26 @@ exports.updateContentConfig = {
       this.contentId = request.params.contentId;
       this.sessionId = session.sessionId;
 
-      // TODO: Don't allow updating every field! Dangerous.
+      const question = _.get(request, 'payload.question', null);
+      const answer = _.get(request, 'payload.answer', null);
+      const contentType = _.get(request, 'payload.contentType', null);
+
+      const updateDict = {
+        question: question,
+        contentType: contentType,
+        answer: answer
+      };
+      // Strip null values
+      const strippedDict = _.omitBy(updateDict, _.isNil);
+      const empty = _.isEmpty(strippedDict);
+      if (empty) {
+        return reply('Success');
+      }
 
       return knex('content').where({
         'contentId': this.contentId,
         'sessionId': this.sessionId
-      }).update(_.omit(request.payload, ['contentId', 'sessionId']));
+      }).update(strippedDict);
     })
     .then(function() {
       return reply({

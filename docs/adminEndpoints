@@ -15,6 +15,10 @@ returns
   token,
   employeeId
 }
+
+Use the returned token in 'Authorization' header in format:
+'Bearer $token'
+
 -----------------------------------------------------------------
 PUT /session/{sessionId} - Implemented
 

@@ -27,11 +27,11 @@ import {
 
 const routes = [];
 
-routes.push({
-  method: 'GET',
-  path: '/',
-  config: getIndexConfig
-});
+/*
+-------------------------------------------------------
+  Mobile user endpoints for the Hemmo mobile app.
+*/
+
 
 routes.push({
   method: 'POST',
@@ -63,16 +63,24 @@ routes.push({
   config: userRegistrationConfig
 });
 
+/*
+---------------------------------------------------------
+  External api endpoints
+  These require 'employee' score in JWT (except registration
+  and authentication of course)
+*/
+routes.push({
+  method: 'GET',
+  path: '/',
+  config: getIndexConfig
+});
+
 routes.push({
   method: 'POST',
   path: '/employees/register',
   config: employeeRegistrationConfig
 });
 
-/*
----------------------------------------------------------
-  External api endpoints
-*/
 routes.push({
   method: 'POST',
   path: '/employees/authenticate',

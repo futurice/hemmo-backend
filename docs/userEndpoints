@@ -1,0 +1,82 @@
+Users are required to register before accessing these endpoints. However,
+after registration, the received token can be used indefinitely.
+-----------------------------------------------------------------
+POST /register
+
+Register a new user to the service.
+
+payload {
+  name: (string)
+}
+
+returns {
+  token: (string)
+}
+
+Use the returned token in 'Authorization' header in format:
+'Bearer $token'
+
+-----------------------------------------------------------------
+POST /session
+
+Create a new session.
+
+returns {
+  sessionId: (string) id for the newly created session
+}
+
+-----------------------------------------------------------------
+POST /content
+
+Create a new content (audio file, text answer...)
+
+request headers {
+  Authorization: token,
+  session: sessionId
+}
+
+request payload {
+  contentType: ('file', 'text') REQUIRED,
+  question: (String) OPTIONAL,
+  answer: (String) OPTIONAL
+}
+
+returns {
+  contentId: (String) Content id of the created content
+}
+
+-----------------------------------------------------------------
+PUT /content/{contentId}
+
+Update content question, answer or contentType
+
+request headers {
+  Authorization: token,
+  session: sessionId
+}
+
+request payload {
+  question: (String) optional,
+  answer: (String) optional,
+  contentType: ('file', 'text') optional
+}
+
+returns {
+  contentId: (String)
+}
+
+-----------------------------------------------------------------
+PUT /attachment/{contentId}
+
+Upload a new attachment to content with id contentId
+Note that possible old attachment is destroyed.
+File should be uploaded as multipart/form data.
+
+request headers {
+  Authorization: token,
+  session: sessionId
+}
+
+returns {
+  contentId
+}
