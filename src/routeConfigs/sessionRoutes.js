@@ -109,6 +109,8 @@ exports.updateContentConfig = {
       this.contentId = request.params.contentId;
       this.sessionId = session.sessionId;
 
+      // TODO: Don't allow updating every field! Dangerous.
+
       return knex('content').where({
         'contentId': this.contentId,
         'sessionId': this.sessionId
@@ -190,7 +192,7 @@ exports.attachmentUploadConfig = {
         });
       });
     })
-    .then(function() {
+    .then(function() {  // TODO: Remove old content if updating? or create new content?
       return knex('content').where({
         contentId: this.contentId,
         sessionId: this.sessionId

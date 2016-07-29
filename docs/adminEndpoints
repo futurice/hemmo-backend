@@ -22,11 +22,6 @@ returns
   email: (String), employee email
 }
 
-Discussion:
-  Are name and email needed? At least name can already be found from the jwt, email too if needed.
-  Assignees could also be a list of dictionaries that contain the user's name and id.
-  Who could access this?
-
 -----------------------------------------------------------------
 GET /users/{userId} - Implemented
 
@@ -38,12 +33,6 @@ returns
   sessions: (Array), list of dictionaries containing (startedAt, reviewed)
 }
 
-Discussion:
-  Should sessions array be a list of dictionaries containing information about the
-  session? It might be easier to then list the data in a table instead of calling
-  an endpoint for individual session data for every session. Or perhaps some simple
-  data here and more in depth in an endpoint /sessions/{sessionId}
-
 -----------------------------------------------------------------
 GET /sessions/{sessionId}
 
@@ -53,7 +42,10 @@ returns
 {
   sessionId,
   assigneeId,
-  userId,
+  user: {
+    userId,
+    name
+  }
   reviewed,
   startedAt,
   content (List), dictionary in this form
@@ -61,15 +53,9 @@ returns
     contentId,
     question,
     contentType,
-    contentPath,
     createdAt
   }
 }
-
-Discussion:
-  This data could be included in the endpoint above /sessions/{userId} perhaps?
-  Should content be included? And if so, is it a list of content id's or a complete
-  dictionary about the data? Or perhaps some simple data?
 
 -----------------------------------------------------------------
 GET /attachment/{contentId} - Implemented

@@ -180,8 +180,8 @@ exports.getSessionDataConfig = {
   handler: function(request, reply) {
     knex('sessions').where({
       sessionId: request.params.sessionId
-    }).first('*')
-    .then((session) => {
+    }).first('*').bind({})
+    .then(function(session) {
       if (!session) {
         throw new Error('Session not found');
       }
@@ -190,23 +190,32 @@ exports.getSessionDataConfig = {
 
       return knex.select('*').from('content').where('sessionId', session.sessionId);
     })
-    .then((contents) => {
+    .then(function(contents) {
       const contentArray = _.map(contents, function(content) {
         return {
           contentId: content.contentId,
           question: content.question,
           contentType: content.contentType,
-          contentPath: content.contentPath,
           createdAt: content.createdAt
         };
       });
+      this.content = contentArray;
+      return knex.first('name', 'id').from('users').where('id' ,this.session.userId);
+    })
+    .then(function(user) {
+      if (!user) {
+        throw new Error('No user was found for the session');
+      }
       return reply({
         sessionId: this.session.sessionId,
         assigneeId: this.session.assigneeId,
-        userId: this.session.userId,
+        user: {
+          name: user.name,
+          userId: user.id
+        },
         reviewed: this.session.reviewed,
         startedAt: this.session.startedAt,
-        content: contentArray
+        content: this.content
       });
     })
     .catch((err) => {
