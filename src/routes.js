@@ -19,7 +19,10 @@ import {
   getAttachmentConfig,
   getEmployeeDataConfig,
   getUserDataConfig,
-  getSessionDataConfig
+  getSessionDataConfig,
+  getAllUsersConfig,
+  getAllEmployeesConfig
+
 } from './routeConfigs/externalApiRoutes';
 
 const routes = [];
@@ -66,16 +69,28 @@ routes.push({
   config: employeeRegistrationConfig
 });
 
+/*
+---------------------------------------------------------
+  External api endpoints
+*/
 routes.push({
   method: 'POST',
   path: '/employees/authenticate',
   config: employeeAuthenticationConfig
 });
 
-/*
----------------------------------------------------------
-  External api endpoints
-*/
+routes.push({
+  method: 'GET',
+  path: '/employees',
+  config: getAllEmployeesConfig
+});
+
+routes.push({
+  method: 'GET',
+  path: '/users',
+  config: getAllUsersConfig
+});
+
 routes.push({
   method: 'GET',
   path: '/attachment/{contentId}',

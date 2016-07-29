@@ -1,5 +1,21 @@
 All of these endpoints require employee authorization jwt
 -----------------------------------------------------------------
+POST /employees/authenticate
+
+Authenticate the employee
+
+payload
+{
+  email,
+  password
+}
+
+returns
+{
+  token,
+  employeeId
+}
+-----------------------------------------------------------------
 PUT /session/{sessionId} - Implemented
 
 Update session.
@@ -11,6 +27,21 @@ payload
 }
 
 returns status code (200, 400) representing the outcome.
+
+-----------------------------------------------------------------
+GET /employees
+
+Fetch all employees
+
+returns {
+  employees: [
+    {
+      name,
+      employeeId,
+    }
+  ]
+}
+
 -----------------------------------------------------------------
 GET /employees/{employeeId} - Implemented
 
@@ -20,6 +51,27 @@ returns
 {
   name: (String), employee name (?)
   email: (String), employee email
+  sessions: {
+    startedAt,
+    reviewed,
+    sessionId
+  }
+}
+
+-----------------------------------------------------------------
+GET /users
+
+Fetch all users
+
+returns
+{
+  users :
+    [
+      {
+        name: 'name',
+        userId: '0'
+      }
+    ]
 }
 
 -----------------------------------------------------------------
@@ -30,7 +82,7 @@ Fetch data about user, including sessions
 returns
 {
   name: (String), user's name
-  sessions: (Array), list of dictionaries containing (startedAt, reviewed)
+  sessions: (Array), list of dictionaries containing (startedAt, reviewed, sessionId)
 }
 
 -----------------------------------------------------------------

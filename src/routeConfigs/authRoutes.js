@@ -22,7 +22,8 @@ exports.employeeAuthenticationConfig = {
   handler: function(request, reply) {
     // If password was incorrect, error is issued from the pre method verifyCredentials
     const token = createToken(request.pre.user.id, request.pre.user.name, 'employee');
-    reply({token: token});
+    reply({token: token,
+          employeeId: request.pre.user.id });
   }
 };
 

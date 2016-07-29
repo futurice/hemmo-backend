@@ -50,7 +50,7 @@ exports.newContentConfig = {
     headers: Joi.object({
       session: Joi.string().length(36).required()
     }).options({allowUnknown: true}),
-    payload: {  // TODO: VALIDATE CONTENT TYPE!!!
+    payload: {
       contentType: Joi.string().required(),
       question: Joi.string().optional(),
       answer: Joi.string().optional()

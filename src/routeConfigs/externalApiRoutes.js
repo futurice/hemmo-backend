@@ -19,13 +19,7 @@ exports.getIndexConfig = {
     {method: bindEmployeeData, assign: 'user'}
   ],
   handler: function(request, reply) {
-    knex.select('name').from('users')
-    .then(function(rows) {
-      const data = _.map(rows, function(row) {
-        return row.name;
-      });
-      return reply.view('index', {users: data});
-    });
+    reply('Server is up and running');
   }
 };
 
@@ -57,7 +51,6 @@ exports.updateSessionData = {
     if (empty) {
       return reply('Success');
     }
-    console.log(strippedDict);
 
     knex('sessions').where('sessionId', sessionId)
     .update(strippedDict)
@@ -68,7 +61,6 @@ exports.updateSessionData = {
       console.log(err);
       return reply(Boom.badRequest(err));
     });
-    return 0;
   }
 };
 
@@ -113,14 +105,68 @@ exports.getEmployeeDataConfig = {
   },
   handler: function(request, reply) {
     const employeeId = request.params.employeeId;
-    knex.first('name', 'email').from('employees').where('id', employeeId)
+    knex.first('name', 'email').from('employees').where('id', employeeId).bind({})
     .then(function(employee) {
       if (!employee) {
         throw new Error('Employee not found.');
       }
+      this.employee = employee;
+      return knex.select('startedAt', 'reviewed', 'sessionId').from('sessions').where('assigneeId', employeeId);
+    })
+    .then(function(sessions) {
       return reply({
-        name: employee.name,
-        email: employee.email
+        name: this.employee.name,
+        email: this.employee.email,
+        sessions: sessions
+      });
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest(err));
+    });
+  }
+};
+
+exports.getAllEmployeesConfig = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  handler: function(request, reply) {
+    knex.select('name', 'id').from('employees').bind({})
+    .then(function(employees) {
+      const empl = _.map(employees, function(employee) {
+        return {
+          name: employee.name,
+          employeeId: employee.id
+        };
+      });
+      return reply({
+        employees: empl
+      });
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest(err));
+    });
+  }
+
+}
+
+exports.getAllUsersConfig = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  handler: function(request, reply) {
+    knex.select('name', 'id').from('users').bind({})
+    .then(function(users) {
+      const usrs = _.map(users, function(user) {
+        return {
+          name: user.name,
+          userId: user.id
+        };
+      });
+      return reply({
+        users: usrs
       });
     })
     .catch(function(err) {
@@ -147,13 +193,14 @@ exports.getUserDataConfig = {
         throw new Error('User not found.');
       }
       this.user = user;
-      return knex.select('startedAt', 'reviewed').from('sessions').where('userId', userId);
+      return knex.select('startedAt', 'reviewed', 'sessionId').from('sessions').where('userId', userId);
     })
     .then(function(rows) {
       const sessions = _.map(rows, function(row) {
         return {
           startedAt: row.startedAt,
-          reviewed: row.reviewed
+          reviewed: row.reviewed,
+          sessionId: row.sessionId
         };
       });
       return reply({
