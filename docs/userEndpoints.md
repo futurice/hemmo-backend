@@ -69,8 +69,8 @@ PUT /content/{contentId}
 Update content question, answer or contentType
 
 request headers {
-  Authorization: token,
-  session: sessionId
+  Authorization: token (String),
+  session: sessionId (String)
 }
 
 request payload {
@@ -93,8 +93,8 @@ Upload a new attachment to content with id contentId.
 File should be uploaded as multipart/form data.
 
 request headers {
-  Authorization: token,
-  session: sessionId
+  Authorization: token (String),
+  session: sessionId (String)
 }
 
 returns {

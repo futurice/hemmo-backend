@@ -53,7 +53,7 @@ exports.employeeRegistrationConfig = {
     })
     .then(function(id) {
       const token = createToken(id, name, 'employee');
-      return reply({token: token});
+      return reply({token: token, employeeId: id});
     })
     .catch(function(err) {
       return reply(Boom.badRequest(err));
