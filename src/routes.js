@@ -35,13 +35,13 @@ const routes = [];
 
 routes.push({
   method: 'POST',
-  path: '/session',
+  path: '/session/',
   config: newSessionConfig
 });
 
 routes.push({
   method: 'POST',
-  path: '/content',
+  path: '/content/',
   config: newContentConfig
 });
 
@@ -59,7 +59,7 @@ routes.push({
 
 routes.push({
   method: 'POST',
-  path: '/register',
+  path: '/register/',
   config: userRegistrationConfig
 });
 
@@ -77,25 +77,25 @@ routes.push({
 
 routes.push({
   method: 'POST',
-  path: '/employees/register',
+  path: '/employees/register/',
   config: employeeRegistrationConfig
 });
 
 routes.push({
   method: 'POST',
-  path: '/employees/authenticate',
+  path: '/employees/authenticate/',
   config: employeeAuthenticationConfig
 });
 
 routes.push({
   method: 'GET',
-  path: '/employees',
+  path: '/employees/',
   config: getAllEmployeesConfig
 });
 
 routes.push({
   method: 'GET',
-  path: '/users',
+  path: '/users/',
   config: getAllUsersConfig
 });
 

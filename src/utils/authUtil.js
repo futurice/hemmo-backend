@@ -75,8 +75,10 @@ export function bindEmployeeData(req, res) {
     const decoded = jwt.verify(bearerToken, secret, {
       ignoreExpiration: false
     });
-    const employeeId = decoded.id[0];
+    const employeeId = decoded.id;
     const name = decoded.name;
+
+    console.log(decoded);
 
     knex.first('id', 'name', 'email').from('employees').where({id: employeeId, name: name})
     .then(function(employee) {
@@ -88,11 +90,11 @@ export function bindEmployeeData(req, res) {
     })
     .catch(function(err) {
       console.log(err);
-      res(Boom.unauthorized('Invalid token'));
+      res(Boom.badRequest(err));
     });
   } catch (e) {
     console.log(e);
-    res(Boom.unauthorized('Invalid token'));
+    res(Boom.badRequest(e));
   }
 }
 

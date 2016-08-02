@@ -122,7 +122,9 @@ exports.updateContentConfig = {
       const strippedDict = _.omitBy(updateDict, _.isNil);
       const empty = _.isEmpty(strippedDict);
       if (empty) {
-        return reply('Success');
+        return reply({
+          contentId: this.contentId
+        });
       }
 
       return knex('content').where({
@@ -154,7 +156,9 @@ exports.attachmentUploadConfig = {
     params: {
       contentId: Joi.string().length(36).required()
     },
-    payload: Joi.any().required()
+    payload: {
+      file: Joi.any().required()
+    }
   },
   pre: [
     {method: bindUserData, assign: 'user'}

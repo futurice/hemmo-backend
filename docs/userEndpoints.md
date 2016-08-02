@@ -9,7 +9,7 @@ Users are required to register before accessing API endpoints. However, after re
 Registers a new user to the service.
 
 ```
-POST /register
+POST /register/
 
 payload {
   name: (String)
@@ -29,7 +29,7 @@ Use the returned token in all subsequent requests in `Authorization` header in f
 * Creating session
 
 ```
-POST /session
+POST /session/
 
 Create a new session.
 
@@ -41,7 +41,7 @@ returns {
 * Create new content
 
 ```
-POST /content
+POST /content/
 
 Create a new content (audio file, text answer...)
 
