@@ -3,6 +3,7 @@ import Boom from 'boom';
 import Joi from 'joi';
 import _ from 'lodash';
 import path from 'path';
+import Promise from 'bluebird';
 
 import {
   bindEmployeeData
@@ -212,6 +213,51 @@ exports.getUserDataConfig = {
       return reply(Boom.badRequest(err));
     });
   }
+};
+
+exports.getSessionsDataConfig = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  handler: function(request, reply) {
+    var sessionsArray = [];
+    knex.select('*').from('sessions').bind({})
+    .then(function(sessions) {
+      return sessions;
+    })
+    .each(function(session) {
+      return knex.first('name', 'id').from('users').where('id' , session.userId)
+      .then(function(user) {
+        if (!user) {
+          user = {
+            name: "Unknown",
+            id: -1
+          }
+        }
+        const sessDict = {
+          sessionId: session.sessionId,
+          assigneeId: session.assigneeId,
+          user: {
+            name: user.name,
+            userId: user.id
+          },
+          reviewed: session.reviewed,
+          startedAt: session.startedAt,
+        };
+        sessionsArray.push(sessDict);
+      });
+    })
+    .then(function(array) {
+      return reply({
+        sessions: sessionsArray
+      });
+    })
+    .catch((err) => {
+      return reply(Boom.badRequest(err));
+    });
+  }
+
 };
 
 exports.getSessionDataConfig = {

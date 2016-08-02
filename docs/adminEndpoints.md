@@ -57,7 +57,7 @@ Use the returned token in `Authorization` header in format
 Update some session that was created by the mobile user. Update consists of optional values of `employeeId` that will be assigned to that session and boolean `review` that indicates the session review status.
 
 ```
-PUT /session/{sessionId}
+PUT /sessions/{sessionId}
 
 payload
 {
@@ -111,7 +111,7 @@ returns
 Fetches data about all mobile client users.
 
 ```
-GET /users
+GET /users/
 
 returns
 {
@@ -139,6 +139,31 @@ returns
     startedAt: (Timestamp),
     reviewed: (Boolean),
     sessionId: (String)
+  ]
+}
+```
+
+* Get all sessions
+
+Fetch all sessions
+
+```
+GET /sessions/
+
+returns {
+  sessions:
+  [
+    {
+      sessionId: (String),
+      assigneeId: (String),
+      user: {
+        userId: (Integer),
+        name: (String)
+      }
+      reviewed: (Boolean),
+      startedAt: (Timestamp),
+    },
+    ...
   ]
 }
 ```

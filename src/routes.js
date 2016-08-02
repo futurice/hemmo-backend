@@ -21,8 +21,8 @@ import {
   getUserDataConfig,
   getSessionDataConfig,
   getAllUsersConfig,
-  getAllEmployeesConfig
-
+  getAllEmployeesConfig,
+  getSessionsDataConfig
 } from './routeConfigs/externalApiRoutes';
 
 const routes = [];
@@ -106,8 +106,14 @@ routes.push({
 });
 
 routes.push({
+  method: 'GET',
+  path: '/sessions/',
+  config: getSessionsDataConfig
+});
+
+routes.push({
   method: 'PUT',
-  path: '/session/{sessionId}',
+  path: '/sessions/{sessionId}',
   config: updateSessionData
 });
 
