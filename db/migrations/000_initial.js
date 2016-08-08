@@ -25,6 +25,7 @@ exports.up = function(knex) {
 
     .createTable('content', function(table) {
       table.text('contentId').primary();
+      table.integer('like').defaultTo(0);
       table.text('question');
       table.text('answer');
       table.text('contentType').notNullable();

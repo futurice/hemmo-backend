@@ -52,6 +52,7 @@ Required headers: {
 
 request payload {
   contentType: ('file', 'text') REQUIRED,
+  like: (Number) OPTIONAL,
   question: (String) OPTIONAL,
   answer: (String) OPTIONAL
 }
@@ -74,9 +75,10 @@ request headers {
 }
 
 request payload {
+  contentType: ('file', 'text') OPTIONAL
+  like: (Number) OPTIONAL,
   question: (String) OPTIONAL,
   answer: (String) OPTIONAL,
-  contentType: ('file', 'text') OPTIONAL
 }
 
 returns {

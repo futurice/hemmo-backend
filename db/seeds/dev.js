@@ -10,6 +10,12 @@ let dummyData = {
   ],
   sessionIds: [
     'a0af9302-021b-4537-b2f4-7bd37aed43cd'
+  ],
+  users: [
+    {
+      name: 'dummy user',
+      id: 1
+    }
   ]
 }
 
@@ -24,6 +30,16 @@ exports.seed = function(knex) {
   })
 
   // then insert new dummy data
+
+  /*
+   * Users
+   */
+  .then(() => {
+    return knex('users').insert({
+      name: dummyData.users[0].name,
+      id: dummyData.users[0].id
+    });
+  })
 
   /*
    * Sessions
@@ -45,6 +61,7 @@ exports.seed = function(knex) {
       contentId: dummyData.contentIds[0],
       sessionId: dummyData.sessionIds[0],
       createdAt: knex.fn.now(),
+      like: 1,
       question: 'test question 1'
     });
   })

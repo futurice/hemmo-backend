@@ -39,10 +39,14 @@ export function hashPassword(password) {
   return promise;
 }
 
+let jwtExpirationHours = 5;
 // Crate a json web token for user id and name
 export function createToken(id, name, scope) {
   // Sign the JWT
-  return jwt.sign({id: id, name: name, scope: scope}, secret, {algorithm: 'HS256', expiresIn: '5h'});
+  return {
+    token: jwt.sign({id: id, name: name, scope: scope}, secret, {algorithm: 'HS256', expiresIn: jwtExpirationHours + 'h'}),
+    expiresIn: jwtExpirationHours * 60 * 60 * 1000 // in milliseconds
+  };
 }
 
 // Verify authentication request credentials

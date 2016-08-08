@@ -22,8 +22,8 @@ exports.employeeAuthenticationConfig = {
   handler: function(request, reply) {
     // If password was incorrect, error is issued from the pre method verifyCredentials
     const token = createToken(request.pre.user.id, request.pre.user.name, 'employee');
-    reply({token: token,
-          employeeId: request.pre.user.id });
+    reply({...token,
+      employeeId: request.pre.user.id});
   }
 };
 
@@ -53,7 +53,7 @@ exports.employeeRegistrationConfig = {
     })
     .then(function(id) {
       const token = createToken(id, name, 'employee');
-      return reply({token: token, employeeId: id});
+      return reply({...token, employeeId: id});
     })
     .catch(function(err) {
       return reply(Boom.badRequest(err));
@@ -76,9 +76,7 @@ exports.userRegistrationConfig = {
     .then(function(id) {
       const token = createToken(id, name, 'user');
       // Reply with token
-      return reply({
-        token: token
-      });
+      return reply(token);
     })
     .catch(function(err) {
       return reply(Boom.badRequest(err));
