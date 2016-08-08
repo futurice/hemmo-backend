@@ -10,7 +10,7 @@ register to the service as employees and see data from the mobile frontend.
 Registers the employee with provided credentials.
 
 ```
-POST /employees/register/
+POST /employees/register
 
 payload
 {
@@ -34,7 +34,7 @@ Use the returned token in `Authorization` header in format
 Authenticate employee with credentials.
 
 ```
-POST /employees/authenticate/
+POST /employees/authenticate
 
 payload
 {
@@ -74,7 +74,7 @@ returns status code (200, 400) representing the outcome.
 Fetches all employees.
 
 ```
-GET /employees/
+GET /employees
 
 returns {
   employees: [
@@ -111,7 +111,7 @@ returns
 Fetches data about all mobile client users.
 
 ```
-GET /users/
+GET /users
 
 returns
 {
@@ -148,7 +148,7 @@ returns
 Fetch all sessions
 
 ```
-GET /sessions/
+GET /sessions
 
 returns {
   sessions:
