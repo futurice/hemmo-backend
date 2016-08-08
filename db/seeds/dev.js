@@ -28,6 +28,9 @@ exports.seed = function(knex) {
   .then(() => {
     return knex('sessions').where('sessionId', dummyData.sessionIds[0]).del();
   })
+  .then(() => {
+    return knex('users').where('id', dummyData.users[0].id).del();
+  })
 
   // then insert new dummy data
 
@@ -62,7 +65,8 @@ exports.seed = function(knex) {
       sessionId: dummyData.sessionIds[0],
       createdAt: knex.fn.now(),
       like: 1,
-      question: 'test question 1'
+      question: 'test question 1',
+      answer: 'hello world'
     });
   })
 
@@ -71,6 +75,7 @@ exports.seed = function(knex) {
       contentType: 'text',
       contentId: dummyData.contentIds[1],
       sessionId: dummyData.sessionIds[0],
+      answer: 'hello world 2 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       question: 'test question 2'
     });
   })

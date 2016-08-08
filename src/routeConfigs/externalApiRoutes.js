@@ -292,6 +292,7 @@ exports.getSessionDataConfig = {
       const contentArray = _.map(contents, function(content) {
         return {
           contentId: content.contentId,
+          like: content.like,
           answer: content.answer,
           question: content.question,
           contentType: content.contentType,
