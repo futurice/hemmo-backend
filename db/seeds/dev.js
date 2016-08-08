@@ -75,7 +75,7 @@ exports.seed = function(knex) {
       contentType: 'text',
       contentId: dummyData.contentIds[1],
       sessionId: dummyData.sessionIds[0],
-      answer: 'hello world 2',
+      answer: 'hello world 2 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       question: 'test question 2'
     });
   })
