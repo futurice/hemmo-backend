@@ -116,7 +116,8 @@ exports.updateContentConfig = {
       const updateDict = {
         question: question,
         contentType: contentType,
-        answer: answer
+        answer: answer,
+        like: like
       };
       // Strip null values
       const strippedDict = _.omitBy(updateDict, _.isNil);
