@@ -57,15 +57,16 @@ export function verifyCredentials(req, res) {
   return knex.select('id', 'password', 'name').from('employees').where('email', email)
   .then(function(rows) {
     if (!rows.length) {
-      res(Boom.badRequest('Incorrect email!'));
+      return res(Boom.badRequest('Incorrect email or password!'));
     }
+
     const user = rows[0];
     bcrypt.compare(password, user.password, (err, isValid) => {
       if (isValid) {
         res(user);
       }
       else {
-        res(Boom.badRequest('Incorrect password!'));
+        res(Boom.badRequest('Incorrect email or password!'));
       }
     });
   });

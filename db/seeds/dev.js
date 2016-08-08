@@ -14,7 +14,11 @@ let dummyData = {
   users: [
     {
       name: 'dummy user',
-      id: 1
+      id: 1,
+      email: 'foo@bar.com',
+
+      // 'foobar'
+      password: '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC'
     }
   ]
 }
