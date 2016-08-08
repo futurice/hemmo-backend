@@ -31,6 +31,7 @@ exports.up = function(knex) {
       table.text('contentPath');
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.text('sessionId').references('sessionId').inTable('sessions').notNullable();
+      table.boolean('hasAttachment').defaultTo(false);
     })
 
     .then(function() {

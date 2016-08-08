@@ -211,11 +211,13 @@ exports.attachmentUploadConfig = {
       });
     })
     .then(function() {  // TODO: Remove old content if updating? or create new content?
+      console.log("UPDATING....")
       return knex('content').where({
         contentId: this.contentId,
         sessionId: this.sessionId
       }).update({
-        contentPath: this.filePath
+        contentPath: this.filePath,
+        hasAttachment: true
       });
     })
     .then(function() {

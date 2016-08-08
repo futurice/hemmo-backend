@@ -260,6 +260,7 @@ exports.getSessionsDataConfig = {
 
 };
 
+// Note that this is different from the previous endpoint config! This fetches _one_ session.
 exports.getSessionDataConfig = {
   validate: {
     params: {
@@ -287,9 +288,11 @@ exports.getSessionDataConfig = {
       const contentArray = _.map(contents, function(content) {
         return {
           contentId: content.contentId,
+          answer: content.answer,
           question: content.question,
           contentType: content.contentType,
-          createdAt: content.createdAt
+          createdAt: content.createdAt,
+          hasAttachment: content.hasAttachment
         };
       });
       this.content = contentArray;

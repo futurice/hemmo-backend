@@ -190,7 +190,8 @@ returns
     contentId: (String),
     question: (String),
     contentType: (String, 'file' or 'text'),
-    createdAt: (Timestamp)
+    createdAt: (Timestamp),
+    hasAttachment: (Boolean)
   }
 }
 ```
