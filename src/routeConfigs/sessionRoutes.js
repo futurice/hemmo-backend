@@ -112,6 +112,7 @@ exports.updateContentConfig = {
       const question = _.get(request, 'payload.question', null);
       const answer = _.get(request, 'payload.answer', null);
       const contentType = _.get(request, 'payload.contentType', null);
+      const like = _.get(request, 'payload.like', null);
 
       const updateDict = {
         question: question,
