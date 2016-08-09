@@ -18,7 +18,7 @@ This is the backend for Pelastakaa Lapset ry's Hemmo mobile app. It provides aut
     Create DB for your user (had to do this before next step worked):
 
     ```
-    createdb resk
+    createdb $(whoami)
     ```
 
     Create DB superuser `postgres` + empty DB for it:
@@ -32,7 +32,9 @@ This is the backend for Pelastakaa Lapset ry's Hemmo mobile app. It provides aut
     ```
 
 2. Install npm dependencies `npm install`
-3. Start server `npm run watch`
+3. Run db initialization script `npm run db:init`
+4. Optional: Insert seed data into db for testing/demoing: `npm run db:seed`
+5. Start server `npm run watch`
 
 Note that currently this same backend serves both admin panel and mobile app which is unsafe in production as anyone can register as an employee.
 
