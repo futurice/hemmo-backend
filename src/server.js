@@ -18,23 +18,6 @@ server.connection({
   }
 });
 
-// Register templating engines
-//
-// vision adds template rendering support
-// handlebars is the template engine module
-// templates are found in templates-directory
-server.register(require('vision'), (err) => {
-  Hoek.assert(!err, err);
-
-  server.views({
-    engines: {
-      html: require('handlebars')
-    },
-    relativeTo: __dirname,
-    path: 'templates'
-  });
-});
-
 // Register authentication stuff (for employees login)
 server.register(require('hapi-auth-jwt'), (err) => {
   Hoek.assert(!err, err);
