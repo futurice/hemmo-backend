@@ -6,8 +6,33 @@ This is the backend for Pelastakaa Lapset ry's Hemmo mobile app. It provides aut
 
 ## Running the server
 
-* Install npm dependencies `npm install`
-* Start server `npm run watch`
+1. Install and setup PostgreSQL
+
+    On OSX with brew:
+
+    ```
+    brew install postgres
+    brew services start postgresql
+    ```
+
+    Create DB for your user (had to do this before next step worked):
+
+    ```
+    createdb resk
+    ```
+
+    Create DB superuser `postgres` + empty DB for it:
+
+    ```
+    psql
+    CREATE USER postgres SUPERUSER;
+    CREATE DATABASE postgres WITH OWNER postgres;
+
+    <ctrl-d>
+    ```
+
+2. Install npm dependencies `npm install`
+3. Start server `npm run watch`
 
 Note that currently this same backend serves both admin panel and mobile app which is unsafe in production as anyone can register as an employee.
 
