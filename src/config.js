@@ -1,7 +1,7 @@
 const env = process.env;
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-  require('dotenv').load();
+  require('dotenv').config({silent: true});
 }
 
 const requiredEnvironmentVariables = [
@@ -13,20 +13,22 @@ const requiredEnvironmentVariables = [
 
 requiredEnvironmentVariables.forEach(key => {
   if (!env[key]) {
-    console.log(key);
-    throw new Error(`Environment variable ${key} not set.`);
+    if (process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
+      console.log(`Warning: Environment variable ${key} not set.`);
+      throw new Error('Quitting.');
+    }
   }
 });
 
-export default Object.freeze({
+module.exports = Object.freeze({
   server: {
-    host: env.HOST,
-    port: env.PORT
+    host: env.HOST || '0.0.0.0',
+    port: env.PORT || 3001
   },
   db: {
-    url: env.DATABASE_URL
+    url: env.DATABASE_URL || 'postgres://postgres@127.0.0.1/'
   },
   auth: {
-    secret: env.SECRET
+    secret: env.SECRET || 'really_secret_key'
   }
 });

@@ -13,7 +13,7 @@ exports.employeeAuthenticationConfig = {
   validate: {
     payload: {
       email: Joi.string().required(),
-      password: Joi.string().min(6).required()
+      password: Joi.string().required()
     }
   },
   pre: [
