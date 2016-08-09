@@ -47,7 +47,7 @@
     "dotenv": "^2.0.0",
     "fs-sync": "^1.0.2",
     "hapi": "^13.4.1",
-    "hapi-auth-jwt": "^4.0.0",
+    "hapi-auth-jwt2": "^7.0.1",
     "inert": "^4.0.1",
     "joi": "^8.4.2",
     "json-rpc2": "^1.0.2",

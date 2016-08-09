@@ -4,11 +4,11 @@
 let _ = require('lodash');
 let path = require('path');
 let mkdirp = require('mkdirp');
-let contentPath = path.join(process.env.HOME, 'hemmo', 'uploads', 'test.mp3');
+let contentPath = path.join(process.env.HOME, 'hemmo', 'uploads', 'test.mp4');
 let fs = require('fs-sync');
 
 mkdirp.sync(path.dirname(contentPath));
-fs.copy(__dirname + '/test.mp3', contentPath);
+fs.copy(__dirname + '/test.mp4', contentPath);
 
 let dummyData = {
   contentIds: [
