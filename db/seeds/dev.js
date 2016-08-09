@@ -23,17 +23,27 @@ let dummyData = {
   ],
   users: [
     {
-      name: 'dummy user',
-      id: 1,
+      name: 'dummy user'
+    },
+    {
+      name: 'another user'
+    }
+  ],
+  employeeIds: [
+    1,
+    2
+  ],
+  employees: [
+    {
+      name: 'foo',
       email: 'foo@bar.com',
 
       // 'foobar'
       password: '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC'
     },
     {
-      name: 'another user',
-      id: 2,
-      email: 'foo@bar.com',
+      name: 'another employee',
+      email: 'foo@baz.com',
 
       // 'foobar'
       password: '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC'
@@ -53,6 +63,9 @@ exports.seed = function(knex) {
   .then(() => {
     return knex('users').whereIn('id', dummyData.userIds).del();
   })
+  .then(() => {
+    return knex('employees').whereIn('id', dummyData.employeeIds).del();
+  })
 
   // then insert new dummy data
 
@@ -70,6 +83,27 @@ exports.seed = function(knex) {
     return knex('users').insert({
       name: dummyData.users[1].name,
       id: dummyData.userIds[1]
+    });
+  })
+
+  /*
+   * Employees
+   */
+  .then(() => {
+    return knex('employees').insert({
+      name: dummyData.employees[0].name,
+      id: dummyData.employeeIds[0],
+      password: dummyData.employees[0].password,
+      email: dummyData.employees[0].email
+    });
+  })
+
+  .then(() => {
+    return knex('employees').insert({
+      name: dummyData.employees[1].name,
+      id: dummyData.employeeIds[1],
+      password: dummyData.employees[1].password,
+      email: dummyData.employees[1].email
     });
   })
 

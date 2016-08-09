@@ -1,7 +1,7 @@
 const env = process.env;
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-  require('dotenv').load();
+  require('dotenv').config({silent: true});
 }
 
 const requiredEnvironmentVariables = [
@@ -20,7 +20,7 @@ requiredEnvironmentVariables.forEach(key => {
   }
 });
 
-export default Object.freeze({
+module.exports = Object.freeze({
   server: {
     host: env.HOST || '0.0.0.0',
     port: env.PORT || 3001

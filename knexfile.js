@@ -1,10 +1,7 @@
 //This file is interpreted as ES5 CommonJS module.
 'use strict';
 
-// In development mode, load environment variables from a .env file.
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-  require('dotenv').load();
-}
+let config = require('./src/config');
 
 // By default we use a single configuration for all
 // environments, and customize the database connection
@@ -12,7 +9,7 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 // custom config for any environment, if you prefer.
 const ALL_ENVIRONMENTS = Object.freeze({
   client: 'postgresql',
-  connection: process.env.DATABASE_URL,
+  connection: config.db.url,
   // Use a single connection to execute migrations.
   pool: {
     min: 1,
