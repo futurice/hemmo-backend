@@ -8,11 +8,6 @@ const requiredEnvironmentVariables = [
   'HOST',
   'PORT',
   'DATABASE_URL',
-  'SBM_HOST',
-  'SBM_KEY',
-  'SBM_ORG',
-  'SBM_USER',
-  'SBM_USER_PWD',
   'SECRET',
 ];
 
@@ -30,13 +25,6 @@ export default Object.freeze({
   },
   db: {
     url: env.DATABASE_URL
-  },
-  sbm: {
-    host: env.SBM_HOST,
-    key: env.SBM_KEY,
-    org: env.SBM_ORG,
-    user: env.SBM_USER,
-    password: env.SBM_USER_PWD
   },
   auth: {
     secret: env.SECRET
