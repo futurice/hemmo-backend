@@ -3,17 +3,17 @@
 
 exports.up = function(knex) {
   return knex.schema
-    .createTable('users', function(table) {
-      table.increments('id').primary();
-      table.text('name').notNullable();
-      table.integer('assigneeId').references('id').inTable('employees');
-    })
-
     .createTable('employees', function(table) {
       table.increments('id').primary();
       table.text('name').notNullable();
       table.text('password').notNullable();
       table.text('email').notNullable().unique();
+    })
+
+    .createTable('users', function(table) {
+      table.increments('id').primary();
+      table.text('name').notNullable();
+      table.integer('assigneeId').references('id').inTable('employees');
     })
 
     .createTable('sessions', function(table) {
