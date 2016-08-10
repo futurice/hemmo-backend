@@ -82,7 +82,11 @@ exports.updateUserDataConfig = {
     const assigneeId = request.payload.assigneeId;
     knex('users').where('id', userId).update({assigneeId: assigneeId})
     .then(function() {
-      return reply('Success!')
+      return reply({
+        assignee: {
+          id: assigneeId
+        }
+      })
     })
     .catch(function(err) {
       return reply(Boom.badRequest('Failed to update user'));
