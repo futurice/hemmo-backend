@@ -256,6 +256,7 @@ exports.getSessionsDataConfig = {
     const assigneeId = _.get(request, 'query.assignee', null);
     const reviewed = _.get(request, 'query.reviewed', null);
     const userId = _.get(request, 'query.user', null);
+    const limit = _.get(request, 'query.limit', 100);
 
     const filters = {
       reviewed: reviewed,
@@ -275,7 +276,8 @@ exports.getSessionsDataConfig = {
     })
     .then(function(userIds) {
       console.log(userIds);
-      return knex.select('*').from('sessions').whereIn('userId', userIds).andWhere(strippedFilters).bind({})
+      return knex.select('*').from('sessions').whereIn('userId', userIds).andWhere(strippedFilters)
+      .limit(limit).orderBy('startedAt', 'desc').bind({})
     })
     .then(function(sessions) {
       return sessions;
