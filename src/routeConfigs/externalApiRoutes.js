@@ -225,8 +225,20 @@ exports.getSessionsDataConfig = {
     scope: 'employee'
   },
   handler: function(request, reply) {
+    const assigneeId = _.get(request, 'query.assignee', null);
+    const reviewed = _.get(request, 'query.reviewed', null);
+    const userId = _.get(request, 'query.user', null);
+
+    const filters = {
+      assigneeId: assigneeId,
+      reviewed: reviewed,
+      userId: userId
+    };
+    // Strip null values
+    const strippedFilters = _.omitBy(filters, _.isNil);
+
     var sessionsArray = [];
-    knex.select('*').from('sessions').bind({})
+    knex.select('*').from('sessions').where(strippedFilters).bind({})
     .then(function(sessions) {
       return sessions;
     })

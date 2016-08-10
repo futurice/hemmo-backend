@@ -145,10 +145,18 @@ returns
 
 * Get all sessions
 
-Fetch all sessions
+Fetch all sessions. You can specify some filters in the url parameters.
 
 ```
 GET /sessions
+
+Filters:
+  user=userId,
+  assignee=assigneeId,
+  reviewed=0/1
+
+Usage /sessions?user=1&assingee=2&reviewed=0
+Any combination is possible
 
 returns {
   sessions:
