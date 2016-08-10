@@ -113,7 +113,8 @@ returns
     [
       {
         name: (String),
-        userId: (Integer)
+        userId: (Integer),
+        assigneeId: (Integer)
       }
     ]
 }
@@ -129,12 +130,30 @@ GET /users/{userId}
 returns
 {
   name: (String),
+  assignee: {
+    name: (String),
+    id: (Integer)
+  }
   sessions: [
     startedAt: (Timestamp),
     reviewed: (Boolean),
     sessionId: (String)
   ]
 }
+```
+
+* Update user data
+
+Update user's data
+
+```
+PUT /users/{userId}
+
+payload {
+  assigneeId: (Integer) id of employee to be assigned to this user
+}
+
+returns 200/40x
 ```
 
 * Get all sessions

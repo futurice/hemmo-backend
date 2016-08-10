@@ -67,6 +67,29 @@ exports.updateSessionData = {
   }
 };
 
+exports.updateUserDataConfig = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  validate: {
+    params: {
+      userId: Joi.string().required()
+    }
+  },
+  handler: function(request, reply) {
+    const userId = request.params.userId;
+    const assigneeId = request.payload.assigneeId;
+    knex('users').where('id', userId).update({assigneeId: assigneeId})
+    .then(function() {
+      return reply('Success!')
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest('Failed to update user'));
+    });
+  }
+}
+
 exports.getAttachmentConfig = {
   validate: {
     params: {
@@ -156,12 +179,13 @@ exports.getAllUsersConfig = {
     scope: 'employee'
   },
   handler: function(request, reply) {
-    knex.select('name', 'id').from('users').bind({})
+    knex.select('name', 'id', 'assigneeId').from('users').bind({})
     .then(function(users) {
       const usrs = _.map(users, function(user) {
         return {
           name: user.name,
-          userId: user.id
+          userId: user.id,
+          assigneeId: user.assigneeId
         };
       });
       return reply({
@@ -186,7 +210,7 @@ exports.getUserDataConfig = {
   },
   handler: function(request, reply) {
     const userId = request.params.userId;
-    knex.first('name').from('users').where('id', userId).bind({})
+    knex.first('name', 'assigneeId').from('users').where('id', userId).bind({})
     .then(function(user) {
       if (!user) {
         throw new Error('User not found.');
@@ -202,12 +226,19 @@ exports.getUserDataConfig = {
           sessionId: row.sessionId
         };
       });
+      this.sessions = sessions;
+      console.log(this);
+      return knex.first('id', 'name').from('employees').where('id', this.user.assigneeId);
+    })
+    .then(function(employee) {
       return reply({
         name: this.user.name,
-        sessions: sessions
+        sessions: this.sessions,
+        assignee: employee
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest('Failed to get user data'));
     });
   }
