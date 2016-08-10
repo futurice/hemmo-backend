@@ -116,6 +116,9 @@ exports.getAttachmentConfig = {
     .catch((err) => {
       return reply(Boom.badRequest('Failed to get attachment'));
     });
+  },
+  state: {
+    parse: true
   }
 };
 

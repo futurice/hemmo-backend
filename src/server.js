@@ -19,11 +19,15 @@ server.connection({
 });
 
 // Register authentication stuff (for employees login)
-server.register(require('hapi-auth-jwt'), (err) => {
+server.register(require('hapi-auth-jwt2'), (err) => {
   Hoek.assert(!err, err);
 
   server.auth.strategy('jwt', 'jwt', {
     key: config.auth.secret,
+    validateFunc: (decoded, request, callback) => {
+      console.log('TODO: TODO: TODO: implement validateFunc for jwt auth!');
+      callback(null, true);
+    },
     verifyOptions: { algorithms: ['HS256'] }
   });
 });
