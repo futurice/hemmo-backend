@@ -39,11 +39,9 @@ exports.updateSessionData = {
   },
   handler: function(request, reply) {
     const sessionId = request.params.sessionId;
-    const employeeId = _.get(request, 'payload.employeeId', null);
     const reviewed = _.get(request, 'payload.reviewed', null);
 
     const updateDict = {
-      assigneeId: employeeId,
       reviewed: reviewed
     };
     // Strip null values
@@ -116,13 +114,9 @@ exports.getEmployeeDataConfig = {
         throw new Error('Employee not found.');
       }
       this.employee = employee;
-      return knex.select('startedAt', 'reviewed', 'sessionId').from('sessions').where('assigneeId', employeeId);
-    })
-    .then(function(sessions) {
       return reply({
         name: this.employee.name,
         email: this.employee.email,
-        sessions: sessions
       });
     })
     .catch(function(err) {
@@ -230,20 +224,30 @@ exports.getSessionsDataConfig = {
     const userId = _.get(request, 'query.user', null);
 
     const filters = {
-      assigneeId: assigneeId,
       reviewed: reviewed,
       userId: userId
     };
+
+    const userFilter = {
+      assigneeId: assigneeId
+    }
     // Strip null values
     const strippedFilters = _.omitBy(filters, _.isNil);
+    const strippedUserFilter = _.omitBy(userFilter, _.isNil);
 
     var sessionsArray = [];
-    knex.select('*').from('sessions').where(strippedFilters).bind({})
+    knex.select('id').from('users').where(strippedUserFilter).map(function(row) {
+      return row.id
+    })
+    .then(function(userIds) {
+      console.log(userIds);
+      return knex.select('*').from('sessions').whereIn('userId', userIds).andWhere(strippedFilters).bind({})
+    })
     .then(function(sessions) {
       return sessions;
     })
     .each(function(session) {
-      return knex.first('name', 'id').from('users').where('id' , session.userId)
+      return knex.first('name', 'id', 'assigneeId').from('users').where('id' , session.userId)
       .then(function(user) {
         if (!user) {
           user = {
@@ -253,10 +257,10 @@ exports.getSessionsDataConfig = {
         }
         const sessDict = {
           sessionId: session.sessionId,
-          assigneeId: session.assigneeId,
           user: {
             name: user.name,
-            userId: user.id
+            userId: user.id,
+            assigneeId: user.assigneeId,
           },
           reviewed: session.reviewed,
           startedAt: session.startedAt,
@@ -313,7 +317,7 @@ exports.getSessionDataConfig = {
         };
       });
       this.content = contentArray;
-      return knex.first('name', 'id').from('users').where('id' ,this.session.userId);
+      return knex.first('name', 'id', 'assigneeId').from('users').where('id' ,this.session.userId);
     })
     .then(function(user) {
       if (!user) {
@@ -321,10 +325,10 @@ exports.getSessionDataConfig = {
       }
       return reply({
         sessionId: this.session.sessionId,
-        assigneeId: this.session.assigneeId,
         user: {
           name: user.name,
-          userId: user.id
+          userId: user.id,
+          assigneeId: user.assigneeId,
         },
         reviewed: this.session.reviewed,
         startedAt: this.session.startedAt,

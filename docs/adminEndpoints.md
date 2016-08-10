@@ -61,7 +61,6 @@ PUT /sessions/{sessionId}
 
 payload
 {
-  employeeId: (Integer, optional) id of employee who will be assigned,
   reviewed: (Boolean, optional)
 }
 
@@ -98,11 +97,6 @@ returns
 {
   name: (String), employee name,
   email: (String), employee email,
-  sessions: {
-    startedAt (Timestamp),
-    reviewed (Boolean),
-    sessionId (String)
-  }
 }
 ```
 
@@ -163,10 +157,10 @@ returns {
   [
     {
       sessionId: (String),
-      assigneeId: (String),
       user: {
         userId: (Integer),
-        name: (String)
+        name: (String),
+        assigneeId: (String),
       }
       reviewed: (Boolean),
       startedAt: (Timestamp),

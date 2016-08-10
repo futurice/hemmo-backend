@@ -6,6 +6,7 @@ exports.up = function(knex) {
     .createTable('users', function(table) {
       table.increments('id').primary();
       table.text('name').notNullable();
+      table.integer('assigneeId').references('id').inTable('employees');
     })
 
     .createTable('employees', function(table) {
@@ -17,7 +18,6 @@ exports.up = function(knex) {
 
     .createTable('sessions', function(table) {
       table.text('sessionId').primary();
-      table.integer('assigneeId').references('id').inTable('employees');
       table.integer('userId').references('id').inTable('users').notNullable();
       table.boolean('reviewed').defaultTo(false);
       table.timestamp('startedAt').defaultTo(knex.fn.now());
