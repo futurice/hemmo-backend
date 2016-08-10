@@ -257,6 +257,7 @@ exports.getSessionsDataConfig = {
     const reviewed = _.get(request, 'query.reviewed', null);
     const userId = _.get(request, 'query.user', null);
     const limit = _.get(request, 'query.limit', 100);
+    const order = _.get(request, 'query.order', 'desc')
 
     const filters = {
       reviewed: reviewed,
@@ -277,7 +278,7 @@ exports.getSessionsDataConfig = {
     .then(function(userIds) {
       console.log(userIds);
       return knex.select('*').from('sessions').whereIn('userId', userIds).andWhere(strippedFilters)
-      .limit(limit).orderBy('startedAt', 'desc').bind({})
+      .orderBy('startedAt', order).limit(limit).bind({})
     })
     .then(function(sessions) {
       return sessions;
