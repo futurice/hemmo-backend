@@ -62,7 +62,7 @@ exports.updateSessionData = {
     })
     .catch(function(err) {
       console.log(err);
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to update session'));
     });
   }
 };
@@ -91,7 +91,7 @@ exports.getAttachmentConfig = {
       });
     })
     .catch((err) => {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to get attachment'));
     });
   }
 };
@@ -120,7 +120,7 @@ exports.getEmployeeDataConfig = {
       });
     })
     .catch(function(err) {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to get employee data'));
     });
   }
 };
@@ -144,7 +144,7 @@ exports.getAllEmployeesConfig = {
       });
     })
     .catch(function(err) {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to find employees'));
     });
   }
 
@@ -169,7 +169,7 @@ exports.getAllUsersConfig = {
       });
     })
     .catch(function(err) {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to find users'));
     });
   }
 };
@@ -208,7 +208,7 @@ exports.getUserDataConfig = {
       });
     })
     .catch(function(err) {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to get user data'));
     });
   }
 };
@@ -274,7 +274,7 @@ exports.getSessionsDataConfig = {
       });
     })
     .catch((err) => {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to get session data'));
     });
   }
 
@@ -336,7 +336,7 @@ exports.getSessionDataConfig = {
       });
     })
     .catch((err) => {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to get sessions data'));
     });
   }
 };

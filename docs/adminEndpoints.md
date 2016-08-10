@@ -180,10 +180,11 @@ GET /sessions/{sessionId}
 returns
 {
   sessionId: (String),
-  assigneeId: (Integer),
   user: {
     userId: (Integer),
-    name: (String)
+    name: (String),
+    assigneeId: (Integer),
+
   }
   reviewed: (Boolean),
   startedAt: (Timestamp),

@@ -40,7 +40,7 @@ exports.newSessionConfig = {
       });
     })
     .catch(function(err) {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Could not create session'));
     });
   }
 };
@@ -81,7 +81,7 @@ exports.newContentConfig = {
       });
     })
     .catch(function(err) {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to create new content'));
     });
   }
 };
@@ -140,8 +140,7 @@ exports.updateContentConfig = {
       });
     })
     .catch(function(err) {
-      console.log(err);
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to update'));
     });
   }
 };
@@ -228,7 +227,7 @@ exports.attachmentUploadConfig = {
       });
     })
     .catch(function(err) {
-      return reply(Boom.badRequest(err));
+      return reply(Boom.badRequest('Failed to upload attachment'));
     });
   }
 };
