@@ -238,10 +238,16 @@ exports.getUserDataConfig = {
       return knex.first('id', 'name').from('employees').where('id', this.user.assigneeId);
     })
     .then(function(employee) {
+      this.employee = employee;
+      return knex('content').select('like').innerJoin('sessions', 'content.sessionId', 'sessions.sessionId').where('sessions.userId', userId);
+    })
+    .then(function(likes) {
+      const likeMean = _.meanBy(likes, 'like');
       return reply({
         name: this.user.name,
         sessions: this.sessions,
-        assignee: employee
+        assignee: this.employee,
+        likes: likeMean
       });
     })
     .catch(function(err) {
