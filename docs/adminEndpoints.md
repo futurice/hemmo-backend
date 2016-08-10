@@ -166,9 +166,11 @@ GET /sessions
 Filters:
   user=userId,
   assignee=assigneeId,
-  reviewed=0/1
+  reviewed=0/1,
+  order=asc/desc
+  limit=0..inf
 
-Usage /sessions?user=1&assingee=2&reviewed=0
+Usage /sessions?user=1&assignee=2&reviewed=0 ... etc
 Any combination is possible
 
 returns {
