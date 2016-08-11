@@ -111,6 +111,9 @@ Fetches data about all mobile client users.
 ```
 GET /users
 
+Query parameters:
+limit, offset
+
 returns
 {
   users :
@@ -171,8 +174,9 @@ Filters:
   user=userId,
   assignee=assigneeId,
   reviewed=0/1,
-  order=asc/desc
-  limit=0..inf
+  order=asc/desc,
+  limit=0..,
+  offset=0..
 
 Usage /sessions?user=1&assignee=2&reviewed=0 ... etc
 Any combination is possible

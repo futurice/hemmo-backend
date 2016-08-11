@@ -189,7 +189,9 @@ exports.getAllUsersConfig = {
     scope: 'employee'
   },
   handler: function(request, reply) {
-    knex.select('name', 'id', 'assigneeId').from('users').bind({})
+    const offset = _.get(request, 'query.offset', 0);
+    const limit = _.get(request, 'query.limit', 100);
+    knex.select('name', 'id', 'assigneeId').from('users').limit(limit).offset(offset).bind({})
     .then(function(users) {
       const usrs = _.map(users, function(user) {
         return {
@@ -271,6 +273,7 @@ exports.getSessionsDataConfig = {
     const userId = _.get(request, 'query.user', null);
     const limit = _.get(request, 'query.limit', 100);
     const order = _.get(request, 'query.order', 'desc')
+    const offset = _.get(request, 'query.offset', 0);
 
     const filters = {
       reviewed: reviewed,
@@ -291,7 +294,7 @@ exports.getSessionsDataConfig = {
     .then(function(userIds) {
       console.log(userIds);
       return knex.select('*').from('sessions').whereIn('userId', userIds).andWhere(strippedFilters)
-      .orderBy('startedAt', order).limit(limit).bind({})
+      .orderBy('startedAt', order).limit(limit).offset(offset).bind({})
     })
     .then(function(sessions) {
       return sessions;
