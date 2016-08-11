@@ -61,10 +61,14 @@ PUT /sessions/{sessionId}
 
 payload
 {
-  reviewed: (Boolean, optional)
+  reviewed: (Boolean, optional),
+  assigneeId: (Integer, optional)
 }
 
-returns status code (200, 400) representing the outcome.
+returns {
+  reviewed: (Boolean, optional),
+  assigneeId: (Integer, optional)
+}
 ```
 
 

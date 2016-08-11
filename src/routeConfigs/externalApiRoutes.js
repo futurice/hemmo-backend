@@ -40,9 +40,11 @@ exports.updateSessionData = {
   handler: function(request, reply) {
     const sessionId = request.params.sessionId;
     const reviewed = _.get(request, 'payload.reviewed', null);
+    const assigneeId = _.get(request, 'payload.assigneeId', null);
 
     const updateDict = {
-      reviewed: reviewed
+      reviewed: reviewed,
+      assigneeId: assigneeId
     };
     // Strip null values
     const strippedDict = _.omitBy(updateDict, _.isNil);
@@ -57,7 +59,8 @@ exports.updateSessionData = {
     .then((session) => {
       return reply({
         sessionId: session.sessionId,
-        reviewed: true
+        reviewed: true,
+        assigneeId: assigneeId
       })
     })
     .catch(function(err) {

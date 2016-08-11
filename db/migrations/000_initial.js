@@ -21,6 +21,7 @@ exports.up = function(knex) {
       table.integer('userId').references('id').inTable('users').notNullable();
       table.boolean('reviewed').defaultTo(false);
       table.timestamp('startedAt').defaultTo(knex.fn.now());
+      table.integer('assigneeId').references('id').inTable('employees');
     })
 
     .createTable('content', function(table) {
