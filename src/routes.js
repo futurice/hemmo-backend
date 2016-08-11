@@ -67,7 +67,7 @@ routes.push({
 /*
 ---------------------------------------------------------
   External api endpoints
-  These require 'employee' score in JWT (except registration
+  These require 'employee' scope in JWT (except registration
   and authentication of course)
 */
 routes.push({

@@ -65,7 +65,8 @@ exports.newContentConfig = {
     payload: {
       contentType: Joi.string().required(),
       question: Joi.string().optional(),
-      answer: Joi.string().optional()
+      answer: Joi.string().optional(),
+      like: Joi.number().integer().optional()
     }
   },
   pre: [
@@ -84,7 +85,7 @@ exports.newContentConfig = {
       return knex('content').insert(_.merge(request.payload, {
         contentId: this.contentId,
         sessionId: this.sessionId,
-        createdAt: knex.fn.now()
+        createdAt: knex.fn.now(),
       }));
     })
     .then(function() {
