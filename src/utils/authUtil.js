@@ -113,7 +113,7 @@ export function bindUserData(req, res) {
     });
     const userId = decoded.id[0];
     const name = decoded.name;
-    knex.first('id', 'name').from('users').where({id: userId, name: name})
+    knex.first('id', 'name', 'assigneeId').from('users').where({id: userId, name: name})
     .then(function(user) {
       if (!user) {
         res(Boom.unauthorized('Invalid token'));

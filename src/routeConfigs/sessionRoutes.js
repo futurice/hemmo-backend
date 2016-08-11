@@ -38,10 +38,13 @@ exports.newSessionConfig = {
   ],
   handler: function(request, reply) {
     const sessionId = uuid.v4();
+    const assigneeId = request.pre.user.assigneeId;
+
     knex('sessions').insert({
       userId: request.pre.user.id,
       startedAt: knex.fn.now(),
-      sessionId: sessionId
+      sessionId: sessionId,
+      assigneeId: assigneeId
     })
     .then(function() {
       return reply({
