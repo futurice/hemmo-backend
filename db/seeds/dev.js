@@ -126,7 +126,8 @@ exports.seed = function(knex) {
   .then(() => {
     return knex('sessions').insert({
       sessionId: dummyData.sessionIds[1],
-      userId: dummyData.userIds[0]
+      userId: dummyData.userIds[0],
+      reviewed: true
     });
   })
   .then(() => {
