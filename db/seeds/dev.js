@@ -6,67 +6,171 @@ let path = require('path');
 let mkdirp = require('mkdirp');
 let contentPath = path.join(process.env.HOME, 'hemmo', 'uploads', 'test.mp4');
 let fs = require('fs-sync');
+let uuid = require('node-uuid');
 
 mkdirp.sync(path.dirname(contentPath));
 fs.copy(__dirname + '/test.mp4', contentPath);
 
-let dummyData = {
-  contentIds: [
-    'f8f8b3d7-cba0-47cf-ab13-d51e77437222',
-    'da45ca28-eda6-42e0-af7d-f1cf70a3cc15',
-    'da45ca28-eda6-42e0-af7d-f1cf70a3cc16',
-    'da45ca28-eda6-42e0-af7d-f1cf70a3cc17',
-    'da45ca28-eda6-42e0-af7d-f1cf70a3cc18'
-  ],
-  sessionIds: [
-    'a0af9302-021b-4537-b2f4-7bd37aed43cd',
-    'a0af9302-021b-4537-b2f4-7bd37aed43ce',
-    'a0af9302-021b-4537-b2f4-7bd37aed43cf',
-    'a0af9302-021b-4537-b2f4-7bd37aed43df'
-  ],
-  userIds: [
-    1,
-    2
-  ],
-  users: [
-    {
-      name: 'dummy user'
-    },
-    {
-      name: 'another user'
-    }
-  ],
-  employeeIds: [
-    1,
-    2
-  ],
-  employees: [
-    {
-      name: 'foo',
-      email: 'foo@bar.com',
+// 'foobar'
+let dummyPassword = '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC';
 
-      // 'foobar'
-      password: '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC'
-    },
-    {
-      name: 'another employee',
-      email: 'foo@baz.com',
+let rng = 0;
+let getUuid = function() {
+  rng++;
 
-      // 'foobar'
-      password: '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC'
-    }
-  ]
+  let rngStr = rng.toString(16);
+
+  // zero pad
+  let width = 32;
+  rngStr = rngStr.length >= width ? rngStr : new Array(width - rngStr.length + 1).join('0') + rngStr;
+
+  let arr = rngStr.match(/.{2}/g);
+  arr = arr.map(i => {
+    return parseInt(i, 16);
+  });
+
+  return uuid.v4({
+    random: arr
+  });
 }
 
 exports.seed = function(knex) {
+  let dummyData = {
+    content: [
+      {
+        contentType: 'text',
+        like: 1,
+        question: 'Mitä teitte?',
+        answer: 'Leikittiin yhdessä.'
+      },
+      {
+        contentType: 'audio',
+        contentPath: contentPath,
+        hasAttachment: true,
+        like: 1,
+        question: 'Millaista se oli?'
+      },
+      {
+        contentType: 'text',
+        like: -1,
+        question: 'Kerro tarkemmin!',
+        answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+      },
+      {
+        contentType: 'text',
+        like: 0,
+        question: 'Millainen olo?',
+      }
+    ],
+    sessions: [
+      {
+        userId: 1,
+        reviewed: true,
+        content: [0, 1, 2, 3]
+      },
+      {
+        userId: 1,
+        reviewed: true,
+        content: [0, 1]
+      },
+      {
+        userId: 1,
+        reviewed: false,
+        content: [0, 1]
+      },
+      {
+        userId: 2,
+        reviewed: true,
+        content: [0, 1, 2, 3]
+      },
+      {
+        userId: 3,
+        reviewed: true,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 4,
+        reviewed: false,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 5,
+        reviewed: true,
+        content: [0, 1, 2]
+      }
+    ],
+
+    // randomly generated
+    users: [
+      { name: 'Urho Järvinen' },
+      { name: 'Jani Kivelä' },
+      { name: 'Ismo Nikkonen' },
+      { name: 'Linda Sormunen' },
+      { name: 'Kai Hietanen' },
+      { name: 'Kosti Pulkkinen' },
+      { name: 'Kaija Peltola' },
+      { name: 'Annikki Aura' },
+      { name: 'Aila Laiho' },
+      { name: 'Kalevi Tiainen' },
+      { name: 'Anita Rantanen' }
+    ],
+    employees: [
+      {
+        name: 'Test Employee',
+        email: 'foo@bar.com',
+        password: dummyPassword
+      },
+      {
+        name: 'Into Eerola',
+        email: 'into@example.com',
+        password: dummyPassword
+      },
+      {
+        name: 'Jenni Reinikainen',
+        email: 'jenni@example.com',
+        password: dummyPassword
+      },
+      {
+        name: 'Hilppa Yrjänäinen',
+        email: 'hilppa@example.com',
+        password: dummyPassword
+      },
+      {
+        name: 'Seppo Asunmaa',
+        email: 'seppo@example.com',
+        password: dummyPassword
+      }
+    ]
+  }
+
+  const sessionIds = new Array(100).fill(undefined).map(() => {
+    return getUuid();
+  });
+
+  const contentIds = new Array(100).fill(undefined).map(() => {
+    return getUuid();
+  });
+
+  dummyData.sessions.forEach((session, index) => {
+    session.sessionId = sessionIds[index];
+  });
+
+  dummyData.userIds = dummyData.users.map((user, index) => {
+    user.id = index + 1;
+    return user.id;
+  });
+  dummyData.employeeIds = dummyData.employees.map((employee, index) => {
+    employee.id = index + 1;
+    return employee.id;
+  });
+
   // first delete old dummy data
-  return knex('content').whereIn('contentId', dummyData.contentIds).del()
+  return knex('content').whereIn('contentId', contentIds).del()
+
   .then(() => {
-    return knex('content').whereIn('contentId', dummyData.contentIds).del();
+    return knex('sessions').whereIn('sessionId', sessionIds).del()
   })
-  .then(() => {
-    return knex('sessions').whereIn('sessionId', dummyData.sessionIds).del();
-  })
+
   .then(() => {
     return knex('users').whereIn('id', dummyData.userIds).del();
   })
@@ -80,121 +184,47 @@ exports.seed = function(knex) {
    * Users
    */
   .then(() => {
-    return knex('users').insert({
-      name: dummyData.users[0].name,
-      id: dummyData.userIds[0]
-    });
-  })
-
-  .then(() => {
-    return knex('users').insert({
-      name: dummyData.users[1].name,
-      id: dummyData.userIds[1]
-    });
+    return knex.batchInsert('users', dummyData.users);
   })
 
   /*
    * Employees
    */
   .then(() => {
-    return knex('employees').insert({
-      name: dummyData.employees[0].name,
-      id: dummyData.employeeIds[0],
-      password: dummyData.employees[0].password,
-      email: dummyData.employees[0].email
-    });
-  })
-
-  .then(() => {
-    return knex('employees').insert({
-      name: dummyData.employees[1].name,
-      id: dummyData.employeeIds[1],
-      password: dummyData.employees[1].password,
-      email: dummyData.employees[1].email
-    });
+    return knex.batchInsert('employees', dummyData.employees);
   })
 
   /*
    * Sessions
    */
   .then(() => {
-    return knex('sessions').insert({
-      sessionId: dummyData.sessionIds[0],
-      userId: dummyData.userIds[0]
-    });
-  })
-  .then(() => {
-    return knex('sessions').insert({
-      sessionId: dummyData.sessionIds[1],
-      userId: dummyData.userIds[0],
-      reviewed: true
-    });
-  })
-  .then(() => {
-    return knex('sessions').insert({
-      sessionId: dummyData.sessionIds[2],
-      userId: dummyData.userIds[1]
-    });
+    return knex.batchInsert('sessions', dummyData.sessions.map(session => {
+      let copy = Object.assign({}, session);
+      delete copy.content;
+
+      return copy;
+    }));
   })
 
   /*
    * Content
    */
   .then(() => {
-    return knex('content').insert({
-      contentType: 'audio',
-      contentPath: contentPath,
-      hasAttachment: true,
-      contentId: dummyData.contentIds[0],
-      sessionId: dummyData.sessionIds[0],
-      createdAt: knex.fn.now(),
-      like: 1,
-      question: 'test question 1',
-      answer: 'hello world'
-    });
-  })
+    let i = 0;
 
-  .then(() => {
-    return knex('content').insert({
-      contentType: 'text',
-      contentId: dummyData.contentIds[1],
-      sessionId: dummyData.sessionIds[0],
-      like: 0,
-      answer: 'Long answer test, lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-      question: 'test question 2'
-    });
-  })
+    let contents = [];
 
-  .then(() => {
-    return knex('content').insert({
-      contentType: 'text',
-      contentId: dummyData.contentIds[2],
-      sessionId: dummyData.sessionIds[0],
-      like: -1,
-      answer: 'third answer, very bad!',
-      question: 'lorem ipsum'
-    });
-  })
+    dummyData.sessions.forEach(session => {
+      let newContent = session.content.map(index => {
+        return Object.assign({}, dummyData.content[index], {
+          sessionId: session.sessionId,
+          contentId: contentIds[i++]
+        });
+      });
 
-  .then(() => {
-    return knex('content').insert({
-      contentType: 'text',
-      contentId: dummyData.contentIds[3],
-      sessionId: dummyData.sessionIds[1],
-      like: 1,
-      answer: 'hello',
-      question: 'question from another session'
+      contents = contents.concat(newContent);
     });
-  })
 
-  .then(() => {
-    return knex('content').insert({
-      contentType: 'text',
-      contentId: dummyData.contentIds[4],
-      sessionId: dummyData.sessionIds[2],
-      answer: 'hello',
-      like: -1,
-      question: 'question from another user'
-    });
+    return knex.batchInsert('content', contents);
   });
 };
