@@ -23,6 +23,15 @@ const getUserSession = function(userId, sessionId) {
   });
 };
 
+const getUserContent = function(userId, sessionId, contentId) {
+  return knex.first('contentId', 'content.sessionId').from('content').innerJoin('sessions', 'content.sessionId', 'sessions.sessionId')
+  .where({
+    'sessions.userId': userId,
+    'sessions.sessionId': sessionId,
+    'content.contentId': contentId
+  });
+}
+
 exports.newSessionConfig = {
   pre: [
     {method: bindUserData, assign: 'user'}
@@ -76,11 +85,17 @@ exports.newContentConfig = {
       }));
     })
     .then(function() {
+      // Mark unreviewed
+      return knex('sessions').where('sessionId', this.sessionId)
+      .update({reviewed: false})
+    })
+    .then(function() {
       return reply({
         contentId: this.contentId
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest('Failed to create new content'));
     });
   }
@@ -100,14 +115,13 @@ exports.updateContentConfig = {
   ],
   handler: function(request, reply) {
     // Find user session by auth token and sessionId
-    getUserSession(request.pre.user.id, request.headers.session).bind({})
-    .then(function(session) {
-      if (!session) {
+    getUserContent(request.pre.user.id, request.headers.session, request.params.contentId).bind({})
+    .then(function(content) {
+      if (!content) {
         throw new Error('Session not found');
       }
-
-      this.contentId = request.params.contentId;
-      this.sessionId = session.sessionId;
+      this.contentId = content.contentId;
+      this.sessionId = content.sessionId;
 
       const question = _.get(request, 'payload.question', null);
       const answer = _.get(request, 'payload.answer', null);
@@ -135,11 +149,17 @@ exports.updateContentConfig = {
       }).update(strippedDict);
     })
     .then(function() {
+      // Mark unreviewed
+      return knex('sessions').where('sessionId', this.sessionId)
+      .update({reviewed: false})
+    })
+    .then(function() {
       return reply({
         contentId: this.contentId
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest('Failed to update'));
     });
   }
@@ -172,15 +192,13 @@ exports.attachmentUploadConfig = {
       ext = filename.substring(filename.lastIndexOf('.') + 1);
     }
 
-    // Find user session by auth token and sessionId
-    getUserSession(request.pre.user.id, request.headers.session).bind({})
-    .then(function(session) {
-      if (!session) {
-        throw new Error('Session not found');
+    getUserContent(request.pre.user.id, request.headers.session, request.params.contentId).bind({})
+    .then(function(content) {
+      if (!content) {
+        throw new Error('Content not found');
       }
-
-      this.contentId = request.params.contentId;
-      this.sessionId = request.headers.session;
+      this.contentId = content.contentId;
+      this.sessionId = content.sessionId;
 
       return mkdirp(uploadPath);
     })
@@ -222,11 +240,17 @@ exports.attachmentUploadConfig = {
       });
     })
     .then(function() {
+      // Mark unreviewed
+      return knex('sessions').where('sessionId', this.sessionId)
+      .update({reviewed: false})
+    })
+    .then(function() {
       return reply({
         contentId: this.contentId
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest('Failed to upload attachment'));
     });
   }
