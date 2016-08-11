@@ -97,6 +97,56 @@ exports.seed = function(knex) {
         userId: 5,
         reviewed: true,
         content: [0, 1, 2]
+      },
+      {
+        userId: 6,
+        reviewed: true,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 6,
+        reviewed: false,
+        content: [0, 1, 2, 3]
+      },
+      {
+        userId: 6,
+        reviewed: false,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 6,
+        reviewed: false,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 6,
+        reviewed: false,
+        content: [1, 2]
+      },
+      {
+        userId: 6,
+        reviewed: false,
+        content: [0, 2]
+      },
+      {
+        userId: 8,
+        reviewed: false,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 9,
+        reviewed: false,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 10,
+        reviewed: false,
+        content: [0, 1, 2]
+      },
+      {
+        userId: 11,
+        reviewed: false,
+        content: [0, 1, 2, 3]
       }
     ],
 
