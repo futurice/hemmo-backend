@@ -39,10 +39,30 @@ server.register(require('inert'), (err) => {
   server.route(routes);
 });
 
-
-// Start the server
-server.start((err) => {
+server.register({
+  register: require('good'),
+  options: {
+    includes: {
+      request: ['headers', 'payload'],
+      response: ['payload']
+    },
+    reporters: {
+      myConsoleReporter: [{
+          module: 'good-squeeze',
+          name: 'Squeeze',
+          args: [{ log: '*', request: '*', response: '*' }]
+      }, {
+          module: 'good-console'
+      }, 'stdout']
+    }
+  }
+}, (err) => {
   Hoek.assert(!err, err);
 
-  console.log('Server running at:', server.info.uri);
+  // Start the server
+  server.start((err) => {
+    console.log('Server running at:', server.info.uri);
+  });
 });
+
+

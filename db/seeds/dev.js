@@ -206,12 +206,10 @@ exports.seed = function(knex) {
   });
 
   dummyData.userIds = dummyData.users.map((user, index) => {
-    user.id = index + 1;
-    return user.id;
+    return index + 1;
   });
   dummyData.employeeIds = dummyData.employees.map((employee, index) => {
-    employee.id = index + 1;
-    return employee.id;
+    return index + 1;
   });
 
   // first delete old dummy data

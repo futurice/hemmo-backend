@@ -68,6 +68,7 @@ exports.userRegistrationConfig = {
     }
   },
   handler: function(request, reply) {
+    console.log(request.payload);
     const name = request.payload['name'];
     knex('users').insert({
       name: name

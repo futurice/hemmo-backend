@@ -310,6 +310,7 @@ exports.getSessionsDataConfig = {
         }
         const sessDict = {
           sessionId: session.sessionId,
+          assigneeId: session.assigneeId,
           user: {
             name: user.name,
             userId: user.id,
@@ -378,6 +379,7 @@ exports.getSessionDataConfig = {
       }
       return reply({
         sessionId: this.session.sessionId,
+        assigneeId: this.session.assigneeId,
         user: {
           name: user.name,
           userId: user.id,
