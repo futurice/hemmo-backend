@@ -38,35 +38,55 @@ exports.seed = function(knex) {
   let dummyData = {
     content: [
       {
-        contentType: 'text',
-        like: 1,
-        question: 'Mitä teitte?',
-        answer: 'Leikittiin yhdessä.'
+        moods: ['Iloinen', 'Riehakas'],
+        questions: [{
+          question: 'Mitä teitte?',
+          like: 1,
+          answer: 'Leikittiin yhdessä.'
+        },
+        {
+          question: 'Millaista se oli?',
+          like: 1,
+          attachmentId: 'test.mp4'
+        },
+        {
+          question: 'Kerro tarkemmin!',
+          like: -1,
+          answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+        },
+        {
+          like: 0,
+          question: 'Millainen olo?'
+        }]
       },
       {
-        contentType: 'audio',
-        contentPath: contentPath,
-        hasAttachment: true,
-        like: 1,
-        question: 'Millaista se oli?'
-      },
-      {
-        contentType: 'text',
-        like: -1,
-        question: 'Kerro tarkemmin!',
-        answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
-      },
-      {
-        contentType: 'text',
-        like: 0,
-        question: 'Millainen olo?',
+        moods: ['Iloinen', 'Riehakas'],
+        questions: [{
+          question: 'Mitä teitte?',
+          like: 0,
+          answer: 'Leikittiin yhdessä.'
+        },
+        {
+          question: 'Millaista se oli?',
+          like: 1,
+          answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+        },
+        {
+          question: 'Kerro tarkemmin!',
+          like: 0,
+          answer: 'Lorem ipsum dolor sit amet'
+        },
+        {
+          like: 1,
+          question: 'Millainen olo?'
+        }]
       }
     ],
     sessions: [
       {
         userId: 1,
         reviewed: true,
-        content: [0, 1, 2, 3]
+        content: [0]
       },
       {
         userId: 1,
@@ -81,72 +101,72 @@ exports.seed = function(knex) {
       {
         userId: 2,
         reviewed: true,
-        content: [0, 1, 2, 3]
+        content: [0]
       },
       {
         userId: 3,
         reviewed: true,
-        content: [0, 1, 2]
+        content: [0]
       },
       {
         userId: 4,
         reviewed: false,
-        content: [0, 1, 2]
+        content: [0]
       },
       {
         userId: 5,
         reviewed: true,
-        content: [0, 1, 2]
+        content: [1]
       },
       {
         userId: 6,
         reviewed: true,
-        content: [0, 1, 2]
+        content: [1]
       },
       {
         userId: 6,
         reviewed: false,
-        content: [0, 1, 2, 3]
+        content: [1]
       },
       {
         userId: 6,
         reviewed: false,
-        content: [0, 1, 2]
+        content: [0]
       },
       {
         userId: 6,
         reviewed: false,
-        content: [0, 1, 2]
+        content: [1]
       },
       {
         userId: 6,
         reviewed: false,
-        content: [1, 2]
+        content: [0, 1]
       },
       {
         userId: 6,
         reviewed: false,
-        content: [0, 2]
+        content: [0]
       },
       {
         userId: 8,
         reviewed: false,
-        content: [0, 1, 2]
+        content: [0]
       },
       {
         userId: 9,
         reviewed: false,
-        content: [0, 1, 2]
+        content: [0]
       },
       {
         userId: 10,
         reviewed: false,
-        content: [0, 1, 2]
+        content: [0]
       },
       {
         userId: 11,
         reviewed: false,
-        content: [0, 1, 2, 3]
+        content: [0]
       }
     ],
 
@@ -264,10 +284,12 @@ exports.seed = function(knex) {
 
     dummyData.sessions.forEach(session => {
       let newContent = session.content.map(index => {
-        return Object.assign({}, dummyData.content[index], {
+        return {
+          moods: JSON.stringify(dummyData.content[index].moods),
+          questions: JSON.stringify(dummyData.content[index].questions),
           sessionId: session.sessionId,
           contentId: contentIds[i++]
-        });
+        };
       });
 
       contents = contents.concat(newContent);

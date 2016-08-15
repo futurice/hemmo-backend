@@ -63,10 +63,13 @@ exports.newContentConfig = {
       session: Joi.string().length(36).required()
     }).options({allowUnknown: true}),
     payload: {
-      contentType: Joi.string().required(),
-      question: Joi.string().optional(),
-      answer: Joi.string().optional(),
-      like: Joi.number().integer().optional()
+      moods: Joi.array().items(Joi.string()).optional(),
+      questions: Joi.array().items(Joi.object().keys({
+        question: Joi.string(),
+        like: Joi.number(),
+        answer: Joi.string(),
+        attachmentId: Joi.string()
+      })).optional()
     }
   },
   pre: [
@@ -127,16 +130,12 @@ exports.updateContentConfig = {
       this.contentId = content.contentId;
       this.sessionId = content.sessionId;
 
-      const question = _.get(request, 'payload.question', null);
-      const answer = _.get(request, 'payload.answer', null);
-      const contentType = _.get(request, 'payload.contentType', null);
-      const like = _.get(request, 'payload.like', null);
+      const moods = _.get(request, 'payload.moods', null);
+      const questions = _.get(request, 'payload.questions', null);
 
       const updateDict = {
-        question: question,
-        contentType: contentType,
-        answer: answer,
-        like: like
+        questions: questions,
+        moods: moods
       };
       // Strip null values
       const strippedDict = _.omitBy(updateDict, _.isNil);
@@ -196,13 +195,14 @@ exports.attachmentUploadConfig = {
       ext = filename.substring(filename.lastIndexOf('.') + 1);
     }
 
-    getUserContent(request.pre.user.id, request.headers.session, request.params.contentId).bind({})
-    .then(function(content) {
-      if (!content) {
-        throw new Error('Content not found');
+    getUserSession(request.pre.user.id, request.headers.session).bind({})
+    .then(function(session) {
+      if (!session) {
+        throw new Error('Session not found');
       }
-      this.contentId = content.contentId;
-      this.sessionId = content.sessionId;
+
+      this.contentId = request.params.contentId;
+      this.sessionId = request.headers.session;
 
       return mkdirp(uploadPath);
     })
@@ -233,6 +233,7 @@ exports.attachmentUploadConfig = {
         });
       });
     })
+    /*
     .then(function() {  // TODO: Remove old content if updating? or create new content?
       console.log("UPDATING....")
       return knex('content').where({
@@ -243,6 +244,7 @@ exports.attachmentUploadConfig = {
         hasAttachment: true
       });
     })
+    */
     .then(function() {
       // Mark unreviewed
       return knex('sessions').where('sessionId', this.sessionId)
