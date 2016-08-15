@@ -362,12 +362,9 @@ exports.getSessionDataConfig = {
       const contentArray = _.map(contents, function(content) {
         return {
           contentId: content.contentId,
-          like: content.like,
-          answer: content.answer,
-          question: content.question,
-          contentType: content.contentType,
-          createdAt: content.createdAt,
-          hasAttachment: content.hasAttachment
+          questions: content.questions,
+          moods: content.moods,
+          createdAt: content.createdAt
         };
       });
       this.content = contentArray;
