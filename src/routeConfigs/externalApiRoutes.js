@@ -100,7 +100,7 @@ exports.updateUserDataConfig = {
 exports.getAttachmentConfig = {
   validate: {
     params: {
-      contentId: Joi.string().length(36).required()
+      attachmentId: Joi.string().required()
     }
   },
   auth: {
@@ -108,20 +108,8 @@ exports.getAttachmentConfig = {
     scope: 'employee'
   },
   handler: function(request, reply) {
-    knex('content').where({
-      contentId: request.params.contentId
-    }).select('contentPath')
-    .then((results) => {
-      if (!results.length) {
-        throw new Error('Attachment not found');
-      }
-
-      return reply.file(results[0].contentPath, {
-        confine: uploadPath
-      });
-    })
-    .catch((err) => {
-      return reply(Boom.badRequest('Failed to get attachment'));
+    return reply.file(path.join(uploadPath, request.params.attachmentId), {
+      confine: uploadPath
     });
   },
   state: {

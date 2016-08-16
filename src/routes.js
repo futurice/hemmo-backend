@@ -102,7 +102,7 @@ routes.push({
 
 routes.push({
   method: 'GET',
-  path: '/attachment/{contentId}',
+  path: '/attachment/{attachmentId}',
   config: getAttachmentConfig
 });
 

@@ -177,9 +177,6 @@ exports.attachmentUploadConfig = {
     headers: Joi.object({
       session: Joi.string().length(36).required()
     }).options({allowUnknown: true}),
-    params: {
-      contentId: Joi.string().length(36).required()
-    },
     payload: {
       file: Joi.any().required()
     }
@@ -188,6 +185,8 @@ exports.attachmentUploadConfig = {
     {method: bindUserData, assign: 'user'}
   ],
   handler: function(request, reply) {
+    const attachmentId = uuid.v4();
+
     const filename = request.payload.file.hapi.filename;
     let ext = '';
 
@@ -201,14 +200,13 @@ exports.attachmentUploadConfig = {
         throw new Error('Session not found');
       }
 
-      this.contentId = request.params.contentId;
       this.sessionId = request.headers.session;
 
       return mkdirp(uploadPath);
     })
     .then(function() {
       return new Promise((resolve, reject) => {
-        this.filePath = path.join(uploadPath, this.contentId);
+        this.filePath = path.join(uploadPath, attachmentId);
         if (ext) {
           this.filePath += '.' + ext;
         }
@@ -252,7 +250,7 @@ exports.attachmentUploadConfig = {
     })
     .then(function() {
       return reply({
-        contentId: this.contentId
+        attachmentId
       });
     })
     .catch(function(err) {
