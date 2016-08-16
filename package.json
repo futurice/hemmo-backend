@@ -61,6 +61,7 @@
     "moment-timezone": "^0.5.4",
     "node-uuid": "^1.4.7",
     "pg": "^5.0.0",
+    "prompt": "^1.0.0",
     "underscore.string": "^3.3.4",
     "vision": "^4.1.0"
   },
@@ -70,7 +71,6 @@
     "eslint": "^2.11.1",
     "lab": "^10.8.2",
     "lab-babel": "^1.1.1",
-    "nodemon": "^1.9.2",
-    "prompt": "^1.0.0"
+    "nodemon": "^1.9.2"
   }
 }
