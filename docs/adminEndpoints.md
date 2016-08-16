@@ -217,14 +217,21 @@ returns
   }
   reviewed: (Boolean),
   startedAt: (Timestamp),
-  content:
-  {
-    contentId: (String),
-    question: (String),
-    contentType: (String, 'file' or 'text'),
-    createdAt: (Timestamp),
-    hasAttachment: (Boolean)
-  }
+  content: [
+      {
+        contentId: (String),
+        createdAt: (Timestamp),
+        moods: [(String)],
+        questions: [
+            {
+                question: (String),
+                like: (Number),
+                answer: (String),
+                attachmentId: (String)
+            }
+        ],
+      }
+  ]
 }
 ```
 

@@ -232,15 +232,17 @@ exports.getUserDataConfig = {
     })
     .then(function(employee) {
       this.employee = employee;
+    /*
       return knex('content').select('like').innerJoin('sessions', 'content.sessionId', 'sessions.sessionId').where('sessions.userId', userId);
     })
     .then(function(likes) {
       const likeMean = _.meanBy(likes, 'like');
+    */
       return reply({
         name: this.user.name,
         sessions: this.sessions,
         assignee: this.employee,
-        likes: likeMean
+        //likes: likeMean
       });
     })
     .catch(function(err) {

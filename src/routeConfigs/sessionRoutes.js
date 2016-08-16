@@ -85,11 +85,13 @@ exports.newContentConfig = {
       this.sessionId = session.sessionId;
       this.contentId = uuid.v4();
 
-      return knex('content').insert(_.merge(request.payload, {
+      return knex('content').insert({
+        moods: JSON.stringify(request.payload.moods),
+        questions: JSON.stringify(request.payload.questions),
         contentId: this.contentId,
         sessionId: this.sessionId,
         createdAt: knex.fn.now(),
-      }));
+      });
     })
     .then(function() {
       // Mark unreviewed
