@@ -136,8 +136,8 @@ exports.updateContentConfig = {
       const questions = _.get(request, 'payload.questions', null);
 
       const updateDict = {
-        questions: questions,
-        moods: moods
+        questions: JSON.stringify(questions),
+        moods: JSON.stringify(moods)
       };
       // Strip null values
       const strippedDict = _.omitBy(updateDict, _.isNil);
