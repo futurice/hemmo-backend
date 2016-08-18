@@ -146,6 +146,7 @@ exports.getEmployeeData = {
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest('Failed to get employee data'));
     });
   }
@@ -170,6 +171,7 @@ exports.getAllEmployees = {
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest('Failed to find employees'));
     });
   }
@@ -184,18 +186,18 @@ exports.getAllUsers = {
   handler: function(request, reply) {
     const offset = _.get(request, 'query.offset', 0);
     const limit = _.get(request, 'query.limit', 100);
-    knex.select('name', 'id', 'assigneeId')
-      .from('users')
+    knex('users').select('users.name', 'employees.name as assignee', 'users.id', 'assigneeId')
+      .leftJoin('employees', 'users.assigneeId', 'employees.id')
       .limit(limit)
       .offset(offset)
-      .orderBy('createdAt', 'desc')
+      .orderBy('users.createdAt', 'desc')
       .bind({})
     .then(function(users) {
       const usrs = _.map(users, function(user) {
         return {
           name: user.name,
-          userId: user.id,
-          assigneeId: user.assigneeId
+          assignee: user.assignee,
+          userId: user.id
         };
       });
       return reply({
@@ -203,6 +205,7 @@ exports.getAllUsers = {
       });
     })
     .catch(function(err) {
+      console.log(err);
       return reply(Boom.badRequest('Failed to find users'));
     });
   }
@@ -237,11 +240,10 @@ exports.getUserData = {
         };
       });
       this.sessions = sessions;
-      console.log(this);
       return knex.first('id', 'name').from('employees').where('id', this.user.assigneeId);
     })
     .then(function(employee) {
-      this.employee = employee;
+      this.employee = employee || null;
       return knex('content').select('questions').innerJoin('sessions', 'content.sessionId', 'sessions.sessionId').where('sessions.userId', userId);
     })
     .then(function(contents) {
@@ -251,6 +253,7 @@ exports.getUserData = {
       const likes = questionsWithLikes.map(question => question.like);
       const likeMean = _.mean(likes);
 
+      console.log(this.employee);
       return reply({
         name: this.user.name,
         sessions: this.sessions,
@@ -288,39 +291,38 @@ exports.getSessionsData = {
     const strippedFilters = _.omitBy(filters, _.isNil);
 
     var sessionsArray = [];
-    knex.select('id').from('users').map(function(row) {
-      return row.id
-    })
-    .then(function(userIds) {
-      console.log(userIds);
-      return knex.select('*').from('sessions').whereIn('userId', userIds).andWhere(strippedFilters)
-      .orderBy('createdAt', order).limit(limit).offset(offset).bind({})
-    })
+    knex.select(
+        'sessionId',
+        'userId',
+        'reviewed',
+        'sessions.createdAt',
+        'employees.name as assignee',
+        'users.name as userName',
+        'sessions.updatedAt')
+
+        .from('sessions').where(strippedFilters)
+        .leftJoin('employees', 'sessions.assigneeId', 'employees.id')
+        .leftJoin('users', 'sessions.userId', 'users.id')
+        .orderBy('sessions.createdAt', order)
+        .limit(limit)
+        .offset(offset)
+        .bind({})
     .then(function(sessions) {
       return sessions;
     })
     .each(function(session) {
-      return knex.first('name', 'id', 'assigneeId').from('users').where('id' , session.userId)
-      .then(function(user) {
-        if (!user) {
-          user = {
-            name: "Unknown",
-            id: -1
-          }
-        }
-        const sessDict = {
-          sessionId: session.sessionId,
-          assigneeId: session.assigneeId,
-          user: {
-            name: user.name,
-            userId: user.id,
-            assigneeId: user.assigneeId,
-          },
-          reviewed: session.reviewed,
-          createdAt: session.createdAt,
-        };
-        sessionsArray.push(sessDict);
-      });
+      const sessDict = {
+        sessionId: session.sessionId,
+        assignee: session.assignee,
+        user: {
+          name: session.userName,
+          userId: session.userId
+        },
+        reviewed: session.reviewed,
+        createdAt: session.createdAt,
+      };
+
+      sessionsArray.push(sessDict);
     })
     .then(function(array) {
       return reply({
@@ -328,6 +330,7 @@ exports.getSessionsData = {
       });
     })
     .catch((err) => {
+      console.log(err);
       return reply(Boom.badRequest('Failed to get session data'));
     });
   }
