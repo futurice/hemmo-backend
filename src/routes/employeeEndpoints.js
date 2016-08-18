@@ -247,7 +247,10 @@ exports.getUserData = {
     .then(function(contents) {
       let questions = _.flatten(contents.map(content => content.questions));
 
-      const likeMean = _.meanBy(questions, question => question.like);
+      const questionsWithLikes = _.filter(questions, question => !_.isNil(question.like));
+      const likes = questionsWithLikes.map(question => question.like);
+      const likeMean = _.mean(likes);
+
       return reply({
         name: this.user.name,
         sessions: this.sessions,
