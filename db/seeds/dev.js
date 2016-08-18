@@ -59,18 +59,34 @@ exports.seed = function(knex) {
           moods: ['Iloinen', 'Riehakas'],
           questions: [{
             question: 'Mitä teitte?',
-            like: 1,
-            answer: 'Leikittiin yhdessä.'
+            answer: 'Leikimme, pelasimme'
           },
           {
-            question: 'Millaista se oli?',
-            like: 1,
+            question: 'Mitä teitte (tarkemmin)?',
+            answer: 'Liikunta'
+          },
+          {
+            question: 'Kertoisitko lisää?',
             attachmentId: attachmentFilename
           },
           {
-            question: 'Kerro tarkemmin!',
-            like: -1,
-            answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
+            like: 1,
+            question: 'Millainen olo?'
+          }]
+        },
+        {
+          moods: ['Innostunut', 'Iloinen', 'Jännittynyt'],
+          questions: [{
+            question: 'Mitä teitte?',
+            answer: 'Ulkoilimme, retkeilimme'
+          },
+          {
+            question: 'Mitä teitte (tarkemmin)?',
+            answer: 'Ulkoilu',
+          },
+          {
+            question: 'Kertoisitko lisää?',
+            answer: 'Ohitettu'
           },
           {
             like: 0,
@@ -78,24 +94,78 @@ exports.seed = function(knex) {
           }]
         },
         {
-          moods: ['Iloinen', 'Riehakas'],
+          moods: ['Innostunut', 'Rauhallinen'],
           questions: [{
             question: 'Mitä teitte?',
-            like: 0,
-            answer: 'Leikittiin yhdessä.'
+            answer: 'Vietimme aikaa yhdessä'
           },
           {
-            question: 'Millaista se oli?',
-            like: 1,
+            question: 'Mitä teitte (tarkemmin)?',
+            answer: 'Kyläily',
+          },
+          {
+            question: 'Kertoisitko lisää?',
             answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
           },
           {
-            question: 'Kerro tarkemmin!',
-            like: 0,
-            answer: 'Lorem ipsum dolor sit amet'
+            like: 1,
+            question: 'Millainen olo?'
+          }]
+        },
+        {
+          moods: ['Surullinen', 'Yksinäinen', 'Jännittynyt'],
+          questions: [{
+            question: 'Mitä teitte?',
+            answer: 'Leikimme, pelasimme'
+          },
+          {
+            question: 'Mitä teitte (tarkemmin)?',
+            answer: 'Leikkiminen',
+          },
+          {
+            question: 'Kertoisitko lisää?',
+            attachmentId: attachmentFilename
+          },
+          {
+            like: -1,
+            question: 'Millainen olo?'
+          }]
+        },
+        {
+          moods: ['Iloinen', 'Innostunut'],
+          questions: [{
+            question: 'Mitä teitte?',
+            answer: 'Leikimme, pelasimme'
+          },
+          {
+            question: 'Mitä teitte (tarkemmin)?',
+            answer: 'Lautapelit',
+          },
+          {
+            question: 'Kertoisitko lisää?',
+            answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
           },
           {
             like: 1,
+            question: 'Millainen olo?'
+          }]
+        },
+        {
+          moods: ['Iloinen', 'Innostunut'],
+          questions: [{
+            question: 'Mitä teitte?',
+            answer: 'Ulkoilimme, retkeilimme'
+          },
+          {
+            question: 'Mitä teitte (tarkemmin)?',
+            answer: 'Pihahommat',
+          },
+          {
+            question: 'Kertoisitko lisää?',
+            answer: 'Lorem ipsum dolor sit amet'
+          },
+          {
+            like: 0,
             question: 'Millainen olo?'
           }]
         }
@@ -103,88 +173,39 @@ exports.seed = function(knex) {
       sessions: [
         {
           userId: 1,
-          reviewed: true,
-          content: [0]
         },
         {
           userId: 1,
-          reviewed: true,
-          content: [0, 1]
-        },
-        {
-          userId: 1,
-          reviewed: false,
-          content: [0, 1]
         },
         {
           userId: 2,
-          reviewed: true,
-          content: [0]
         },
         {
           userId: 3,
-          reviewed: true,
-          content: [0]
         },
         {
           userId: 4,
-          reviewed: false,
-          content: [0]
         },
         {
           userId: 5,
-          reviewed: true,
-          content: [1]
         },
         {
           userId: 6,
-          reviewed: true,
-          content: [1]
         },
         {
           userId: 6,
-          reviewed: false,
-          content: [1]
-        },
-        {
-          userId: 6,
-          reviewed: false,
-          content: [0]
-        },
-        {
-          userId: 6,
-          reviewed: false,
-          content: [1]
-        },
-        {
-          userId: 6,
-          reviewed: false,
-          content: [0, 1]
-        },
-        {
-          userId: 6,
-          reviewed: false,
-          content: [0]
         },
         {
           userId: 8,
-          reviewed: false,
-          content: [0]
         },
         {
           userId: 9,
-          reviewed: false,
-          content: [0]
         },
         {
           userId: 10,
-          reviewed: false,
-          content: [0]
         },
         {
           userId: 11,
-          reviewed: false,
-          content: [0]
         }
       ],
 
@@ -231,6 +252,10 @@ exports.seed = function(knex) {
       ]
     }
 
+    /*
+     * Set sessionIds & contentIds
+     */
+
     const sessionIds = new Array(100).fill(undefined).map(() => {
       return getUuid();
     });
@@ -243,11 +268,53 @@ exports.seed = function(knex) {
       session.sessionId = sessionIds[index];
     });
 
-    dummyData.userIds = dummyData.users.map((user, index) => {
-      return index + 1;
+    /*
+     * Randomize createdAt / updatedAt times
+     */
+
+    dummyData.users.forEach((user, index) => {
+      user.createdAt = new Date(Date.now() - index * 1000000000 * Math.random());
     });
-    dummyData.employeeIds = dummyData.employees.map((employee, index) => {
-      return index + 1;
+    dummyData.sessions.forEach((session, index) => {
+      let randDate = new Date(Date.now() - index * 1000000000 * Math.random())
+      session.createdAt = randDate;
+      session.updatedAt = randDate;
+
+      if (Math.random() < 0.25) {
+        session.updatedAt = new Date(randDate.getTime() + 100000000 * Math.random());
+      }
+    });
+    dummyData.content.forEach((content, index) => {
+      let randDate = new Date(Date.now() - index * 1000000000 * Math.random())
+      content.createdAt = randDate;
+      content.updatedAt = randDate;
+
+      if (Math.random() < 0.25) {
+        content.updatedAt = new Date(randDate.getTime() + 100000000 * Math.random());
+      }
+    });
+
+    /*
+     * Randomize session contents
+     */
+    dummyData.sessions.forEach((session, index) => {
+      session.reviewed = Math.random > 0.5 ? true : false;
+    });
+    dummyData.sessions.forEach((session, index) => {
+      let contents = [];
+
+      dummyData.content.forEach((content, index) => {
+        if (Math.random() > 0.65) {
+          contents.push(index);
+        }
+      });
+
+      // Make sure there's at least one content in session
+      if (!contents.length) {
+        contents.push(Math.floor(Math.random() * dummyData.content.length));
+      }
+
+      session.content = contents;
     });
 
     // first delete old dummy data
