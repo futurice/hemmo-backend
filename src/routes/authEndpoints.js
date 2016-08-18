@@ -9,7 +9,7 @@ import {
   checkIfEmailAvailable
 } from '../utils/authUtil';
 
-exports.employeeAuthenticationConfig = {
+exports.employeeAuthentication = {
   validate: {
     payload: {
       email: Joi.string().required(),
@@ -27,7 +27,7 @@ exports.employeeAuthenticationConfig = {
   }
 };
 
-exports.employeeRegistrationConfig = {
+exports.employeeRegistration = {
   validate: {
     payload: {
       name: Joi.string().required(),
@@ -61,7 +61,7 @@ exports.employeeRegistrationConfig = {
   }
 };
 
-exports.userRegistrationConfig = {
+exports.userRegistration = {
   validate: {
     payload: {
       name: Joi.string().required()

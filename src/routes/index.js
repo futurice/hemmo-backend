@@ -1,30 +1,30 @@
 /*eslint-disable object-curly-spacing*/
 
 import {
-  employeeAuthenticationConfig,
-  employeeRegistrationConfig,
-  userRegistrationConfig
-} from './routeConfigs/authRoutes';
+  employeeAuthentication,
+  employeeRegistration,
+  userRegistration
+} from './authEndpoints';
 
 import {
-  attachmentUploadConfig,
-  updateContentConfig,
-  newContentConfig,
-  newSessionConfig
-} from './routeConfigs/sessionRoutes';
+  attachmentUpload,
+  updateContent,
+  newContent,
+  newSession
+} from './userEndpoints';
 
 import {
-  getIndexConfig,
+  getIndex,
   updateSessionData,
-  getAttachmentConfig,
-  getEmployeeDataConfig,
-  getUserDataConfig,
-  getSessionDataConfig,
-  getAllUsersConfig,
-  getAllEmployeesConfig,
-  getSessionsDataConfig,
-  updateUserDataConfig
-} from './routeConfigs/externalApiRoutes';
+  getAttachment,
+  getEmployeeData,
+  getUserData,
+  getSessionData,
+  getAllUsers,
+  getAllEmployees,
+  getSessionsData,
+  updateUserData
+} from './employeeEndpoints';
 
 const routes = [];
 
@@ -37,31 +37,31 @@ const routes = [];
 routes.push({
   method: 'POST',
   path: '/session',
-  config: newSessionConfig
+  config: newSession
 });
 
 routes.push({
   method: 'POST',
   path: '/content',
-  config: newContentConfig
+  config: newContent
 });
 
 routes.push({
   method: 'PUT',
   path: '/content/{contentId}',
-  config: updateContentConfig
+  config: updateContent
 });
 
 routes.push({
   method: 'PUT',
   path: '/attachment/{contentId}',
-  config: attachmentUploadConfig
+  config: attachmentUpload
 });
 
 routes.push({
   method: 'POST',
   path: '/register',
-  config: userRegistrationConfig
+  config: userRegistration
 });
 
 /*
@@ -73,43 +73,43 @@ routes.push({
 routes.push({
   method: 'GET',
   path: '/',
-  config: getIndexConfig
+  config: getIndex
 });
 
 routes.push({
   method: 'POST',
   path: '/employees/register',
-  config: employeeRegistrationConfig
+  config: employeeRegistration
 });
 
 routes.push({
   method: 'POST',
   path: '/employees/authenticate',
-  config: employeeAuthenticationConfig
+  config: employeeAuthentication
 });
 
 routes.push({
   method: 'GET',
   path: '/employees',
-  config: getAllEmployeesConfig
+  config: getAllEmployees
 });
 
 routes.push({
   method: 'GET',
   path: '/users',
-  config: getAllUsersConfig
+  config: getAllUsers
 });
 
 routes.push({
   method: 'GET',
   path: '/attachment/{attachmentId}',
-  config: getAttachmentConfig
+  config: getAttachment
 });
 
 routes.push({
   method: 'GET',
   path: '/sessions',
-  config: getSessionsDataConfig
+  config: getSessionsData
 });
 
 routes.push({
@@ -121,25 +121,25 @@ routes.push({
 routes.push({
   method: 'GET',
   path: '/employees/{employeeId}',
-  config: getEmployeeDataConfig
+  config: getEmployeeData
 });
 
 routes.push({
   method: 'GET',
   path: '/users/{userId}',
-  config: getUserDataConfig
+  config: getUserData
 });
 
 routes.push({
   method: 'PUT',
   path: '/users/{userId}',
-  config: updateUserDataConfig
+  config: updateUserData
 });
 
 routes.push({
   method: 'GET',
   path: '/sessions/{sessionId}',
-  config: getSessionDataConfig
+  config: getSessionData
 });
 
 export default routes;

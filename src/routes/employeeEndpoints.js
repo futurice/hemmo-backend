@@ -11,7 +11,7 @@ import {
 
 const uploadPath = path.join(process.env.HOME, 'hemmo', 'uploads');
 
-exports.getIndexConfig = {
+exports.getIndex = {
   auth: {
     strategy: 'jwt',
     scope: 'employee'
@@ -70,7 +70,7 @@ exports.updateSessionData = {
   }
 };
 
-exports.updateUserDataConfig = {
+exports.updateUserData = {
   auth: {
     strategy: 'jwt',
     scope: 'employee'
@@ -97,7 +97,7 @@ exports.updateUserDataConfig = {
   }
 }
 
-exports.getAttachmentConfig = {
+exports.getAttachment = {
   validate: {
     params: {
       attachmentId: Joi.string().required()
@@ -121,7 +121,7 @@ exports.getAttachmentConfig = {
   }
 };
 
-exports.getEmployeeDataConfig = {
+exports.getEmployeeData = {
   validate: {
     params: {
       employeeId: Joi.string().required()
@@ -150,7 +150,7 @@ exports.getEmployeeDataConfig = {
   }
 };
 
-exports.getAllEmployeesConfig = {
+exports.getAllEmployees = {
   auth: {
     strategy: 'jwt',
     scope: 'employee'
@@ -175,7 +175,7 @@ exports.getAllEmployeesConfig = {
 
 }
 
-exports.getAllUsersConfig = {
+exports.getAllUsers = {
   auth: {
     strategy: 'jwt',
     scope: 'employee'
@@ -202,7 +202,7 @@ exports.getAllUsersConfig = {
   }
 };
 
-exports.getUserDataConfig = {
+exports.getUserData = {
   validate: {
     params: {
       userId: Joi.string().required()
@@ -256,7 +256,7 @@ exports.getUserDataConfig = {
   }
 };
 
-exports.getSessionsDataConfig = {
+exports.getSessionsData = {
   auth: {
     strategy: 'jwt',
     scope: 'employee'
@@ -329,7 +329,7 @@ exports.getSessionsDataConfig = {
 };
 
 // Note that this is different from the previous endpoint config! This fetches _one_ session.
-exports.getSessionDataConfig = {
+exports.getSessionData = {
   validate: {
     params: {
       sessionId: Joi.string().length(36).required()

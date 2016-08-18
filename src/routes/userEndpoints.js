@@ -32,7 +32,7 @@ const getUserContent = function(userId, sessionId, contentId) {
   });
 }
 
-exports.newSessionConfig = {
+exports.newSession = {
   pre: [
     {method: bindUserData, assign: 'user'}
   ],
@@ -57,7 +57,7 @@ exports.newSessionConfig = {
   }
 };
 
-exports.newContentConfig = {
+exports.newContent = {
   validate: {
     headers: Joi.object({
       session: Joi.string().length(36).required()
@@ -110,7 +110,7 @@ exports.newContentConfig = {
   }
 };
 
-exports.updateContentConfig = {
+exports.updateContent = {
   validate: {
     headers: Joi.object({
       session: Joi.string().length(36).required()
@@ -170,7 +170,7 @@ exports.updateContentConfig = {
   }
 };
 
-exports.attachmentUploadConfig = {
+exports.attachmentUpload = {
   payload: {
     output: 'stream',
     maxBytes: sizeLimit
