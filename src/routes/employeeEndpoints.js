@@ -282,9 +282,9 @@ exports.getSessionsData = {
     const offset = _.get(request, 'query.offset', 0);
 
     const filters = {
-      reviewed: reviewed,
-      userId: userId,
-      assigneeId: assigneeId
+      'sessions.reviewed': reviewed,
+      'sessions.userId': userId,
+      'sessions.assigneeId': assigneeId
     };
 
     // Strip null values
