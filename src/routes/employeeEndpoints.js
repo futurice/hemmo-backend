@@ -44,7 +44,8 @@ exports.updateSessionData = {
 
     const updateDict = {
       reviewed: reviewed,
-      assigneeId: assigneeId
+      assigneeId: assigneeId,
+      updatedAt: knex.fn.now()
     };
     // Strip null values
     const strippedDict = _.omitBy(updateDict, _.isNil);
@@ -183,7 +184,12 @@ exports.getAllUsers = {
   handler: function(request, reply) {
     const offset = _.get(request, 'query.offset', 0);
     const limit = _.get(request, 'query.limit', 100);
-    knex.select('name', 'id', 'assigneeId').from('users').limit(limit).offset(offset).bind({})
+    knex.select('name', 'id', 'assigneeId')
+      .from('users')
+      .limit(limit)
+      .offset(offset)
+      .orderBy('createdAt', 'desc')
+      .bind({})
     .then(function(users) {
       const usrs = _.map(users, function(user) {
         return {
@@ -220,12 +226,12 @@ exports.getUserData = {
         throw new Error('User not found.');
       }
       this.user = user;
-      return knex.select('startedAt', 'reviewed', 'sessionId').from('sessions').where('userId', userId);
+      return knex.select('createdAt', 'reviewed', 'sessionId').from('sessions').where('userId', userId);
     })
     .then(function(rows) {
       const sessions = _.map(rows, function(row) {
         return {
-          startedAt: row.startedAt,
+          createdAt: row.createdAt,
           reviewed: row.reviewed,
           sessionId: row.sessionId
         };
@@ -288,7 +294,7 @@ exports.getSessionsData = {
     .then(function(userIds) {
       console.log(userIds);
       return knex.select('*').from('sessions').whereIn('userId', userIds).andWhere(strippedFilters)
-      .orderBy('startedAt', order).limit(limit).offset(offset).bind({})
+      .orderBy('createdAt', order).limit(limit).offset(offset).bind({})
     })
     .then(function(sessions) {
       return sessions;
@@ -311,7 +317,7 @@ exports.getSessionsData = {
             assigneeId: user.assigneeId,
           },
           reviewed: session.reviewed,
-          startedAt: session.startedAt,
+          createdAt: session.createdAt,
         };
         sessionsArray.push(sessDict);
       });
@@ -377,7 +383,7 @@ exports.getSessionData = {
           assigneeId: user.assigneeId,
         },
         reviewed: this.session.reviewed,
-        startedAt: this.session.startedAt,
+        createdAt: this.session.createdAt,
         content: this.content
       });
     })

@@ -42,7 +42,7 @@ exports.newSession = {
 
     knex('sessions').insert({
       userId: request.pre.user.id,
-      startedAt: knex.fn.now(),
+      createdAt: knex.fn.now(),
       sessionId: sessionId,
       assigneeId: assigneeId
     })
@@ -137,7 +137,8 @@ exports.updateContent = {
 
       const updateDict = {
         questions: JSON.stringify(questions),
-        moods: JSON.stringify(moods)
+        moods: JSON.stringify(moods),
+        updatedAt: knex.fn.now()
       };
       // Strip null values
       const strippedDict = _.omitBy(updateDict, _.isNil);
