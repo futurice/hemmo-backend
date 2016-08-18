@@ -280,18 +280,15 @@ exports.getSessionsData = {
 
     const filters = {
       reviewed: reviewed,
-      userId: userId
+      userId: userId,
+      assigneeId: assigneeId
     };
 
-    const userFilter = {
-      assigneeId: assigneeId
-    }
     // Strip null values
     const strippedFilters = _.omitBy(filters, _.isNil);
-    const strippedUserFilter = _.omitBy(userFilter, _.isNil);
 
     var sessionsArray = [];
-    knex.select('id').from('users').where(strippedUserFilter).map(function(row) {
+    knex.select('id').from('users').map(function(row) {
       return row.id
     })
     .then(function(userIds) {

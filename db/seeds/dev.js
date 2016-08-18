@@ -173,54 +173,65 @@ exports.seed = function(knex) {
       sessions: [
         {
           userId: 1,
+          assigneeId: 1
         },
         {
           userId: 1,
+          assigneeId: 1
         },
         {
           userId: 2,
+          assigneeId: 1
         },
         {
           userId: 3,
+          assigneeId: 1
         },
         {
           userId: 4,
+          assigneeId: 2
         },
         {
           userId: 5,
+          assigneeId: 1
         },
         {
           userId: 6,
+          assigneeId: 1
         },
         {
           userId: 6,
+          assigneeId: 3
         },
         {
           userId: 8,
         },
         {
           userId: 9,
+          assigneeId: 2
         },
         {
           userId: 10,
+          assigneeId: 1
         },
         {
           userId: 11,
+          assigneeId: 3
         }
       ],
 
       // randomly generated
       users: [
-        { name: 'Urho Järvinen' },
-        { name: 'Jani Kivelä' },
-        { name: 'Ismo Nikkonen' },
+        { name: 'Urho Järvinen', assigneeId: 1 },
+        { name: 'Jani Kivelä', assigneeId: 1 },
+        { name: 'Ismo Nikkonen', assigneeId: 2 },
         { name: 'Linda Sormunen' },
         { name: 'Kai Hietanen' },
-        { name: 'Kosti Pulkkinen' },
+        { name: 'Kosti Pulkkinen', assigneeId: 3 },
         { name: 'Kaija Peltola' },
         { name: 'Annikki Aura' },
         { name: 'Aila Laiho' },
-        { name: 'Kalevi Tiainen' },
+        { name: 'Kalevi Tiainen', assigneeId: 3 },
         { name: 'Anita Rantanen' }
       ],
       employees: [
@@ -298,7 +309,7 @@ exports.seed = function(knex) {
      * Randomize session contents
      */
     dummyData.sessions.forEach((session, index) => {
-      session.reviewed = Math.random > 0.5 ? true : false;
+      session.reviewed = Math.random() > 0.5 ? true : false;
     });
     dummyData.sessions.forEach((session, index) => {
       let contents = [];
@@ -326,20 +337,20 @@ exports.seed = function(knex) {
 
     return Promise.all(wipeTables)
 
-    // then insert new dummy data
-
-    /*
-     * Users
-     */
-    .then(() => {
-      return knex.batchInsert('users', dummyData.users);
-    })
+    // then insert new dummy data (order is important)
 
     /*
      * Employees
      */
     .then(() => {
       return knex.batchInsert('employees', dummyData.employees);
+    })
+
+    /*
+     * Users
+     */
+    .then(() => {
+      return knex.batchInsert('users', dummyData.users);
     })
 
     /*
