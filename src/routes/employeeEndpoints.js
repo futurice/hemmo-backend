@@ -59,7 +59,7 @@ exports.updateSessionData = {
     .update(strippedDict)
     .then((session) => {
       return reply({
-        sessionId: session.sessionId,
+        id: session.sessionId,
         reviewed: true,
         assigneeId: assigneeId
       })
@@ -185,7 +185,7 @@ exports.getAllUsers = {
   },
   handler: function(request, reply) {
     const offset = _.get(request, 'query.offset', 0);
-    const limit = _.get(request, 'query.limit', 100);
+    const limit = _.get(request, 'query.limit', 20);
     knex('users').select('users.name', 'employees.name as assignee', 'users.id', 'assigneeId')
       .leftJoin('employees', 'users.assigneeId', 'employees.id')
       .limit(limit)
@@ -193,15 +193,18 @@ exports.getAllUsers = {
       .orderBy('users.createdAt', 'desc')
       .bind({})
     .then(function(users) {
-      const usrs = _.map(users, function(user) {
-        return {
-          name: user.name,
-          assignee: user.assignee,
-          userId: user.id
-        };
-      });
+      this.users = _.map(users, user => ({
+        name: user.name,
+        assignee: user.assignee,
+        id: user.id
+      }));
+
+      return knex('users').count('id');
+    })
+    .then(function(results) {
       return reply({
-        users: usrs
+        count: parseInt(results[0].count),
+        users: this.users
       });
     })
     .catch(function(err) {
@@ -236,7 +239,7 @@ exports.getUserData = {
         return {
           createdAt: row.createdAt,
           reviewed: row.reviewed,
-          sessionId: row.sessionId
+          id: row.sessionId
         };
       });
       this.sessions = sessions;
@@ -277,7 +280,7 @@ exports.getSessionsData = {
     const assigneeId = _.get(request, 'query.assignee', null);
     const reviewed = _.get(request, 'query.reviewed', null);
     const userId = _.get(request, 'query.user', null);
-    const limit = _.get(request, 'query.limit', 100);
+    const limit = _.get(request, 'query.limit', 20);
     const order = _.get(request, 'query.order', 'desc')
     const offset = _.get(request, 'query.offset', 0);
 
@@ -307,16 +310,13 @@ exports.getSessionsData = {
         .limit(limit)
         .offset(offset)
         .bind({})
-    .then(function(sessions) {
-      return sessions;
-    })
     .each(function(session) {
       const sessDict = {
-        sessionId: session.sessionId,
+        id: session.sessionId,
         assignee: session.assignee,
         user: {
           name: session.userName,
-          userId: session.userId
+          id: session.userId
         },
         reviewed: session.reviewed,
         createdAt: session.createdAt,
@@ -324,8 +324,12 @@ exports.getSessionsData = {
 
       sessionsArray.push(sessDict);
     })
-    .then(function(array) {
+    .then(function() {
+      return knex('sessions').where(strippedFilters).count('sessionId');
+    })
+    .then(function(results) {
       return reply({
+        count: parseInt(results[0].count),
         sessions: sessionsArray
       });
     })
@@ -378,11 +382,11 @@ exports.getSessionData = {
         throw new Error('No user was found for the session');
       }
       return reply({
-        sessionId: this.session.sessionId,
+        id: this.session.sessionId,
         assigneeId: this.session.assigneeId,
         user: {
           name: user.name,
-          userId: user.id,
+          id: user.id,
           assigneeId: user.assigneeId,
         },
         reviewed: this.session.reviewed,
