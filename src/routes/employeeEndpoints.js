@@ -57,11 +57,13 @@ exports.updateSessionData = {
     knex('sessions').where('sessionId', sessionId)
     .returning('*')
     .update(strippedDict)
-    .then((session) => {
+    .then((results) => {
+      let session = results[0];
+
       return reply({
         id: session.sessionId,
-        reviewed: true,
-        assigneeId: assigneeId
+        reviewed: session.reviewed,
+        assigneeId: session.assigneeId
       })
     })
     .catch(function(err) {
