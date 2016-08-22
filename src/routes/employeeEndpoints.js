@@ -39,8 +39,8 @@ exports.updateSessionData = {
   },
   handler: function(request, reply) {
     const sessionId = request.params.sessionId;
-    const reviewed = _.get(request, 'payload.reviewed', null);
-    const assigneeId = _.get(request, 'payload.assigneeId', null);
+    const reviewed = _.get(request, 'payload.reviewed', undefined);
+    const assigneeId = _.get(request, 'payload.assigneeId', undefined);
 
     const updateDict = {
       reviewed: reviewed,
