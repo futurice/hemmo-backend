@@ -26,7 +26,7 @@ server.register(require('hapi-auth-jwt2'), (err) => {
   server.auth.strategy('jwt', 'jwt', {
     key: config.auth.secret,
     validateFunc: (decoded, request, callback) => {
-      knex.first('name').from('employees').where('id', decoded.id).bind({})
+      knex.first('name').from('employees').where('id', parseInt(decoded.id)).bind({})
         .then(user => {
           if (!user) {
             console.log('User ID matching jwt not found in DB!');
