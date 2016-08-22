@@ -47,8 +47,10 @@ exports.updateSessionData = {
       assigneeId: assigneeId,
       updatedAt: knex.fn.now()
     };
-    // Strip null values
-    const strippedDict = _.omitBy(updateDict, _.isNil);
+
+    // Strip undefined values
+    const strippedDict = _.omitBy(updateDict, _.isUndefined);
+
     const empty = _.isEmpty(strippedDict);
     if (empty) {
       return reply('Success');
@@ -258,7 +260,6 @@ exports.getUserData = {
       const likes = questionsWithLikes.map(question => question.like);
       const likeMean = _.mean(likes);
 
-      console.log(this.employee);
       return reply({
         name: this.user.name,
         sessions: this.sessions,
