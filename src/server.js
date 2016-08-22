@@ -4,6 +4,7 @@ import config from './config';
 
 import Hoek from 'hoek';
 
+import knex from './db';
 
 process.env.TZ = 'UTC';
 
@@ -25,8 +26,17 @@ server.register(require('hapi-auth-jwt2'), (err) => {
   server.auth.strategy('jwt', 'jwt', {
     key: config.auth.secret,
     validateFunc: (decoded, request, callback) => {
-      console.log('TODO: TODO: TODO: implement validateFunc for jwt auth!');
-      callback(null, true);
+      knex.first('name').from('employees').where('id', decoded.id).bind({})
+        .then(user => {
+          if (!user) {
+            console.log('User ID matching jwt not found in DB!');
+            console.log('jwt: ' + JSON.stringify(decoded));
+            console.log('Query returned: ' + JSON.stringify(user));
+            return callback(new Error('User ID not valid!', false));
+          }
+
+          callback(null, true);
+        });
     },
     verifyOptions: { algorithms: ['HS256'] }
   });
