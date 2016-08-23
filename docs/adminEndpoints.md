@@ -52,6 +52,21 @@ returns
 Use the returned token in `Authorization` header in format
 `Bearer $token`
 
+* Change employee's password
+
+Required to use `Authorization` header.
+
+```
+POST /employees/password
+
+payload
+{
+  employeeId: (Number),
+  password: (String)
+}
+
+```
+
 * Update mobile user's session
 
 Update some session that was created by the mobile user. Update consists of optional values of `employeeId` that will be assigned to that session and boolean `review` that indicates the session review status.

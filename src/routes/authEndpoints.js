@@ -61,6 +61,39 @@ exports.employeeRegistration = {
   }
 };
 
+exports.employeeChangePassword = {
+  validate: {
+    payload: {
+      employeeId: Joi.number().required(),
+      password: Joi.string().min(6).required()
+    }
+  },
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  handler: function(request, reply) {
+    const password = request.payload['password'];
+
+    hashPassword(password)
+    .then(function(hashed) {
+      return knex('employees').where('id', request.payload['employeeId'])
+      .update({
+        password: hashed
+      }).returning('id');
+    })
+    .then(function(id) {
+      return reply({
+        status: 'ok'
+      });
+    })
+    .catch(function(err) {
+      console.log(err);
+      return reply(Boom.badRequest('Failed to change password'));
+    });
+  }
+};
+
 exports.userRegistration = {
   validate: {
     payload: {

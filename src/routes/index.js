@@ -3,6 +3,7 @@
 import {
   employeeAuthentication,
   employeeRegistration,
+  employeeChangePassword,
   userRegistration
 } from './authEndpoints';
 
@@ -80,6 +81,12 @@ routes.push({
   method: 'POST',
   path: '/employees/register',
   config: employeeRegistration
+});
+
+routes.push({
+  method: 'POST',
+  path: '/employees/password',
+  config: employeeChangePassword
 });
 
 routes.push({
