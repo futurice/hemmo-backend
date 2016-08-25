@@ -27,6 +27,18 @@ exports.employeeAuthentication = {
   }
 };
 
+exports.employeeRenewAuthentication = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  handler: function(request, reply) {
+    const token = createToken(request.auth.credentials.id, request.auth.credentials.name, 'employee');
+    reply({...token,
+      employeeId: request.auth.credentials.id});
+  }
+};
+
 exports.employeeRegistration = {
   validate: {
     payload: {

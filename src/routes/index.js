@@ -2,6 +2,7 @@
 
 import {
   employeeAuthentication,
+  employeeRenewAuthentication,
   employeeRegistration,
   employeeChangePassword,
   userRegistration
@@ -93,6 +94,12 @@ routes.push({
   method: 'POST',
   path: '/employees/authenticate',
   config: employeeAuthentication
+});
+
+routes.push({
+  method: 'POST',
+  path: '/employees/renewauth',
+  config: employeeRenewAuthentication
 });
 
 routes.push({
