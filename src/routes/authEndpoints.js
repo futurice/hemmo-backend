@@ -107,6 +107,10 @@ exports.employeeChangePassword = {
 };
 
 exports.userRegistration = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
   validate: {
     payload: {
       name: Joi.string().required()
