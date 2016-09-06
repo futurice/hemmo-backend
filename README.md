@@ -4,6 +4,8 @@
 
 This is the backend for Pelastakaa Lapset ry's Hemmo mobile app. It provides authentication functionality as well as various API endpoints for both employees and users. See API documentation in docs folder.
 
+The mobile app source will be released at a later date.
+
 ## Running the server
 
 1. Install and setup PostgreSQL
