@@ -6,6 +6,8 @@ This is the backend for Pelastakaa Lapset ry's Hemmo mobile app. It provides aut
 
 The mobile app source will be released at a later date.
 
+Admin frontend app: https://github.com/futurice/hemmo-admin/
+
 ## Running the server
 
 1. Install and setup PostgreSQL
