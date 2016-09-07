@@ -1,0 +1,54 @@
+sudo apt-get install nodejs npm nginx postgresql
+
+###########
+# Backend #
+###########
+
+# Database config
+sudo -u postgres createuser --superuser $USER
+sudo -u postgres createdb $USER
+sudo vim /etc/postgresql/9.5/main/pg_hba.conf
+
+# Edit the following line:
+# host    all             all             127.0.0.1/32            md5
+#
+# to:
+# host    all             all             127.0.0.1/32            trust
+
+# Backend config
+echo "export HOST=127.0.0.1" >> ~/.bashrc
+echo "export PORT=3001" >> ~/.bashrc
+echo "export DATABASE_URL=postgres://$USER@127.0.0.1/" >> ~/.bashrc
+echo "export SECRET=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)" >> ~/.bashrc
+
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+
+cd
+git clone https://github.com/futurice/hemmo-backend
+cd hemmo-backend
+npm install
+npm run db:init
+
+# Optional: insert seed data into db (not recommended for production)
+npm run db:seed
+
+npm run build
+npm start
+# TODO: daemonize and setup as service
+
+# Nginx config
+sudo vim /etc/nginx/sites-enabled/default
+# Copy server blocks from example nginx.conf in hemmo-backend repo
+
+##################
+# Admin frontend #
+##################
+
+cd
+git clone https://github.com/futurice/hemmo-admin
+cd hemmo-admin
+npm install --production
+
+# Admin frontend static files now available under /home/$USER/hemmo-admin/static
+
+sudo cp -r /home/$USER/hemmo-admin/static/* /var/www/html
