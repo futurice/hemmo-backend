@@ -54,7 +54,7 @@ export function verifyCredentials(req, res) {
   const password = req.payload.password;
   const email = req.payload.email;
 
-  return knex.select('id', 'password', 'name').from('employees').where('email', email)
+  return knex.select('id', 'password', 'verified', 'name').from('employees').where('email', email)
   .then(function(rows) {
     if (!rows.length) {
       return res(Boom.badRequest('Incorrect email or password!'));
@@ -63,7 +63,12 @@ export function verifyCredentials(req, res) {
     const user = rows[0];
     bcrypt.compare(password, user.password, (err, isValid) => {
       if (isValid) {
-        res(user);
+        console.log(user.verified);
+        if (user.verified) {
+          res(user);
+        } else {
+          res(Boom.badRequest('User account is not verified. Have another employee verify your account through Preferences!'));
+        }
       }
       else {
         res(Boom.badRequest('Incorrect email or password!'));

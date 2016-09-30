@@ -98,7 +98,8 @@ returns {
   employees: [
     {
       name: (String),
-      employeeId (Integer)
+      employeeId (Integer),
+      verified: (Boolean), tells if employee is verified
     },
     ...
   ]
@@ -116,6 +117,20 @@ returns
 {
   name: (String), employee name,
   email: (String), employee email,
+  verified: (Boolean), tells if employee is verified
+}
+```
+
+* Verify employee
+
+Mark a new employee as verified
+
+```
+PUT /employees/verify/{employeeId}
+
+returns
+{
+  employeeId: (Integer)
 }
 ```
 

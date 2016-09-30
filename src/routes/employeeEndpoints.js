@@ -138,7 +138,7 @@ exports.getEmployeeData = {
   },
   handler: function(request, reply) {
     const employeeId = request.params.employeeId;
-    knex.first('name', 'email').from('employees').where('id', employeeId).bind({})
+    knex.first('name', 'email', 'verified').from('employees').where('id', employeeId).bind({})
     .then(function(employee) {
       if (!employee) {
         throw new Error('Employee not found.');
@@ -147,6 +147,7 @@ exports.getEmployeeData = {
       return reply({
         name: this.employee.name,
         email: this.employee.email,
+        verified: this.employee.verified
       });
     })
     .catch(function(err) {
@@ -162,12 +163,13 @@ exports.getAllEmployees = {
     scope: 'employee'
   },
   handler: function(request, reply) {
-    knex.select('name', 'id').from('employees').bind({})
+    knex.select('name', 'id', 'verified').from('employees').bind({})
     .then(function(employees) {
       const empl = _.map(employees, function(employee) {
         return {
           name: employee.name,
-          employeeId: employee.id
+          employeeId: employee.id,
+          verified: employee.verified
         };
       });
       return reply({

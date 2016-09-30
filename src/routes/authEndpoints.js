@@ -54,22 +54,71 @@ exports.employeeRegistration = {
     const name = request.payload['name'];
     const email = request.payload['email'];
     const password = request.payload['password'];
+    let hashedPassword = '';
+    let verified = false;
 
     hashPassword(password)
     .then(function(hashed) {
+      hashedPassword = hashed;
+      return knex('employees')
+        .where('verified', true)
+        .count('verified');
+    })
+    .then(function(count) {
+      // If there are no verified users in the DB, automatically verify newly
+      // created user. Otherwise keep user unverified until a verified employee
+      // verifies them.
+      verified = !count;
+
       return knex('employees').insert({
         name: name,
         email: email,
-        password: hashed
+        password: hashedPassword,
+        verified: !count
       }).returning('id');
     })
     .then(function(id) {
-      const token = createToken(id, name, 'employee');
-      return reply({...token, employeeId: id});
+      if (verified) {
+        const token = createToken(id, name, 'employee');
+        return reply({...token, employeeId: id});
+      } else {
+        return reply({
+          message: 'User registration successful, but user needs verification. Please have another employee verify user via Preferences, then proceed with logging in!'
+        });
+      }
     })
     .catch(function(err) {
       return reply(Boom.badRequest(err));
     });
+  }
+};
+
+exports.employeeVerification = {
+  validate: {
+    params: {
+      employeeId: Joi.number().required(),
+    }
+  },
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  handler: function(request, reply) {
+    return knex('employees').where('id', request.params.employeeId)
+      .update({
+        verified: true
+      })
+      .returning('id')
+      .then(function(id) {
+        return reply({
+          employeeId: id,
+          status: 'ok'
+        });
+      })
+      .catch(function(err) {
+        console.log(err);
+        return reply(Boom.badRequest('Failed to change password'));
+      });
   }
 };
 
