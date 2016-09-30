@@ -64,17 +64,17 @@ exports.employeeRegistration = {
         .where('verified', true)
         .count('verified');
     })
-    .then(function(count) {
+    .then(function(result) {
       // If there are no verified users in the DB, automatically verify newly
       // created user. Otherwise keep user unverified until a verified employee
       // verifies them.
-      verified = !count;
+      verified = !parseInt(result[0].count);
 
       return knex('employees').insert({
         name: name,
         email: email,
         password: hashedPassword,
-        verified: !count
+        verified: verified
       }).returning('id');
     })
     .then(function(id) {
