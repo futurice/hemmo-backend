@@ -4,36 +4,37 @@
 exports.up = function(knex) {
   return knex.schema
     .createTable('employees', function(table) {
+      table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.increments('id').primary();
       table.text('name').notNullable();
       table.text('password').notNullable();
       table.text('email').notNullable().unique();
+      table.boolean('verified').notNull().defaultTo(true);
     })
 
     .createTable('users', function(table) {
+      table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.increments('id').primary();
       table.text('name').notNullable();
-      table.integer('assigneeId').references('id').inTable('employees');
+      table.integer('assigneeId').references('id').inTable('employees').onDelete('SET NULL');
     })
 
     .createTable('sessions', function(table) {
+      table.timestamp('createdAt').defaultTo(knex.fn.now());
+      table.timestamp('updatedAt').defaultTo(knex.fn.now());
       table.text('sessionId').primary();
-      table.integer('userId').references('id').inTable('users').notNullable();
+      table.integer('userId').references('id').inTable('users').notNullable().onDelete('CASCADE');
       table.boolean('reviewed').defaultTo(false);
-      table.timestamp('startedAt').defaultTo(knex.fn.now());
-      table.integer('assigneeId').references('id').inTable('employees');
+      table.integer('assigneeId').references('id').inTable('employees').onDelete('SET NULL');
     })
 
     .createTable('content', function(table) {
-      table.text('contentId').primary();
-      table.integer('like').defaultTo(0);
-      table.text('question');
-      table.text('answer');
-      table.text('contentType').notNullable();
-      table.text('contentPath');
       table.timestamp('createdAt').defaultTo(knex.fn.now());
-      table.text('sessionId').references('sessionId').inTable('sessions').notNullable();
-      table.boolean('hasAttachment').defaultTo(false);
+      table.timestamp('updatedAt').defaultTo(knex.fn.now());
+      table.text('contentId').primary();
+      table.text('sessionId').references('sessionId').inTable('sessions').notNullable().onDelete('CASCADE');
+      table.json('moods');
+      table.json('questions');
     })
 
     .then(function() {
