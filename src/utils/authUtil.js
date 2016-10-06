@@ -88,8 +88,6 @@ export function bindEmployeeData(req, res) {
     const employeeId = decoded.id;
     const name = decoded.name;
 
-    console.log(decoded);
-
     knex.first('id', 'name', 'email').from('employees').where({id: employeeId, name: name})
     .then(function(employee) {
       if (!employee) {
