@@ -24,6 +24,60 @@ exports.getIndex = {
   }
 };
 
+exports.deleteEmployee = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  pre: [
+    {method: bindEmployeeData, assign: 'user'}
+  ],
+  validate: {
+    params: {
+      employeeId: Joi.number().required()
+    }
+  },
+  handler: function(request, reply) {
+    const employeeId = request.params.employeeId;
+
+    knex('employees').where('id', employeeId).del()
+    .then(results => {
+      return reply({ deletedEmployees: results });
+    })
+    .catch(err => {
+      console.log(err);
+      return reply(Boom.badRequest('Failed to delete employee'));
+    });
+  }
+};
+
+exports.deleteSession = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  pre: [
+    {method: bindEmployeeData, assign: 'user'}
+  ],
+  validate: {
+    params: {
+      sessionId: Joi.string().length(36).required()
+    }
+  },
+  handler: function(request, reply) {
+    const sessionId = request.params.sessionId;
+
+    knex('sessions').where('sessionId', sessionId).del()
+    .then(results => {
+      return reply({ deletedSessions: results });
+    })
+    .catch(err => {
+      console.log(err);
+      return reply(Boom.badRequest('Failed to delete session'));
+    });
+  }
+};
+
 exports.updateSessionData = {
   auth: {
     strategy: 'jwt',
@@ -101,6 +155,33 @@ exports.updateUserData = {
     });
   }
 }
+
+exports.deleteUser = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  pre: [
+    {method: bindEmployeeData, assign: 'user'}
+  ],
+  validate: {
+    params: {
+      userId: Joi.number().required()
+    }
+  },
+  handler: function(request, reply) {
+    const userId = request.params.userId;
+
+    knex('users').where('id', userId).del()
+    .then(results => {
+      return reply({ deletedUsers: results });
+    })
+    .catch(err => {
+      console.log(err);
+      return reply(Boom.badRequest('Failed to delete user'));
+    });
+  }
+};
 
 exports.getAttachment = {
   validate: {

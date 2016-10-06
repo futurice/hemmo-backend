@@ -18,6 +18,9 @@ import {
 
 import {
   getIndex,
+  deleteSession,
+  deleteUser,
+  deleteEmployee,
   updateSessionData,
   getAttachment,
   getEmployeeData,
@@ -86,6 +89,12 @@ routes.push({
 });
 
 routes.push({
+  method: 'DELETE',
+  path: '/employees/{employeeId}',
+  config: deleteEmployee
+});
+
+routes.push({
   method: 'POST',
   path: '/employees/password',
   config: employeeChangePassword
@@ -134,6 +143,12 @@ routes.push({
 });
 
 routes.push({
+  method: 'DELETE',
+  path: '/sessions/{sessionId}',
+  config: deleteSession
+});
+
+routes.push({
   method: 'PUT',
   path: '/sessions/{sessionId}',
   config: updateSessionData
@@ -149,6 +164,12 @@ routes.push({
   method: 'GET',
   path: '/users/{userId}',
   config: getUserData
+});
+
+routes.push({
+  method: 'DELETE',
+  path: '/users/{userId}',
+  config: deleteUser
 });
 
 routes.push({
