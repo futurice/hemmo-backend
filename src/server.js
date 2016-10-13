@@ -40,13 +40,13 @@ server.register(require('hapi-auth-jwt2'), (err) => {
     },
     verifyOptions: { algorithms: ['HS256'] }
   });
-});
 
-// Register file sending plugin
-server.register(require('inert'), (err) => {
-  Hoek.assert(!err, err);
+  // Register file sending plugin
+  server.register(require('inert'), (err) => {
+    Hoek.assert(!err, err);
 
-  server.route(routes);
+    server.route(routes);
+  });
 });
 
 server.register({
