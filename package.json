@@ -20,7 +20,7 @@
     "Mocha"
   ],
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "npm run build && node dist/server.js",
     "postinstall": "npm run build",
     "build": "mkdir -p dist && babel src --out-dir dist --source-maps",
     "watch": "NODE_ENV=development nodemon --exec babel-node src/server.js",
