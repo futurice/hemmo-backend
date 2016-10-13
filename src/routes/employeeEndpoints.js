@@ -273,7 +273,7 @@ exports.getAllUsers = {
   handler: function(request, reply) {
     const offset = _.get(request, 'query.offset', 0);
     const limit = _.get(request, 'query.limit', 20);
-    knex('users').select('users.name', 'employees.name as assignee', 'users.id', 'assigneeId')
+    knex('users').select('users.name', 'employees.name as assignee', 'users.id', 'assigneeId', 'users.createdAt')
       .leftJoin('employees', 'users.assigneeId', 'employees.id')
       .limit(limit)
       .offset(offset)
@@ -283,7 +283,8 @@ exports.getAllUsers = {
       this.users = _.map(users, user => ({
         name: user.name,
         assignee: user.assignee,
-        id: user.id
+        id: user.id,
+        createdAt: user.createdAt
       }));
 
       return knex('users').count('id');
@@ -313,7 +314,7 @@ exports.getUserData = {
   },
   handler: function(request, reply) {
     const userId = request.params.userId;
-    knex.first('name', 'assigneeId').from('users').where('id', userId).bind({})
+    knex.first('name', 'assigneeId', 'createdAt').from('users').where('id', userId).bind({})
     .then(function(user) {
       if (!user) {
         throw new Error('User not found.');
@@ -345,6 +346,7 @@ exports.getUserData = {
 
       return reply({
         name: this.user.name,
+        createdAt: this.user.createdAt,
         sessions: this.sessions,
         assignee: this.employee,
         likes: likeMean
