@@ -17,13 +17,17 @@ exports.employeeAuthentication = {
     }
   },
   pre: [
-    {method: verifyCredentials, assign: 'user'}
+    {method: verifyCredentials, assign: 'employee'}
   ],
   handler: function(request, reply) {
     // If password was incorrect, error is issued from the pre method verifyCredentials
-    const token = createToken(request.pre.user.id, request.pre.user.name, 'employee');
-    reply({...token,
-      employeeId: request.pre.user.id});
+    const token = createToken(request.pre.employee.id, request.pre.employee.name, 'employee', {
+      locale: request.pre.employee.locale
+    });
+    reply({
+      ...token,
+      employeeId: request.pre.employee.id
+    });
   }
 };
 
@@ -33,9 +37,18 @@ exports.employeeRenewAuthentication = {
     scope: 'employee'
   },
   handler: function(request, reply) {
-    const token = createToken(request.auth.credentials.id, request.auth.credentials.name, 'employee');
-    reply({...token,
-      employeeId: request.auth.credentials.id});
+    // Create a new token based on the old one
+    const token = createToken(
+      request.auth.credentials.id,
+      request.auth.credentials.name,
+      'employee',
+      request.auth.credentials.data
+    );
+
+    reply({
+      ...token,
+      employeeId: request.auth.credentials.id
+    });
   }
 };
 
@@ -44,7 +57,8 @@ exports.employeeRegistration = {
     payload: {
       name: Joi.string().required(),
       password: Joi.string().min(6).required(),
-      email: Joi.string().required()
+      email: Joi.string().required(),
+      locale: Joi.string().required()
     }
   },
   pre: [
@@ -54,6 +68,8 @@ exports.employeeRegistration = {
     const name = request.payload['name'];
     const email = request.payload['email'];
     const password = request.payload['password'];
+    const locale = request.payload['locale'];
+
     let hashedPassword = '';
     let verified = false;
 
@@ -74,13 +90,22 @@ exports.employeeRegistration = {
         name: name,
         email: email,
         password: hashedPassword,
-        verified: verified
+        verified: verified,
+        locale: locale
       }).returning('id');
     })
     .then(function(id) {
       if (verified) {
-        const token = createToken(id, name, 'employee');
-        return reply({...token, employeeId: id});
+        const token = createToken(
+          id,
+          name,
+          'employee',
+          { locale }
+        );
+
+        return reply({
+          ...token, employeeId: id
+        });
       } else {
         return reply({
           message: 'User registration successful, but user needs verification. Please have another employee verify user via Preferences, then proceed with logging in!'
@@ -166,14 +191,20 @@ exports.userRegistration = {
     }
   },
   handler: function(request, reply) {
-    console.log(request.payload);
     const name = request.payload['name'];
     knex('users').insert({
       name: name
     })
     .returning('id')
     .then(function(id) {
-      const token = createToken(id, name, 'user');
+      const token = createToken(
+        id,
+        name,
+        'user',
+        null,
+        true
+      );
+
       // Reply with token
       return reply(token);
     })

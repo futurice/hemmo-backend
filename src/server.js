@@ -26,17 +26,18 @@ server.register(require('hapi-auth-jwt2'), (err) => {
   server.auth.strategy('jwt', 'jwt', {
     key: config.auth.secret,
     validateFunc: (decoded, request, callback) => {
-      knex.first('name').from('employees').where('id', parseInt(decoded.id)).bind({})
-        .then(user => {
-          if (!user) {
-            console.log('User ID matching jwt not found in DB!');
-            console.log('jwt: ' + JSON.stringify(decoded));
-            console.log('Query returned: ' + JSON.stringify(user));
-            return callback(new Error('User ID not valid!', false));
-          }
+      // Invalidate old JWTs with missing fields
+      let invalidToken = false;
 
-          callback(null, true);
-        });
+      invalidToken |= !decoded.id;
+      invalidToken |= !decoded.name;
+      invalidToken |= !decoded.scope;
+
+      if (invalidToken) {
+        callback(new Error('JWT is missing some fields and not valid! Please log out and in again.'), false);
+      } else {
+        callback(null, true);
+      }
     },
     verifyOptions: { algorithms: ['HS256'] }
   });
@@ -45,6 +46,7 @@ server.register(require('hapi-auth-jwt2'), (err) => {
   server.register(require('inert'), (err) => {
     Hoek.assert(!err, err);
 
+    // Register routes
     server.route(routes);
   });
 });
@@ -74,5 +76,3 @@ server.register({
     console.log('Server running at:', server.info.uri);
   });
 });
-
-

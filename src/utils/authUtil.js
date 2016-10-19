@@ -41,73 +41,78 @@ export function hashPassword(password) {
 
 let jwtExpirationHours = 5;
 // Crate a json web token for user id and name
-export function createToken(id, name, scope) {
+export function createToken(id, name, scope, data, neverExpires) {
+  const expiration = neverExpires ? null : `${jwtExpirationHours}h`;
+  const expirationMs = neverExpires ? null : jwtExpirationHours * 60 * 60 * 1000;
+
   // Sign the JWT
   return {
-    token: jwt.sign({id: id, name: name, scope: scope}, secret, {algorithm: 'HS256', expiresIn: jwtExpirationHours + 'h'}),
-    expiresIn: jwtExpirationHours * 60 * 60 * 1000 // in milliseconds
+    token: jwt.sign({id, name, scope, data}, secret, {algorithm: 'HS256', expiresIn: expiration}),
+    expiresIn: expirationMs
   };
 }
 
 // Verify authentication request credentials
 export function verifyCredentials(req, res) {
-  const password = req.payload.password;
-  const email = req.payload.email;
+  const {email, password} = req.payload;
 
-  return knex.select('id', 'password', 'verified', 'name').from('employees').where('email', email)
-  .then(function(rows) {
-    if (!rows.length) {
+  return knex.first(
+    'id',
+    'password',
+    'verified',
+    'name',
+    'locale'
+  )
+  .from('employees').where('email', email)
+  .then(function(employee) {
+    if (!employee) {
       return res(Boom.badRequest('Incorrect email or password!'));
     }
 
-    const user = rows[0];
-    bcrypt.compare(password, user.password, (err, isValid) => {
+    bcrypt.compare(password, employee.password, (err, isValid) => {
       if (isValid) {
-        console.log(user.verified);
-        if (user.verified) {
-          res(user);
+        if (employee.verified) {
+          res(employee);
         } else {
-          res(Boom.badRequest('User account is not verified. Have another employee verify your account through Preferences!'));
+          res(Boom.badRequest('Employee account is not verified. Have another employee verify your account through Preferences!'));
         }
       }
       else {
         res(Boom.badRequest('Incorrect email or password!'));
       }
     });
+  })
+  .catch(function(e) {
+    console.log(e);
+    res(Boom.badRequest('Unknown error verifying employee'));
   });
 }
 
-// Get EMPLOYEE data from jwt
-// DO NOT USE THIS TO GET MOBILE USER DATA!
+// Get employee data from JWT.
+//
+// NOTE: this does NOT validate the JWT, it is assumed to be valid at this
+// point! The hapi-auth-jwt2 library must take care of that before passing
+// the token on to here.
 export function bindEmployeeData(req, res) {
   try {
     const bearerToken = req.headers.authorization.slice(7);
-    const decoded = jwt.verify(bearerToken, secret, {
-      ignoreExpiration: false
-    });
+    const decoded = jwt.decode(bearerToken);
+
     const employeeId = decoded.id;
     const name = decoded.name;
 
-    knex.first('id', 'name', 'email').from('employees').where({id: employeeId, name: name})
-    .then(function(employee) {
-      if (!employee) {
-        res(Boom.unauthorized('Invalid token'));
-      } else {
-        res(employee);
-      }
-    })
-    .catch(function(err) {
-      console.log(err);
-      res(Boom.badRequest(err));
-    });
+    res(decoded);
   } catch (e) {
     console.log(e);
     res(Boom.badRequest(e));
   }
 }
 
-// Get USER data from jwt
-// Note that checking for expiration is ignored as we want to use the same token foreveeeer
+// Get user data from JWT.
+//
+// NOTE: this does NOT validate the JWT, it is assumed to be valid at this
+// point! The hapi-auth-jwt2 library must take care of that before passing
+// the token on to here.
 export function bindUserData(req, res) {
   try {
     const bearerToken = req.headers.authorization.slice(7);
