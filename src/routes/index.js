@@ -22,6 +22,7 @@ import {
   deleteUser,
   deleteEmployee,
   updateSessionData,
+  updateLocale,
   getAttachment,
   getEmployeeData,
   getUserData,
@@ -146,6 +147,12 @@ routes.push({
   method: 'DELETE',
   path: '/sessions/{sessionId}',
   config: deleteSession
+});
+
+routes.push({
+  method: 'POST',
+  path: '/locale',
+  config: updateLocale
 });
 
 routes.push({

@@ -24,10 +24,7 @@ exports.employeeAuthentication = {
     const token = createToken(request.pre.employee.id, request.pre.employee.name, 'employee', {
       locale: request.pre.employee.locale
     });
-    reply({
-      ...token,
-      employeeId: request.pre.employee.id
-    });
+    reply({ token });
   }
 };
 
@@ -45,10 +42,7 @@ exports.employeeRenewAuthentication = {
       request.auth.credentials.data
     );
 
-    reply({
-      ...token,
-      employeeId: request.auth.credentials.id
-    });
+    reply({ token });
   }
 };
 
@@ -58,7 +52,7 @@ exports.employeeRegistration = {
       name: Joi.string().required(),
       password: Joi.string().min(6).required(),
       email: Joi.string().required(),
-      locale: Joi.string().required()
+      locale: Joi.string().optional()
     }
   },
   pre: [
@@ -68,7 +62,7 @@ exports.employeeRegistration = {
     const name = request.payload['name'];
     const email = request.payload['email'];
     const password = request.payload['password'];
-    const locale = request.payload['locale'];
+    const locale = request.payload['locale'] || 'en';
 
     let hashedPassword = '';
     let verified = false;
@@ -103,9 +97,7 @@ exports.employeeRegistration = {
           { locale }
         );
 
-        return reply({
-          ...token, employeeId: id
-        });
+        return reply({ token });
       } else {
         return reply({
           message: 'User registration successful, but user needs verification. Please have another employee verify user via Preferences, then proceed with logging in!'
@@ -206,7 +198,7 @@ exports.userRegistration = {
       );
 
       // Reply with token
-      return reply(token);
+      return reply({ token });
     })
     .catch(function(err) {
       return reply(Boom.badRequest(err));

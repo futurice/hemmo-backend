@@ -129,6 +129,32 @@ exports.updateSessionData = {
   }
 };
 
+exports.updateLocale = {
+  auth: {
+    strategy: 'jwt',
+    scope: 'employee'
+  },
+  validate: {
+    params: {
+      locale: Joi.string().required()
+    }
+  },
+  handler: function(request, reply) {
+    const { locale } = request.params;
+
+    knex
+    .first('employees')
+    .where('id', request.auth.credentials.id)
+    .update({ locale })
+    .then(function() {
+      return reply({ locale });
+    })
+    .catch(function(err) {
+      return reply(Boom.badRequest('Failed to update locale'));
+    });
+  }
+}
+
 exports.updateUserData = {
   auth: {
     strategy: 'jwt',

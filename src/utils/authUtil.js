@@ -46,10 +46,7 @@ export function createToken(id, name, scope, data, neverExpires) {
   const expirationMs = neverExpires ? null : jwtExpirationHours * 60 * 60 * 1000;
 
   // Sign the JWT
-  return {
-    token: jwt.sign({id, name, scope, data}, secret, {algorithm: 'HS256', expiresIn: expiration}),
-    expiresIn: expirationMs
-  };
+  return jwt.sign({id, name, scope, data}, secret, {algorithm: 'HS256', expiresIn: expiration});
 }
 
 // Verify authentication request credentials
