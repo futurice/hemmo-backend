@@ -42,11 +42,18 @@ export function hashPassword(password) {
 let jwtExpirationHours = 5;
 // Crate a json web token for user id and name
 export function createToken(id, name, scope, data, neverExpires) {
-  const expiration = neverExpires ? null : `${jwtExpirationHours}h`;
-  const expirationMs = neverExpires ? null : jwtExpirationHours * 60 * 60 * 1000;
+  const expiration = neverExpires ? '100y' : `${jwtExpirationHours}h`;
 
   // Sign the JWT
-  return jwt.sign({id, name, scope, data}, secret, {algorithm: 'HS256', expiresIn: expiration});
+  return jwt.sign({
+    id,
+    name,
+    scope,
+    data
+  }, secret, {
+    algorithm: 'HS256',
+    expiresIn: expiration
+  });
 }
 
 // Verify authentication request credentials
