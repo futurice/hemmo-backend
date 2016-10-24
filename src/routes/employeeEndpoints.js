@@ -135,18 +135,18 @@ exports.updateLocale = {
     scope: 'employee'
   },
   validate: {
-    params: {
+    query: {
       locale: Joi.string().required()
     }
   },
   handler: function(request, reply) {
-    const { locale } = request.params;
+    const { locale } = request.query;
+    const { id } = request.auth.credentials;
 
-    knex
-    .first('employees')
-    .where('id', request.auth.credentials.id)
+    knex('employees')
+    .where('id', id)
     .update({ locale })
-    .then(function() {
+    .then(function(result) {
       return reply({ locale });
     })
     .catch(function(err) {
