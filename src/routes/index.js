@@ -1,48 +1,33 @@
 /*eslint-disable object-curly-spacing*/
 
 import {
-  employeeAuthentication,
-  employeeRenewAuthentication,
-  employeeRegistration,
-  employeeChangePassword,
-  employeeVerification,
-  userRegistration
-} from './authEndpoints';
-
-import {
   attachmentUpload,
   updateContent,
-  newContent,
-  newSession
+  newContent
 } from './userEndpoints';
 
 import {
-  getIndex,
-  deleteSession,
-  deleteUser,
-  deleteEmployee,
-  updateSessionData,
   updateLocale,
-  getAttachment,
-  getEmployeeData,
-  getUserData,
-  getSessionData,
-  getAllUsers,
-  getAllEmployees,
-  getSessionsData,
-  updateUserData
+  getAttachment
 } from './employeeEndpoints';
 
 import employeeEndpoints from './employees';
+import sessionEndpoints from './sessions';
+import userEndpoints from './users';
 
 let routes = [];
 
+// TODO: there are better ways with hapi's API?
 routes = routes.concat(employeeEndpoints);
+routes = routes.concat(sessionEndpoints);
+routes = routes.concat(userEndpoints);
 
 /*
 -------------------------------------------------------
   Mobile user endpoints for the Hemmo mobile app.
 */
+
+// TODO: Refactor rest of these
 
 routes.push({
   method: 'POST',
@@ -62,30 +47,12 @@ routes.push({
   config: attachmentUpload
 });
 
-routes.push({
-  method: 'POST',
-  path: '/register',
-  config: userRegistration
-});
-
 /*
 ---------------------------------------------------------
   External api endpoints
   These require 'employee' scope in JWT (except registration
   and authentication of course)
 */
-routes.push({
-  method: 'GET',
-  path: '/',
-  config: getIndex
-});
-
-
-routes.push({
-  method: 'GET',
-  path: '/users',
-  config: getAllUsers
-});
 
 routes.push({
   method: 'GET',
@@ -97,24 +64,6 @@ routes.push({
   method: 'POST',
   path: '/locale',
   config: updateLocale
-});
-
-routes.push({
-  method: 'GET',
-  path: '/users/{userId}',
-  config: getUserData
-});
-
-routes.push({
-  method: 'DELETE',
-  path: '/users/{userId}',
-  config: deleteUser
-});
-
-routes.push({
-  method: 'PUT',
-  path: '/users/{userId}',
-  config: updateUserData
 });
 
 export default routes;
