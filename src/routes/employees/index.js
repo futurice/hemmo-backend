@@ -226,7 +226,7 @@ const list = {
   }
 };
 
-const getEmployee = {
+const get = {
   validate: {
     params: {
       employeeId: Joi.string().required()
@@ -289,6 +289,6 @@ export default [
   }, {
     method: 'GET',
     path: '/employees/{employeeId}',
-    config: getEmployee
+    config: get
   }
 ];

@@ -32,31 +32,6 @@ const getUserContent = function(userId, sessionId, contentId) {
   });
 }
 
-exports.newSession = {
-  pre: [
-    {method: bindUserData, assign: 'user'}
-  ],
-  handler: function(request, reply) {
-    const sessionId = uuid.v4();
-    const assigneeId = request.pre.user.assigneeId;
-
-    knex('sessions').insert({
-      userId: request.pre.user.id,
-      createdAt: knex.fn.now(),
-      sessionId: sessionId,
-      assigneeId: assigneeId
-    })
-    .then(function() {
-      return reply({
-        sessionId: sessionId
-      });
-    })
-    .catch(function(err) {
-      return reply(Boom.badRequest('Could not create session'));
-    });
-  }
-};
-
 exports.newContent = {
   validate: {
     headers: Joi.object({

@@ -44,13 +44,6 @@ routes = routes.concat(employeeEndpoints);
   Mobile user endpoints for the Hemmo mobile app.
 */
 
-
-routes.push({
-  method: 'POST',
-  path: '/session',
-  config: newSession
-});
-
 routes.push({
   method: 'POST',
   path: '/content',
@@ -101,27 +94,9 @@ routes.push({
 });
 
 routes.push({
-  method: 'GET',
-  path: '/sessions',
-  config: getSessionsData
-});
-
-routes.push({
-  method: 'DELETE',
-  path: '/sessions/{sessionId}',
-  config: deleteSession
-});
-
-routes.push({
   method: 'POST',
   path: '/locale',
   config: updateLocale
-});
-
-routes.push({
-  method: 'PUT',
-  path: '/sessions/{sessionId}',
-  config: updateSessionData
 });
 
 routes.push({
@@ -140,12 +115,6 @@ routes.push({
   method: 'PUT',
   path: '/users/{userId}',
   config: updateUserData
-});
-
-routes.push({
-  method: 'GET',
-  path: '/sessions/{sessionId}',
-  config: getSessionData
 });
 
 export default routes;
