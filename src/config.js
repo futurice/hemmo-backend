@@ -1,6 +1,6 @@
 const env = process.env;
 
-if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+if (!env.NODE_ENV || env.NODE_ENV === 'development') {
   require('dotenv').config({silent: true});
 }
 
@@ -11,14 +11,14 @@ const requiredEnvironmentVariables = [
   'SECRET',
 ];
 
-requiredEnvironmentVariables.forEach(key => {
-  if (!env[key]) {
-    if (process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
+if (env.NODE_ENV && (env.NODE_ENV !== 'development' && env.NODE_ENV !== 'test')) {
+  requiredEnvironmentVariables.forEach(key => {
+    if (!env[key]) {
       console.log(`Warning: Environment variable ${key} not set.`);
       throw new Error('Quitting.');
     }
-  }
-});
+  });
+}
 
 module.exports = Object.freeze({
   server: {

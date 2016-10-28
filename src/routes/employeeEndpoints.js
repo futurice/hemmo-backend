@@ -1,4 +1,3 @@
-import knex from '../db';
 import Boom from 'boom';
 import Joi from 'joi';
 import _ from 'lodash';
@@ -8,6 +7,8 @@ import Promise from 'bluebird';
 import {
   bindEmployeeData
 } from '../utils/authUtil';
+
+const knex = require('db');
 
 const uploadPath = path.join(process.env.HOME, 'hemmo', 'uploads');
 
@@ -270,7 +271,7 @@ exports.getAllEmployees = {
     scope: 'employee'
   },
   handler: function(request, reply) {
-    knex.select('name', 'id', 'verified').from('employees').bind({})
+    knex('employees').select('name', 'id', 'verified').bind({})
     .then(function(employees) {
       const empl = _.map(employees, function(employee) {
         return {

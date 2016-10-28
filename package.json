@@ -17,15 +17,16 @@
     "Postgres",
     "Auth0",
     "Knex",
-    "Mocha"
+    "Jest"
   ],
   "scripts": {
     "start": "npm run build && node dist/server.js",
     "postinstall": "npm run build",
-    "build": "mkdir -p dist && babel src --out-dir dist --source-maps",
+    "build": "mkdir -p dist && babel bin src --out-dir dist --source-maps",
     "watch": "NODE_ENV=development nodemon --exec babel-node src/server.js",
     "watch-tests": "./test/runner.sh test:reload",
-    "test": "./test/runner.sh test:all",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "test:all": "lab --transform node_modules/lab-babel --sourcemaps --ignore '__core-js_shared__'",
     "test:reload": "npm run test:all && chokidar '**/*.js' -c 'npm run test:all'",
     "db:init": "knex migrate:latest",
@@ -52,6 +53,7 @@
     "good-squeeze": "^4.0.0",
     "hapi": "^13.4.1",
     "hapi-auth-jwt2": "^7.0.1",
+    "hoek": "^4.1.0",
     "inert": "^4.0.1",
     "joi": "^8.4.2",
     "knex": "^0.11.5",
@@ -62,11 +64,17 @@
     "prompt": "^1.0.0"
   },
   "devDependencies": {
+    "babel-jest": "^16.0.0",
+    "babel-plugin-module-resolver": "^2.2.0",
+    "babel-polyfill": "^6.16.0",
     "chokidar-cli": "^1.2.0",
     "code": "^3.0.1",
     "eslint": "^2.11.1",
+    "fixture-factory": "^1.5.1",
+    "jest": "^16.0.2",
     "lab": "^10.8.2",
     "lab-babel": "^1.1.1",
+    "mock-knex": "^0.3.7",
     "nodemon": "^1.9.2"
   }
 }
