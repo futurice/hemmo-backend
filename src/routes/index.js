@@ -33,7 +33,11 @@ import {
   updateUserData
 } from './employeeEndpoints';
 
-const routes = [];
+import employeeEndpoints from './employees';
+
+let routes = [];
+
+routes = routes.concat(employeeEndpoints);
 
 /*
 -------------------------------------------------------
@@ -83,47 +87,6 @@ routes.push({
   config: getIndex
 });
 
-routes.push({
-  method: 'POST',
-  path: '/employees/register',
-  config: employeeRegistration
-});
-
-routes.push({
-  method: 'DELETE',
-  path: '/employees/{employeeId}',
-  config: deleteEmployee
-});
-
-routes.push({
-  method: 'POST',
-  path: '/employees/password',
-  config: employeeChangePassword
-});
-
-routes.push({
-  method: 'POST',
-  path: '/employees/verify/{employeeId}',
-  config: employeeVerification
-});
-
-routes.push({
-  method: 'POST',
-  path: '/employees/authenticate',
-  config: employeeAuthentication
-});
-
-routes.push({
-  method: 'POST',
-  path: '/employees/renewauth',
-  config: employeeRenewAuthentication
-});
-
-routes.push({
-  method: 'GET',
-  path: '/employees',
-  config: getAllEmployees
-});
 
 routes.push({
   method: 'GET',
@@ -159,12 +122,6 @@ routes.push({
   method: 'PUT',
   path: '/sessions/{sessionId}',
   config: updateSessionData
-});
-
-routes.push({
-  method: 'GET',
-  path: '/employees/{employeeId}',
-  config: getEmployeeData
 });
 
 routes.push({

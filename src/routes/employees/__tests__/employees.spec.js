@@ -1,11 +1,11 @@
 'use strict';
 
-jest.mock('../src/db');
+jest.mock('../../../db');
 
 import _ from 'lodash';
-import initServer from '../src/server';
-import fixtures, { renameKeys } from '../testutil/fixtures';
-import request from '../testutil/request';
+import initServer from '../../../server';
+import fixtures, { renameKeys } from '../../../../testutil/fixtures';
+import request from '../../../../testutil/request';
 
 import mockKnex from 'mock-knex';
 const tracker = mockKnex.getTracker();

@@ -25,33 +25,6 @@ exports.getIndex = {
   }
 };
 
-exports.deleteEmployee = {
-  auth: {
-    strategy: 'jwt',
-    scope: 'employee'
-  },
-  pre: [
-    {method: bindEmployeeData, assign: 'user'}
-  ],
-  validate: {
-    params: {
-      employeeId: Joi.number().required()
-    }
-  },
-  handler: function(request, reply) {
-    const employeeId = request.params.employeeId;
-
-    knex('employees').where('id', employeeId).del()
-    .then(results => {
-      return reply({ deletedEmployees: results });
-    })
-    .catch(err => {
-      console.log(err);
-      return reply(Boom.badRequest('Failed to delete employee'));
-    });
-  }
-};
-
 exports.deleteSession = {
   auth: {
     strategy: 'jwt',
@@ -234,62 +207,7 @@ exports.getAttachment = {
   }
 };
 
-exports.getEmployeeData = {
-  validate: {
-    params: {
-      employeeId: Joi.string().required()
-    }
-  },
-  auth: {
-    strategy: 'jwt',
-    scope: 'employee'
-  },
-  handler: function(request, reply) {
-    const employeeId = request.params.employeeId;
-    knex.first('name', 'email', 'verified').from('employees').where('id', employeeId).bind({})
-    .then(function(employee) {
-      if (!employee) {
-        throw new Error('Employee not found.');
-      }
-      this.employee = employee;
-      return reply({
-        name: this.employee.name,
-        email: this.employee.email,
-        verified: this.employee.verified
-      });
-    })
-    .catch(function(err) {
-      console.log(err);
-      return reply(Boom.badRequest('Failed to get employee data'));
-    });
-  }
-};
 
-exports.getAllEmployees = {
-  auth: {
-    strategy: 'jwt',
-    scope: 'employee'
-  },
-  handler: function(request, reply) {
-    knex('employees').select('name', 'id', 'verified').bind({})
-    .then(function(employees) {
-      const empl = _.map(employees, function(employee) {
-        return {
-          name: employee.name,
-          employeeId: employee.id,
-          verified: employee.verified
-        };
-      });
-      return reply({
-        employees: empl
-      });
-    })
-    .catch(function(err) {
-      return reply(Boom.badImplementation('Failed to find employees', err));
-    });
-  }
-
-}
 
 exports.getAllUsers = {
   auth: {
