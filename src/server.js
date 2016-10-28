@@ -13,7 +13,7 @@ export default () => {
     // Create a hapi.js server with host and port from config
     const server = new Hapi.Server({
       // Only affects verbosity of logging to console
-      debug: process.env.NODE_ENV === 'test' ? false: true
+      debug: process.env.NODE_ENV === 'test' ? false : { request: ['error'] }
     });
 
     server.connection({

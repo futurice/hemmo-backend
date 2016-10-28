@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-import initServer from './server';
+import initServer from 'server';
 
 initServer()
   .then(server => {
@@ -11,5 +11,5 @@ initServer()
       });
   })
   .catch(err => {
-      console.err('Error while starting server:', err);
+      console.error('Error while starting server:', err);
   });
