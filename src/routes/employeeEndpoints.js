@@ -285,8 +285,7 @@ exports.getAllEmployees = {
       });
     })
     .catch(function(err) {
-      console.log(err);
-      return reply(Boom.badRequest('Failed to find employees'));
+      return reply(Boom.badImplementation('Failed to find employees', err));
     });
   }
 

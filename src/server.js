@@ -11,7 +11,10 @@ process.env.TZ = 'UTC';
 export default () => {
   return new Promise((resolve, reject) => {
     // Create a hapi.js server with host and port from config
-    const server = new Hapi.Server();
+    const server = new Hapi.Server({
+      // Only affects verbosity of logging to console
+      debug: process.env.NODE_ENV === 'test' ? false: true
+    });
 
     server.connection({
       host: config.server.host,
@@ -53,29 +56,34 @@ export default () => {
       });
     });
 
-    // Register logging plugin
-    server.register({
-      register: require('good'),
-      options: {
-        includes: {
-          request: ['headers', 'payload'],
-          response: ['payload']
-        },
-        reporters: {
-          myConsoleReporter: [{
-              module: 'good-squeeze',
-              name: 'Squeeze',
-              args: [{ log: '*', request: '*', response: '*' }]
-          }, {
-              module: 'good-console'
-          }, 'stdout']
-        }
-      }
-    }, (err) => {
-      Hoek.assert(!err, err);
-
-      // Responsibility of starting the server is left to callee
+    if (process.env.NODE_ENV === 'test') {
+      // Don't do any extra logging to console in test environments
       resolve(server);
-    });
+    } else {
+      // Register logging plugin only in non-test environments
+      server.register({
+        register: require('good'),
+        options: {
+          includes: {
+            request: ['headers', 'payload'],
+            response: ['payload']
+          },
+          reporters: {
+            myConsoleReporter: [{
+                module: 'good-squeeze',
+                name: 'Squeeze',
+                args: [{ log: '*', request: '*', response: '*' }]
+            }, {
+                module: 'good-console'
+            }, 'stdout']
+          }
+        }
+      }, (err) => {
+        Hoek.assert(!err, err);
+
+        // Responsibility of starting the server is left to callee
+        resolve(server);
+      });
+    }
   });
 }

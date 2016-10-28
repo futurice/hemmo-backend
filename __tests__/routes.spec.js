@@ -1,7 +1,6 @@
 'use strict';
 
 jest.mock('../src/db');
-//jest.mock('knex');
 
 import _ from 'lodash';
 import initServer from '../src/server';
@@ -12,6 +11,14 @@ import mockKnex from 'mock-knex';
 const tracker = mockKnex.getTracker();
 
 describe('GET /employees', () => {
+  let options = {
+    method: 'GET',
+    url: '/employees',
+    credentials: {
+      scope: 'employee'
+    }
+  };
+
   let server = null;
 
   beforeAll(() => {
@@ -25,10 +32,24 @@ describe('GET /employees', () => {
     tracker.uninstall();
   });
 
+  it('should require authentication', () => {
+    return request(server, _.omit(options, 'credentials')).then((res) => {
+      expect(res.statusCode).toBe(401);
+
+      expect(res.result).toEqual({
+        statusCode: 401,
+        error: 'Unauthorized',
+        message: 'Missing authentication'
+      });
+      expect(res.result.employees).toBeUndefined();
+    });
+  });
+
   it('should return list of all employees', () => {
     const employees = fixtures.generate('employee', 3);
 
     // Rename id => employeeId, pick employeeId, name, verified
+    // No other keys allowed in result!
     const resEmployees = employees.map((employee) => (
       _.pick(renameKeys(employee, { id: 'employeeId' }), [
         'employeeId',
@@ -42,14 +63,24 @@ describe('GET /employees', () => {
       query.response(employees);
     });
 
-    return request(server, {
-      method: 'GET',
-      url: '/employees',
-      credentials: {
-        scope: 'employee'
-      }
-    }).then((res) => {
+    return request(server, options).then((res) => {
+      expect(res.statusCode).toEqual(200);
       expect(res.result.employees).toEqual(resEmployees);
+    });
+  });
+
+  it('should fail gracefully on db errors', () => {
+    tracker.install();
+    tracker.on('query', (query) => {
+      query.reject('Dummy error');
+    });
+
+    return request(server, options).then((res) => {
+      expect(res.result).toEqual({
+        statusCode: 500,
+        error: 'Internal Server Error',
+        message: 'An internal server error occurred'
+      });
     });
   });
 });
