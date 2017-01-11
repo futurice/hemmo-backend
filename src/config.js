@@ -25,8 +25,11 @@ module.exports = Object.freeze({
     host: env.HOST || '0.0.0.0',
     port: env.PORT || 3001
   },
-  db: {
-    url: env.DATABASE_URL || 'postgres://postgres@127.0.0.1/'
+  db: env.DATABASE_URL || {
+    host : '127.0.0.1',
+    user : 'postgres', /* whoami */
+    password : '',
+    database : 'hemmo'
   },
   auth: {
     secret: env.SECRET || 'really_secret_key'

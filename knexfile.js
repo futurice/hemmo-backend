@@ -9,7 +9,7 @@ let config = require('./src/config');
 // custom config for any environment, if you prefer.
 const ALL_ENVIRONMENTS = Object.freeze({
   client: 'postgresql',
-  connection: config.db.url,
+  connection: config.db,
   // Use a single connection to execute migrations.
   pool: {
     min: 1,

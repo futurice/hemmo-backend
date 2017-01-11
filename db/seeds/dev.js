@@ -9,6 +9,7 @@ let contentPath = path.join(process.env.HOME, 'hemmo', 'uploads', attachmentFile
 let fs = require('fs-sync');
 let uuid = require('node-uuid');
 let prompt = require('prompt');
+let config = require('../../src/config');
 
 mkdirp.sync(path.dirname(contentPath));
 fs.copy(path.join(__dirname, attachmentFilename), contentPath);
@@ -39,7 +40,7 @@ let getUuid = function() {
 exports.seed = function(knex) {
   return new Promise((resolve, reject) => {
     console.log(`\nAbout to insert development seed data into database.\n`);
-    console.log(`WARNING: this will effectively WIPE the database at ${process.env.DATABASE_URL}!`);
+    console.log(`WARNING: this will effectively WIPE the database at ${JSON.stringify(config.db)}!`);
     console.log(`Are you REALLY sure you want to continue? (type 'yes' to confirm)`);
 
     prompt.start();

@@ -5,5 +5,5 @@ import knex from 'knex';
 
 module.exports = knex({
   client: 'pg',
-  connection: config.db.url
+  connection: config.db
 });
