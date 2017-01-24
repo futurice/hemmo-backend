@@ -72,6 +72,7 @@
     "lab": "^10.8.2",
     "lab-babel": "^1.1.1",
     "mock-knex": "^0.3.7",
+    "node-schedule": "^1.2.0",
     "nodemon": "^1.9.2"
   }
 }
