@@ -2,15 +2,15 @@ import _ from 'lodash';
 import moment from 'moment';
 import sessions from './sessions';
 
-const fallbackEmail = 'admin@example.org';
+const fallbackEmail = 'admin@example.org'; // TODO where to send these really?
 
 function notifyUnreviewed() {
   sessions.list({ 'sessions.reviewed': false }, 2000, 0, 'desc')
     .then((unReviewedSessions) => {
       const grouped = _.groupBy(unReviewedSessions,
                                 el => el.assigneeEmail ? el.assigneeEmail : fallbackEmail);
-      const emails = Object.keys(grouped).map(email => {
-        const mySessions = grouped[email];
+      const emails = Object.keys(grouped).map(emailAddress => {
+        const mySessions = grouped[emailAddress];
 
         const subjectUnreadCount = mySessions.length > 1
               ? `${mySessions.length} unreviewed sessions`
@@ -27,10 +27,11 @@ function notifyUnreviewed() {
 
         return {
           subject: `You have ${subjectUnreadCount}`,
+          to: emailAddress,
           body
         };
       });
-      console.log('results', emails);
+      console.log('results', emails); // TODO actually send emails (using emailjs?)
     });
 }
 
