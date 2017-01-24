@@ -39,7 +39,7 @@ export function hashPassword(password) {
   return promise;
 }
 
-let jwtExpirationHours = 5;
+const jwtExpirationHours = 5;
 // Crate a json web token for user id and name
 export function createToken(id, name, scope, data, neverExpires) {
   const expiration = neverExpires ? '100y' : `${jwtExpirationHours}h`;
@@ -101,9 +101,6 @@ export function bindEmployeeData(req, res) {
   try {
     const bearerToken = req.headers.authorization.slice(7);
     const decoded = jwt.decode(bearerToken);
-
-    const employeeId = decoded.id;
-    const name = decoded.name;
 
     res(decoded);
   } catch (e) {

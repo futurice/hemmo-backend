@@ -30,7 +30,7 @@ Admin frontend app: https://github.com/futurice/hemmo-admin/
     ```
     psql
     CREATE USER postgres SUPERUSER;
-    CREATE DATABASE postgres WITH OWNER postgres;
+    CREATE DATABASE hemmo WITH OWNER postgres;
 
     <ctrl-d>
     ```

@@ -4,8 +4,6 @@ import config from './config';
 
 import Hoek from 'hoek';
 
-import knex from './db';
-
 process.env.TZ = 'UTC';
 
 export default () => {
@@ -70,11 +68,11 @@ export default () => {
           },
           reporters: {
             myConsoleReporter: [{
-                module: 'good-squeeze',
-                name: 'Squeeze',
-                args: [{ log: '*', request: '*', response: '*' }]
+              module: 'good-squeeze',
+              name: 'Squeeze',
+              args: [{ log: '*', request: '*', response: '*' }]
             }, {
-                module: 'good-console'
+              module: 'good-console'
             }, 'stdout']
           }
         }
@@ -86,4 +84,4 @@ export default () => {
       });
     }
   });
-}
+};

@@ -30,7 +30,7 @@ exports.updateLocale = {
       return reply(Boom.badRequest('Failed to update locale'));
     });
   }
-}
+};
 
 exports.getAttachment = {
   validate: {
@@ -43,13 +43,9 @@ exports.getAttachment = {
     scope: 'employee'
   },
   handler: function(request, reply) {
-    let attachmentPath = path.join(uploadPath, request.params.attachmentId);
-
     return reply.file(path.join(uploadPath, request.params.attachmentId), {
       confine: uploadPath
     });
-
-    reply.file(attachmentPath);
   },
   state: {
     parse: true

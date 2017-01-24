@@ -2,6 +2,7 @@ import knex from 'db';
 import Boom from 'boom';
 import Joi from 'joi';
 import _ from 'lodash';
+import uuid from 'node-uuid';
 
 import { bindEmployeeData, bindUserData } from '../../utils/authUtil';
 
@@ -46,8 +47,8 @@ const update = {
   },
   handler: function(request, reply) {
     const sessionId = request.params.sessionId;
-    const reviewed = _.get(request, 'payload.reviewed', undefined);
-    const assigneeId = _.get(request, 'payload.assigneeId', undefined);
+    const reviewed = _.get(request, 'payload.reviewed', null);
+    const assigneeId = _.get(request, 'payload.assigneeId', null);
 
     const updateDict = {
       reviewed: reviewed,
@@ -67,13 +68,13 @@ const update = {
     .returning('*')
     .update(strippedDict)
     .then((results) => {
-      let session = results[0];
+      const session = results[0];
 
       return reply({
         id: session.sessionId,
         reviewed: session.reviewed,
         assigneeId: session.assigneeId
-      })
+      });
     })
     .catch(function(err) {
       console.log(err);
@@ -119,7 +120,7 @@ const list = {
     const reviewed = _.get(request, 'query.reviewed', null);
     const userId = _.get(request, 'query.user', null);
     const limit = _.get(request, 'query.limit', 20);
-    const order = _.get(request, 'query.order', 'desc')
+    const order = _.get(request, 'query.order', 'desc');
     const offset = _.get(request, 'query.offset', 0);
 
     const filters = {
@@ -131,7 +132,7 @@ const list = {
     // Strip null values
     const strippedFilters = _.omitBy(filters, _.isNil);
 
-    var sessionsArray = [];
+    const sessionsArray = [];
     knex.select(
         'sessionId',
         'userId',
@@ -157,7 +158,7 @@ const list = {
           id: session.userId
         },
         reviewed: session.reviewed,
-        createdAt: session.createdAt,
+        createdAt: session.createdAt
       };
 
       sessionsArray.push(sessDict);
@@ -191,7 +192,8 @@ const get = {
   handler: function(request, reply) {
     knex('sessions').where({
       sessionId: request.params.sessionId
-    }).first('*').bind({})
+    }).first('*')
+      .bind({}) // http://bluebirdjs.com/docs/api/promise.bind.html
     .then(function(session) {
       if (!session) {
         throw new Error('Session not found');
@@ -223,7 +225,7 @@ const get = {
         user: {
           name: user.name,
           id: user.id,
-          assigneeId: user.assigneeId,
+          assigneeId: user.assigneeId
         },
         reviewed: this.session.reviewed,
         createdAt: this.session.createdAt,

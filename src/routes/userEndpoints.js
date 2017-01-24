@@ -24,13 +24,16 @@ const getUserSession = function(userId, sessionId) {
 };
 
 const getUserContent = function(userId, sessionId, contentId) {
-  return knex.first('contentId', 'content.sessionId').from('content').innerJoin('sessions', 'content.sessionId', 'sessions.sessionId')
-  .where({
-    'sessions.userId': userId,
-    'sessions.sessionId': sessionId,
-    'content.contentId': contentId
-  });
-}
+  return knex
+    .first('contentId', 'content.sessionId')
+    .from('content')
+    .innerJoin('sessions', 'content.sessionId', 'sessions.sessionId')
+    .where({
+      'sessions.userId': userId,
+      'sessions.sessionId': sessionId,
+      'content.contentId': contentId
+    });
+};
 
 exports.newContent = {
   validate: {
@@ -52,7 +55,8 @@ exports.newContent = {
   ],
   handler: function(request, reply) {
     // Check that the user actually owns the session requested
-    getUserSession(request.pre.user.id, request.headers.session).bind({})
+    getUserSession(request.pre.user.id, request.headers.session)
+      .bind({}) // http://bluebirdjs.com/docs/api/promise.bind.html
     .then(function(session) {
       if (!session) {
         throw new Error('Session not found');
@@ -65,13 +69,13 @@ exports.newContent = {
         questions: JSON.stringify(request.payload.questions),
         contentId: this.contentId,
         sessionId: this.sessionId,
-        createdAt: knex.fn.now(),
+        createdAt: knex.fn.now()
       });
     })
     .then(function() {
       // Mark unreviewed
       return knex('sessions').where('sessionId', this.sessionId)
-      .update({reviewed: false})
+        .update({reviewed: false});
     })
     .then(function() {
       return reply({
@@ -224,7 +228,7 @@ exports.attachmentUpload = {
     .then(function() {
       // Mark unreviewed
       return knex('sessions').where('sessionId', this.sessionId)
-      .update({reviewed: false})
+        .update({reviewed: false});
     })
     .then(function() {
       return reply({

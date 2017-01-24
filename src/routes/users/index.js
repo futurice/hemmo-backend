@@ -3,7 +3,7 @@ import Boom from 'boom';
 import Joi from 'joi';
 import _ from 'lodash';
 
-import { bindEmployeeData, bindUserData } from '../../utils/authUtil';
+import { bindEmployeeData, createToken } from '../../utils/authUtil';
 
 const create = {
   auth: {
@@ -58,7 +58,7 @@ const update = {
         assignee: {
           id: assigneeId
         }
-      })
+      });
     })
     .catch(function(err) {
       return reply(Boom.badRequest('Failed to update user'));
@@ -166,7 +166,7 @@ const get = {
       return knex('content').select('questions').innerJoin('sessions', 'content.sessionId', 'sessions.sessionId').where('sessions.userId', userId);
     })
     .then(function(contents) {
-      let questions = _.flatten(contents.map(content => content.questions));
+      const questions = _.flatten(contents.map(content => content.questions));
 
       const questionsWithLikes = _.filter(questions, question => !_.isNil(question.like));
       const likes = questionsWithLikes.map(question => question.like);

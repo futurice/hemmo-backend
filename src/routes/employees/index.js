@@ -175,7 +175,7 @@ const del = {
 const verify = {
   validate: {
     params: {
-      employeeId: Joi.number().required(),
+      employeeId: Joi.number().required()
     }
   },
   auth: {
