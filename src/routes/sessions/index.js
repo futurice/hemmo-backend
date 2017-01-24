@@ -5,6 +5,7 @@ import _ from 'lodash';
 import uuid from 'node-uuid';
 
 import { bindEmployeeData, bindUserData } from '../../utils/authUtil';
+import sessions from '../../services/sessions';
 
 const create = {
   // TODO: auth strategy? don't do authentication in bindUserData!
@@ -132,50 +133,17 @@ const list = {
     // Strip null values
     const strippedFilters = _.omitBy(filters, _.isNil);
 
-    const sessionsArray = [];
-    knex.select(
-        'sessionId',
-        'userId',
-        'reviewed',
-        'sessions.createdAt',
-        'employees.name as assignee',
-        'users.name as userName',
-        'sessions.updatedAt')
-
-        .from('sessions').where(strippedFilters)
-        .leftJoin('employees', 'sessions.assigneeId', 'employees.id')
-        .leftJoin('users', 'sessions.userId', 'users.id')
-        .orderBy('sessions.createdAt', order)
-        .limit(limit)
-        .offset(offset)
-        .bind({})
-    .each(function(session) {
-      const sessDict = {
-        id: session.sessionId,
-        assignee: session.assignee,
-        user: {
-          name: session.userName,
-          id: session.userId
-        },
-        reviewed: session.reviewed,
-        createdAt: session.createdAt
-      };
-
-      sessionsArray.push(sessDict);
-    })
-    .then(function() {
-      return knex('sessions').where(strippedFilters).count('sessionId');
-    })
-    .then(function(results) {
-      return reply({
-        count: parseInt(results[0].count),
-        sessions: sessionsArray
+    sessions.list(strippedFilters, limit, offset, order)
+      .then(function(sessionsArray) {
+        return reply({
+          count: sessionsArray.length,
+          sessions: sessionsArray
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        return reply(Boom.badRequest('Failed to get session data'));
       });
-    })
-    .catch((err) => {
-      console.log(err);
-      return reply(Boom.badRequest('Failed to get session data'));
-    });
   }
 };
 
