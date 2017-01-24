@@ -8,6 +8,7 @@ const list = (strippedFilters, limit, offset, order) => {
     'reviewed',
     'sessions.createdAt',
     'employees.name as assignee',
+    'employees.email as assigneeEmail',
     'users.name as userName',
     'sessions.updatedAt')
 
@@ -22,6 +23,7 @@ const list = (strippedFilters, limit, offset, order) => {
       const sessDict = {
         id: session.sessionId,
         assignee: session.assignee,
+        assigneeEmail: session.assigneeEmail,
         user: {
           name: session.userName,
           id: session.userId
