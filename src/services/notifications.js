@@ -19,7 +19,7 @@ function notifyUnreviewed() {
               : 'one unreviewed session';
 
         const makeLine = (session) => {
-          const url = `http://base/sessions/${session.id}`;
+          const url = `http://base/sessions/${session.id}`; // TODO: what is the base url?
           const user = session.user.name;
           const date = moment(session.createdAt).format('YYYY-MM-DD');
           return `${user} (${date}) - ${url}`;
