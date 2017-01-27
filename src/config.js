@@ -12,7 +12,8 @@ const requiredEnvironmentVariables = [
   'SMTP_HOST',
   'SMTP_USER',
   'SMTP_PASSWORD',
-  'SMTP_TLS'
+  'SMTP_TLS',
+  'FALLBACK_EMAIL'
 ];
 
 if (env.NODE_ENV && (env.NODE_ENV !== 'development' && env.NODE_ENV !== 'test')) {
@@ -43,5 +44,6 @@ module.exports = Object.freeze({
     user: env.SMTP_USER,
     password: env.SMTP_PASSWORD,
     tls: env.SMTP_TLS === 'true'
-  }
+  },
+  fallbackEmail: env.FALLBACK_EMAIL
 });

@@ -2,9 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import email from 'emailjs';
 import sessions from './sessions';
-import { smtp } from '../config';
-
-const fallbackEmail = 'admin@example.org'; // TODO where to send these really?
+import { smtp, fallbackEmail } from '../config';
 
 function notifyUnreviewed() {
   const server = email.server.connect(smtp);
