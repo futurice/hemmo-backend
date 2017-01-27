@@ -57,7 +57,7 @@ const update = {
     };
 
     // Strip undefined values
-    const strippedDict = _.omitBy(updateDict, _.isUndefined);
+    const strippedDict = _.omitBy(updateDict, _.isNil);
 
     const empty = _.isEmpty(strippedDict);
     if (empty) {
