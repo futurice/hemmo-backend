@@ -44,6 +44,7 @@
     "bluebird": "^3.4.1",
     "boom": "^3.2.2",
     "dotenv": "^2.0.0",
+    "emailjs": "^1.0.8",
     "fs-sync": "^1.0.2",
     "good": "^7.0.1",
     "good-console": "^6.1.2",
@@ -72,6 +73,7 @@
     "lab": "^10.8.2",
     "lab-babel": "^1.1.1",
     "mock-knex": "^0.3.7",
+    "node-schedule": "^1.2.0",
     "nodemon": "^1.9.2"
   }
 }

@@ -2,6 +2,7 @@
 'use strict';
 
 import initServer from 'server';
+import initSchedules from 'schedules';
 
 initServer()
   .then(server => {
