@@ -22,7 +22,7 @@
   "scripts": {
     "start": "npm run build && node dist/hemmo-backend.js",
     "postinstall": "npm run build",
-    "build": "mkdir -p dist && babel bin src --out-dir dist --source-maps",
+    "build": "mkdir -p dist && babel src --out-dir dist --source-maps",
     "watch": "NODE_ENV=development nodemon --exec babel-node bin/hemmo-backend.js",
     "test": "jest",
     "test:watch": "jest --watch",
