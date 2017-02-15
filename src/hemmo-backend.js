@@ -4,6 +4,7 @@
 import initServer from 'server';
 import initSchedules from 'schedules';
 
+initSchedules();
 initServer()
   .then(server => {
       // Start the server
