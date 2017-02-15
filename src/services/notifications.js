@@ -5,7 +5,7 @@ import knex from 'db';
 import sessions from './sessions';
 import { smtp } from '../config';
 
-function notifyUnreviewed() {
+export function notifyUnreviewed() {
   const server = email.server.connect(smtp);
 
   allEmails().then((allUsersEmailsList) => {
@@ -66,7 +66,3 @@ function notifyUnreviewed() {
 function allEmails() {
   return knex.select('email').from('employees').distinct().pluck('email');
 }
-
-export default {
-  notifyUnreviewed
-};
