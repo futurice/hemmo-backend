@@ -46,7 +46,7 @@ export function notifyUnreviewed() {
         });
         emails.forEach((emailDetails) => {
           server.send({
-            from: `${smtp.username}@${smtp.host}`,
+            from: smtp.user, // This assumes smtp.user is a full email address
             text: emailDetails.body,
             to: emailDetails.to,
             subject: emailDetails.subject
