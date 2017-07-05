@@ -1,11 +1,9 @@
 {
   "presets": [
-    "es2015"
+    "es2015-node",
+    "stage-0",
   ],
-  "plugins": [
-    "transform-object-rest-spread",
-    ["module-resolver", {
-      "root": ["./src"]
-    }]
+  "ignore": [
+    "**/__mocks__/*.js"
   ]
 }
