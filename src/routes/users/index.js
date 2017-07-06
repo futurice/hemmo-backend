@@ -101,11 +101,35 @@ const list = {
   handler: function(request, reply) {
     const offset = _.get(request, 'query.offset', 0);
     const limit = _.get(request, 'query.limit', 20);
+    const order = _.get(request, 'query.order', 'desc');
+    const orderBy = _.get(request, 'query.orderBy', 'name');
+    const name = _.get(request, 'query.name', '');
+    const showAll = JSON.parse(_.get(request, 'query.showAll', false));
+    const filterByParams = queryBuilder => {
+      const hasName = name.length > 0;
+
+      // Show all assigned to employee without name filtering
+      if (!hasName && !showAll) {
+        queryBuilder.where('users.assigneeId', request.auth.credentials.id);
+      }
+      // Show all assigned to employee with name filtering
+      else if (hasName && !showAll) {
+        queryBuilder
+          .whereRaw("LOWER(users.name) LIKE '%' || LOWER(?) || '%' ", name)
+          .andWhere('users.assigneeId', request.auth.credentials.id);
+      }
+      // Show all with name filtering
+      else if (hasName && showAll) {
+        queryBuilder.whereRaw("LOWER(users.name) LIKE '%' || LOWER(?) || '%' ", name);
+      }
+    };
+
     knex('users').select('users.name', 'employees.name as assignee', 'users.id', 'assigneeId', 'users.createdAt')
       .leftJoin('employees', 'users.assigneeId', 'employees.id')
+      .modify(filterByParams)
       .limit(limit)
       .offset(offset)
-      .orderBy('users.createdAt', 'desc')
+      .orderBy(`users.${orderBy}`, order)
       .bind({})
     .then(function(users) {
       this.users = _.map(users, user => ({
@@ -115,7 +139,9 @@ const list = {
         createdAt: user.createdAt
       }));
 
-      return knex('users').count('id');
+      return knex('users')
+        .modify(filterByParams)
+        .count('id');
     })
     .then(function(results) {
       return reply({

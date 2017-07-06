@@ -5,7 +5,6 @@ import _ from 'lodash';
 import uuid from 'node-uuid';
 
 import { bindEmployeeData, bindUserData } from '../../utils/authUtil';
-import sessions from '../../services/sessions';
 
 const create = {
   // TODO: auth strategy? don't do authentication in bindUserData!
@@ -123,27 +122,71 @@ const list = {
     const limit = _.get(request, 'query.limit', 20);
     const order = _.get(request, 'query.order', 'desc');
     const offset = _.get(request, 'query.offset', 0);
+    const name = _.get(request, 'query.name', '');
+    const showAll = JSON.parse(_.get(request, 'query.showAll', false));
+    const assignedTo = (userId) ? assigneeId : ((!showAll) ? request.auth.credentials.id : null);
+    const filterByName = queryBuilder => {
+      if (name.length > 0) {
+        queryBuilder.whereRaw("LOWER(users.name) LIKE '%' || LOWER(?) || '%' ", name);
+      }
+    };
 
     const filters = {
       'sessions.reviewed': reviewed,
       'sessions.userId': userId,
-      'sessions.assigneeId': assigneeId
+      'sessions.assigneeId': assignedTo
     };
 
     // Strip null values
     const strippedFilters = _.omitBy(filters, _.isNil);
 
-    sessions.list(strippedFilters, limit, offset, order)
-      .then(function(sessionsArray) {
-        return reply({
-          count: sessionsArray.length,
-          sessions: sessionsArray
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        return reply(Boom.badRequest('Failed to get session data'));
+    knex.select(
+        'sessionId',
+        'userId',
+        'reviewed',
+        'sessions.createdAt',
+        'employees.name as assignee',
+        'employees.email as assigneeEmail',
+        'users.name as userName',
+        'sessions.updatedAt')
+      .from('sessions').where(strippedFilters)
+      .leftJoin('employees', 'sessions.assigneeId', 'employees.id')
+      .leftJoin('users', 'sessions.userId', 'users.id')
+      .modify(filterByName)
+      .orderBy('sessions.createdAt', order)
+      .limit(limit)
+      .offset(offset)
+      .bind({})
+    .then(function(feedback) {
+      this.feedback = _.map(feedback, feed => ({
+        id: feed.sessionId,
+        assignee: feed.assignee,
+        assigneeEmail: feed.assigneeEmail,
+        user: {
+          name: feed.userName,
+          id: feed.userId
+        },
+        reviewed: feed.reviewed,
+        createdAt: feed.createdAt
+      }));
+
+      return knex('sessions')
+        .where(strippedFilters)
+        .leftJoin('employees', 'sessions.assigneeId', 'employees.id')
+        .leftJoin('users', 'sessions.userId', 'users.id')
+        .modify(filterByName)
+        .count('sessionId');
+    })
+    .then(function(results) {
+      return reply({
+        count: parseInt(results[0].count),
+        sessions: this.feedback
       });
+    })
+    .catch(function(err) {
+      console.log(err);
+      return reply(Boom.badRequest('Failed to find feedback'));
+    });
   }
 };
 
