@@ -26,7 +26,7 @@ if (env.NODE_ENV && (env.NODE_ENV !== 'development' && env.NODE_ENV !== 'test'))
 export default {
   server: {
     host: env.HOST || '0.0.0.0',
-    port: env.PORT || 3888,
+    port: env.PORT || 3001,
   },
   db: {
     debug: false, // Toggle db debugging

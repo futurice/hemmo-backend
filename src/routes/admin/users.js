@@ -1,7 +1,7 @@
 import { merge } from 'lodash';
 import Joi from 'joi';
 
-import { getAuthWithScope, doAuth } from '../utils/auth';
+import { getAuthWithScope, doAuth } from '../../utils/auth';
 import {
   getUsers,
   getUser,
@@ -9,7 +9,7 @@ import {
   delUser,
   authUser,
   registerUser,
-} from '../handlers/users';
+} from '../../handlers/users';
 
 const validateUserId = {
   validate: {
@@ -32,7 +32,7 @@ const users = [
   // Get a list of all users
   {
     method: 'GET',
-    path: '/users',
+    path: '/admin/users',
     config: getAuthWithScope('user'),
     handler: getUsers,
   },
@@ -40,7 +40,7 @@ const users = [
   // Get info about a specific user
   {
     method: 'GET',
-    path: '/users/{userId}',
+    path: '/admin/users/{userId}',
     config: merge({}, validateUserId, getAuthWithScope('user')),
     handler: getUser,
   },
@@ -48,7 +48,7 @@ const users = [
   // Update user profile
   {
     method: 'PATCH',
-    path: '/users/{userId}',
+    path: '/admin/users/{userId}',
     config: merge({}, validateUserId, getAuthWithScope('user')),
     handler: updateUser,
   },
@@ -56,7 +56,7 @@ const users = [
   // Delete a user, admin only
   {
     method: 'DELETE',
-    path: '/users/{userId}',
+    path: '/admin/users/{userId}',
     config: merge({}, validateUserId, getAuthWithScope('admin')),
     handler: delUser,
   },
@@ -64,7 +64,7 @@ const users = [
   // Authenticate as user
   {
     method: 'POST',
-    path: '/users/authenticate',
+    path: '/admin/users/authenticate',
     config: doAuth,
     handler: authUser,
   },
@@ -72,7 +72,7 @@ const users = [
   // Register new user
   {
     method: 'POST',
-    path: '/users',
+    path: '/admin/users',
     config: validateRegistrationFields,
     handler: registerUser,
   },

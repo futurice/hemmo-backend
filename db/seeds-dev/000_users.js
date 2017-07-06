@@ -5,6 +5,7 @@ const faker = require('faker');
 const dummyPassword = '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC';
 
 const userFields = {
+  id: faker.random.uuid,
   scope: 'user',
   email: faker.internet.email,
   name: faker.name.findName,

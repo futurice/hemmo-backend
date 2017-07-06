@@ -5,7 +5,7 @@ exports.seed = async (knex) => {
   const users = await knex('users').select('id');
 
   const childrenFields = {
-    uuid: faker.random.uuid,
+    id: faker.random.uuid,
     name: faker.name.findName,
     birthYear: () => Math.floor(2013 - (Math.random() * 10)),
     assigneeId: () => {

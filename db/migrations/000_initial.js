@@ -6,7 +6,7 @@ exports.up = knex => (
      * Contains info on all users in the system
      */
     .createTableIfNotExists('users', (table) => {
-      table.increments('id').primary();
+      table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.enum('scope', ['admin', 'user']).notNullable();
       table.text('email').notNullable().unique();
@@ -27,7 +27,7 @@ exports.up = knex => (
      * You may want to store other user secrets in this table as well.
      */
     .createTableIfNotExists('secrets', (table) => {
-      table.integer('ownerId').references('id').inTable('users').onDelete('CASCADE')
+      table.text('ownerId').references('id').inTable('users').onDelete('CASCADE')
         .primary();
       table.text('password').notNullable();
     })
@@ -40,11 +40,11 @@ exports.up = knex => (
      * the generated JWT at registration time.
      */
     .createTableIfNotExists('children', (table) => {
-      table.text('uuid').primary();
+      table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.text('name').notNullable();
-      table.integer('birthYear').notNullable();
-      table.integer('assigneeId').references('id').inTable('users').onDelete('SET NULL');
+      table.integer('birthYear');
+      table.text('assigneeId').references('id').inTable('users').onDelete('SET NULL');
     })
 
     /**
@@ -53,13 +53,13 @@ exports.up = knex => (
      * Each time a child uses the Hemmo app, a new feedback session is created
      */
     .createTableIfNotExists('feedback', (table) => {
-      table.text('uuid').primary();
+      table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.timestamp('updatedAt').defaultTo(knex.fn.now());
-      table.text('childId').references('uuid').inTable('children').notNullable()
+      table.text('childId').references('id').inTable('children').notNullable()
         .onDelete('CASCADE');
       table.boolean('reviewed').notNullable().defaultTo(false);
-      table.integer('assigneeId').references('id').inTable('users').onDelete('SET NULL');
+      table.text('assigneeId').references('id').inTable('users').onDelete('SET NULL');
     })
 
     /**
@@ -69,10 +69,10 @@ exports.up = knex => (
      * a new content row is added with feedbackId set to the feedback session id.
      */
     .createTableIfNotExists('content', (table) => {
-      table.text('uuid').primary();
+      table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.timestamp('updatedAt').defaultTo(knex.fn.now());
-      table.text('feedbackId').references('uuid').inTable('feedback').notNullable()
+      table.text('feedbackId').references('id').inTable('feedback').notNullable()
         .onDelete('CASCADE');
       table.json('moods');
       table.json('questions');

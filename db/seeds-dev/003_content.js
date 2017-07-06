@@ -112,13 +112,13 @@ const questions = [{
 }];
 
 exports.seed = async (knex) => {
-  const feedback = await knex('feedback').select('uuid');
+  const feedback = await knex('feedback').select('id');
 
   const contentFields = {
-    uuid: faker.random.uuid,
+    id: faker.random.uuid,
     feedbackId: () => (
       // randomly select child
-      feedback[Math.floor(Math.random() * feedback.length)].uuid
+      feedback[Math.floor(Math.random() * feedback.length)].id
     ),
     moods: () => (
       JSON.stringify(sampleSize(moods, Math.floor(Math.random() * moods.length)))
