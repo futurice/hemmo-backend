@@ -3,14 +3,16 @@
 This document describes the Hemmo Admin API. Employees of Pelary can
 register to the service as employees and see data from the mobile frontend.
 
+# Employee users
+
 ## Authentication
 
-* Register new employee
+* Register new employee user
 
 Registers the employee with provided credentials.
 
 ```
-POST /employees/register
+POST /admin/users
 
 payload
 {
@@ -22,19 +24,15 @@ payload
 returns
 {
   token: (String),
-  employeeId: (Integer)
 }
 ```
-Use the returned token in `Authorization` header in format
-`Bearer $token`
 
+* Authenticate employee user
 
-* Renew JSON Web token
-
-Authenticate employee with credentials.
+Authenticate the employee with provided credentials.
 
 ```
-POST /employees/authenticate
+POST /admin/users/authenticate
 
 payload
 {
@@ -45,61 +43,50 @@ payload
 returns
 {
   token: (String),
-  employeeId: (Integer)
 }
 ```
 
-Use the returned token in `Authorization` header in format
-`Bearer $token`
+All below requests require authentication.
+Use the returned token in the `Authorization` header like so: `Bearer $TOKEN`
 
-* Change employee's password
+## Employee user management
 
-Required to use `Authorization` header.
+* Modify employee user profile
 
 ```
-POST /employees/password
+PATCH /admin/users/{userId}
 
 payload
 {
-  employeeId: (Number),
+  email: (String),
+  name: (String),
   password: (String)
 }
 
 ```
 
-* Update mobile user's session
+* Get a list of employees
 
-Update some session that was created by the mobile user. Update consists of optional values of `employeeId` that will be assigned to that session and boolean `review` that indicates the session review status.
+Fetches all employees. Supports filtering
 
-```
-PUT /sessions/{sessionId}
-
-payload
-{
-  reviewed: (Boolean, optional),
-  assigneeId: (Integer, optional)
+query parameters {
+  assignedChildName: (String) Child name,
+  email: (String) Employee e-mail,
+  order: asc/desc,
+  limit: (Integer),
+  offset: (Integer),
 }
 
-returns {
-  reviewed: (Boolean, optional),
-  assigneeId: (Integer, optional)
-}
 ```
-
-
-* Get data about employees
-
-Fetches all employees.
-
-```
-GET /employees
+GET /admin/users
 
 returns {
   employees: [
     {
+      email: (String),
       name: (String),
-      employeeId (Integer),
-      verified: (Boolean), tells if employee is verified
+      id (Integer),
+      verified: (Boolean),
     },
     ...
   ]
@@ -111,58 +98,65 @@ returns {
 Get more detailed data about one employee.
 
 ```
-GET /employees/{employeeId}
+GET /admin/users/{userId}
 
 returns
 {
   name: (String), employee name,
   email: (String), employee email,
+  id (Integer),
   verified: (Boolean), tells if employee is verified
 }
 ```
 
-* Verify employee
+* Verify employee user
 
-Mark a new employee as verified
+Mark a new employee as verified (ie. allow newly registered employee user to log-in)
 
 ```
-PUT /employees/verify/{employeeId}
+PUT /admin/users/verify/{userId}
 
 returns
 {
-  employeeId: (Integer)
+  id: (Integer)
 }
 ```
 
-* Get all users
+## Child user management
 
-Fetches data about all mobile client users.
+* Get list of children
+
+Fetches data about all children. Supports filtering.
 
 ```
-GET /users
+GET /admin/children
 
-Query parameters:
-limit, offset
+query parameters {
+  childName: (String) Child name,
+  assigneeName: (String) Assignee name,
+  order: asc/desc,
+  limit: (Integer),
+  offset: (Integer),
+}
 
 returns
 {
-  users :
-    [
-      {
-        name: (String),
-        userId: (Integer),
-        assigneeId: (Integer)
-      }
-    ]
+  users : [
+    {
+      name: (String),
+      id: (Integer),
+      assigneeId: (Integer)
+    }
+  ]
 }
 ```
 
-* Get detailed user data
+* Get child data
 
-Fetches data about one user, including sessions.
+Fetches detailed child data, including feedback sessions.
 
 ```
-GET /users/{userId}
+GET /admin/children/{childId}
 
 returns
 {
@@ -174,17 +168,15 @@ returns
   sessions: [
     startedAt: (Timestamp),
     reviewed: (Boolean),
-    sessionId: (String)
+    id: (String)
   ]
 }
 ```
 
-* Update user data
-
-Update user's data
+* Update child data
 
 ```
-PUT /users/{userId}
+PATCH /admin/children/{userId}
 
 payload {
   assigneeId: (Integer) id of employee to be assigned to this user
@@ -193,31 +185,31 @@ payload {
 returns 200/40x
 ```
 
-* Get all sessions
+# Feedback sessions
 
-Fetch all sessions. You can specify some filters in the url parameters.
+* Get all feedback sessions
+
+Fetch all feedback sessions. Supports filtering.
 
 ```
-GET /sessions
+GET /admin/feedback
 
-Filters:
-  user=userId,
-  assignee=assigneeId,
-  reviewed=0/1,
-  order=asc/desc,
-  limit=0..,
-  offset=0..
-
-Usage /sessions?user=1&assignee=2&reviewed=0 ... etc
-Any combination is possible
+query parameters {
+  childName: (String) Child name,
+  assigneeName: (String) Assignee name,
+  reviewed: false/true,
+  order: asc/desc,
+  limit: (Integer),
+  offset: (Integer),
+}
 
 returns {
-  sessions:
+  feedback:
   [
     {
-      sessionId: (String),
+      id: (String),
       user: {
-        userId: (Integer),
+        id: (Integer),
         name: (String),
         assigneeId: (String),
       }
@@ -229,39 +221,51 @@ returns {
 }
 ```
 
-* Get session data
+* Get feedback session data
 
-Fetch data about a session
+Fetch data about a feedback session
 
 ```
-GET /sessions/{sessionId}
+GET /admin/feedback/{feedbackId}
 
 returns
 {
-  sessionId: (String),
+  id: (String),
   user: {
-    userId: (Integer),
+    id: (Integer),
     name: (String),
     assigneeId: (Integer),
-
   }
   reviewed: (Boolean),
   startedAt: (Timestamp),
-  content: [
-      {
-        contentId: (String),
-        createdAt: (Timestamp),
-        moods: [(String)],
-        questions: [
-            {
-                question: (String),
-                like: (Number),
-                answer: (String),
-                attachmentId: (String)
-            }
-        ],
-      }
-  ]
+  content: [{
+    id: (String),
+    createdAt: (Timestamp),
+    moods: [(String)],
+    questions: [{
+        question: (String),
+        like: (Number),
+        answer: (String),
+        attachmentId: (String)
+    }]
+  }]
+}
+```
+
+* Modify a feedback session's status.
+
+```
+PATCH /admin/feedback/{sessionId}
+
+payload
+{
+  reviewed: (Boolean, optional),
+  assigneeId: (Integer, optional)
+}
+
+returns {
+  reviewed: (Boolean, optional),
+  assigneeId: (Integer, optional)
 }
 ```
 
@@ -269,7 +273,7 @@ returns
 
 Fetches attachment with contentId
 ```
-GET /attachment/{contentId}
+GET /admin/content/{contentId}/attachments
 
 returns the file or 404
 ```
