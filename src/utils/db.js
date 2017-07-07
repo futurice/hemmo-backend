@@ -27,7 +27,7 @@ export const likeFilter = (filters, anyField = false) => (origQuery) => {
     return q;
   }
 
-  Object.keys(filters).forEach((key, index) => {
+  Object.keys(filters).filter(key => filters[key]).forEach((key, index) => {
     if (!index) {
       // first field with .whereRaw()
       q = q.whereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [key, filters[key]]);

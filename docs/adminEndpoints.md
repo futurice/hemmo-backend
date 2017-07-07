@@ -73,9 +73,10 @@ Fetches all employees. Supports filtering
 GET /admin/employees
 
 query parameters {
-  assignedChildName: (String) Child name,
-  assignedChildId: (String) Child id,
-  include: (String) Can be 'children' to add assigned children to response,
+  assignedChildName: (String) Child name, TODO
+  assignedChildId: (String) Child id, TODO
+  include: (String) Can be 'children' to add assigned children to response, TODO
+  name: (String) Employee name,
   email: (String) Employee e-mail,
   order: (String) 'asc' or 'desc',
   orderBy: (String), 'name', 'email', 'assignedChildName',

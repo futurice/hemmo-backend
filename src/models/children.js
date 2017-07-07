@@ -1,15 +1,24 @@
 import uuid from 'uuid/v4';
-import knex from '../utils/db';
+import knex, { likeFilter } from '../utils/db';
 
-export const dbGetChildren = () => (
+export const dbGetChildren = filters => (
   knex('children')
-    .select('*')
+    .select(['children.*', 'employees.name as assigneeName'])
+    .where(likeFilter({
+      name: filters.name,
+      assigneeName: filters.assigneeName,
+    }))
+    .limit(filters.limit || 50)
+    .offset(filters.offset)
+    .orderBy(filters.orderBy || 'children.name', filters.order)
+    .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
 );
 
 export const dbGetChild = id => (
   knex('children')
-    .first()
-    .where({ id })
+    .first(['children.*', 'employees.name as assigneeName'])
+    .where({ 'children.id': id })
+    .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
 );
 
 export const dbDelChild = id => (
@@ -24,7 +33,7 @@ export const dbCreateChild = fields => (
       ...fields,
       id: uuid(),
     })
-    .returning(['id', 'name'])
+    .returning(['id', 'assigneeId', 'name'])
     .then(results => results[0])
 );
 
@@ -32,6 +41,6 @@ export const dbUpdateChild = (id, fields) => (
   knex('children')
     .update({ ...fields })
     .where({ id })
-    .returning(['id', 'name'])
+    .returning(['id', 'assigneeId', 'name'])
     .then(results => results[0])
 );

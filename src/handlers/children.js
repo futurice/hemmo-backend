@@ -2,9 +2,18 @@ import Boom from 'boom';
 
 import { createToken } from '../utils/auth';
 import {
+  dbGetChildren,
+  dbGetChild,
+  dbDelChild,
   dbCreateChild,
   dbUpdateChild,
 } from '../models/children';
+
+export const getChildren = (request, reply) => dbGetChildren(request.query).then(reply);
+
+export const getChild = (request, reply) => dbGetChild(request.params.childId).then(reply);
+
+export const delChild = (request, reply) => dbDelChild(request.params.childId).then(reply);
 
 export const registerChild = (request, reply) => (
   dbCreateChild(request.payload)

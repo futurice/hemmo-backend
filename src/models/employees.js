@@ -7,9 +7,10 @@ export const dbGetEmployees = filters => (
   knex('employees')
     .select(employeeListFields)
     .where(likeFilter({
+      name: filters.name,
       email: filters.email,
     }))
-    .limit(filters.limit)
+    .limit(filters.limit || 50)
     .offset(filters.offset)
     .orderBy(filters.orderBy || 'name', filters.order)
 );

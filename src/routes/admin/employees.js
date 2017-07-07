@@ -41,6 +41,7 @@ const filters = {
     assignedChildId: Joi.string(),
     include: Joi.string(),
     email: Joi.string(),
+    name: Joi.string(),
     order: Joi.string().allow('asc', 'desc'),
     orderBy: Joi.string().allow('name', 'email', 'assignedChildName'),
     limit: Joi.number().integer(),
