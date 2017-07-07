@@ -1,3 +1,4 @@
+import uuid from 'uuid/v4';
 import knex from '../utils/db';
 
 const userListFields = ['id', 'email'];
@@ -29,7 +30,10 @@ export const dbDelUser = id => (
 export const dbCreateUser = ({ password, ...fields }) => (
   knex.transaction(async (trx) => {
     const user = await trx('users')
-      .insert(fields)
+      .insert({
+        ...fields,
+        id: uuid(),
+      })
       .returning('*')
       .then(results => results[0]); // return only first result
 
@@ -41,4 +45,11 @@ export const dbCreateUser = ({ password, ...fields }) => (
 
     return user;
   })
+);
+
+export const dbVerifyUser = id => (
+  knex('users')
+    .update({ verified: true })
+    .where({ id })
+    .returning('*')
 );

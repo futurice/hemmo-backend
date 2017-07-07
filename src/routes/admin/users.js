@@ -9,12 +9,13 @@ import {
   delUser,
   authUser,
   registerUser,
+  verifyUser,
 } from '../../handlers/users';
 
 const validateUserId = {
   validate: {
     params: {
-      userId: Joi.number().integer().required(),
+      userId: Joi.string().required(),
     },
   },
 };
@@ -23,6 +24,7 @@ const validateRegistrationFields = {
   validate: {
     payload: {
       email: Joi.string().email().required(),
+      name: Joi.string().required(),
       password: Joi.string().required(),
     },
   },
@@ -51,6 +53,14 @@ const users = [
     path: '/admin/users/{userId}',
     config: merge({}, validateUserId, getAuthWithScope('user')),
     handler: updateUser,
+  },
+
+  // Update user profile
+  {
+    method: 'PUT',
+    path: '/admin/users/verify/{userId}',
+    config: merge({}, validateUserId, getAuthWithScope('user')),
+    handler: verifyUser,
   },
 
   // Delete a user, admin only

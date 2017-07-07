@@ -8,7 +8,11 @@ import {
   dbDelUser,
   dbUpdateUser,
   dbCreateUser,
+  dbVerifyUser,
 } from '../models/users';
+
+const unverifiedErrorMsg = `ERROR: User has not been verified!
+Another employee has to verify you as an admin user through hemmo-admin settings before you can log-in.`;
 
 export const getUsers = (request, reply) => dbGetUsers().then(reply);
 export const getUser = (request, reply) => dbGetUser(request.params.userId).then(reply);
@@ -46,13 +50,24 @@ export const updateUser = async (request, reply) => {
   return dbUpdateUser(request.params.userId, fields).then(reply);
 };
 
-export const authUser = (request, reply) => (
-  reply(createToken({
+export const verifyUser = (request, reply) => (
+  dbVerifyUser(request.params.userId).then(reply)
+);
+
+export const authUser = async (request, reply) => {
+  // Make sure user is verified
+  const user = await dbGetUser(request.pre.user.id);
+
+  if (!user.verified) {
+    return reply(Boom.forbidden(unverifiedErrorMsg));
+  }
+
+  return reply(createToken({
     id: request.pre.user.id,
     email: request.pre.user.email,
     scope: 'user',
-  }))
-);
+  }));
+};
 
 export const registerUser = (request, reply) => (
   hashPassword(request.payload.password)
@@ -61,6 +76,7 @@ export const registerUser = (request, reply) => (
       email: request.payload.email.toLowerCase().trim(),
       password: passwordHash,
       scope: 'user',
+      verified: false,
     })
     .then(reply))
     .catch((err) => {
