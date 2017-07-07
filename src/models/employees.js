@@ -7,6 +7,8 @@ export const dbGetEmployees = filters => (
   knex('employees')
     .select(employeeListFields)
     .where(likeFilter({
+      assignedChildId: filters.assignedChildId,
+      assignedChildName: filters.assignedChildName,
       name: filters.name,
       email: filters.email,
     }))

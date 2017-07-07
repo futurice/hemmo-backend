@@ -7,6 +7,7 @@ export const dbGetChildren = filters => (
     .where(likeFilter({
       name: filters.name,
       assigneeName: filters.assigneeName,
+      assigneeId: filters.assigneeId,
     }))
     .limit(filters.limit || 50)
     .offset(filters.offset)

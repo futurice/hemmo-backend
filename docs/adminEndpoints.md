@@ -218,7 +218,7 @@ returns {
   [
     {
       id: (String),
-      employee: {
+      child: {
         id: (String),
         name: (String),
         assigneeId: (String),
@@ -241,7 +241,7 @@ GET /admin/feedback/{feedbackId}
 returns
 {
   id: (String),
-  employee: {
+  child: {
     id: (String),
     name: (String),
     assigneeId: (String),

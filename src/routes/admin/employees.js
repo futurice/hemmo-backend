@@ -49,7 +49,7 @@ const filters = {
   },
 };
 
-const employees = [
+const routeConfigs = [
   // Get a list of all employees
   {
     method: 'GET',
@@ -104,7 +104,7 @@ const employees = [
     handler: delEmployee,
     config: {
       validate: employeeId,
-      ...getAuthWithScope('employee'),
+      ...getAuthWithScope('admin'),
     },
   },
 
@@ -125,7 +125,7 @@ const employees = [
   },
 ];
 
-export default employees;
+export default routeConfigs;
 
 // Here we register the routes
-export const routes = server => server.route(employees);
+export const routes = server => server.route(routeConfigs);
