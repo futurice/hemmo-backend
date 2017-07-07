@@ -69,17 +69,18 @@ payload
 
 Fetches all employees. Supports filtering
 
+```
+GET /admin/users
+
 query parameters {
   assignedChildName: (String) Child name,
   assignedChildId: (String) Child id,
+  include: (String) Comma separated list of: (children),
   email: (String) Employee e-mail,
   order: asc/desc,
   limit: (Integer),
   offset: (Integer),
 }
-
-```
-GET /admin/users
 
 returns {
   employees: [
@@ -100,6 +101,10 @@ Get more detailed data about one employee.
 
 ```
 GET /admin/users/{userId}
+
+query parameters {
+  include: (String) Comma separated list of: (children),
+}
 
 returns
 {
