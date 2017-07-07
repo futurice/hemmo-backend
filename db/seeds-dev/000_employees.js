@@ -20,6 +20,7 @@ exports.seed = knex => (
 
       email: 'foo@bar.com',
       scope: 'admin',
+      verified: true,
     }, 'id')
     .then(ids => ids[0]) // Return first (only) employee id
 
