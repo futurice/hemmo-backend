@@ -35,6 +35,18 @@ const editProfileFields = {
   },
 };
 
+const filters = {
+  query: {
+    assignedChildName: Joi.string(),
+    assignedChildId: Joi.string(),
+    include: Joi.string(),
+    email: Joi.string(),
+    order: Joi.string().allow('asc', 'desc'),
+    orderBy: Joi.string().allow('name', 'email', 'assignedChildName'),
+    limit: Joi.number().integer(),
+    offset: Joi.number().integer(),
+  },
+};
 
 const employees = [
   // Get a list of all employees
@@ -42,7 +54,10 @@ const employees = [
     method: 'GET',
     path: '/admin/employees',
     handler: getEmployees,
-    config: getAuthWithScope('employee'),
+    config: {
+      validate: filters,
+      ...getAuthWithScope('employee'),
+    },
   },
 
   // Get info about a specific employee

@@ -14,7 +14,7 @@ import {
 const unverifiedErrorMsg = `ERROR: Employee has not been verified!
 Another employee has to verify you as an admin employee through hemmo-admin settings before you can log-in.`;
 
-export const getEmployees = (request, reply) => dbGetEmployees().then(reply);
+export const getEmployees = (request, reply) => dbGetEmployees(request.query).then(reply);
 export const getEmployee = (request, reply) => dbGetEmployee(request.params.employeeId).then(reply);
 
 export const delEmployee = (request, reply) => {

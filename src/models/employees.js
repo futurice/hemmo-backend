@@ -1,15 +1,22 @@
 import uuid from 'uuid/v4';
-import knex from '../utils/db';
+import knex, { likeFilter } from '../utils/db';
 
-const employeeListFields = ['id', 'email'];
+const employeeListFields = ['id', 'name', 'email', 'verified'];
 
-export const dbGetEmployees = () => (
+export const dbGetEmployees = filters => (
   knex('employees')
     .select(employeeListFields)
+    .where(likeFilter({
+      email: filters.email,
+    }))
+    .limit(filters.limit)
+    .offset(filters.offset)
+    .orderBy(filters.orderBy || 'name', filters.order)
 );
 
 export const dbGetEmployee = id => (
   knex('employees')
+    .select('*')
     .first()
     .where({ id })
 );

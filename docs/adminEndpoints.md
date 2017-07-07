@@ -75,9 +75,10 @@ GET /admin/employees
 query parameters {
   assignedChildName: (String) Child name,
   assignedChildId: (String) Child id,
-  include: (String) Comma separated list of: (children),
+  include: (String) Can be 'children' to add assigned children to response,
   email: (String) Employee e-mail,
-  order: asc/desc,
+  order: (String) 'asc' or 'desc',
+  orderBy: (String), 'name', 'email', 'assignedChildName',
   limit: (Integer),
   offset: (Integer),
 }
