@@ -101,7 +101,7 @@ returns {
 * Add/Replace attachment
 
 ```
-PUT /attachment/{contentId} => POST /app/content/{contentId}/attachments
+PUT /attachment/{contentId} => POST /app/content/{contentId}/attachment
 
 Upload a new attachment to content with id contentId.
 File should be uploaded as multipart/form data.

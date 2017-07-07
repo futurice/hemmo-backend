@@ -71,6 +71,7 @@ Fetches all employees. Supports filtering
 
 query parameters {
   assignedChildName: (String) Child name,
+  assignedChildId: (String) Child id,
   email: (String) Employee e-mail,
   order: asc/desc,
   limit: (Integer),
@@ -85,7 +86,7 @@ returns {
     {
       email: (String),
       name: (String),
-      id (Integer),
+      id (String),
       verified: (Boolean),
     },
     ...
@@ -104,7 +105,7 @@ returns
 {
   name: (String), employee name,
   email: (String), employee email,
-  id (Integer),
+  id (String),
   verified: (Boolean), tells if employee is verified
 }
 ```
@@ -118,7 +119,7 @@ PUT /admin/users/verify/{userId}
 
 returns
 {
-  id: (Integer)
+  id: (String)
 }
 ```
 
@@ -144,8 +145,8 @@ returns
   users : [
     {
       name: (String),
-      id: (Integer),
-      assigneeId: (Integer)
+      id: (String),
+      assigneeId: (String)
     }
   ]
 }
@@ -163,9 +164,9 @@ returns
   name: (String),
   assignee: {
     name: (String),
-    id: (Integer)
+    id: (String)
   }
-  sessions: [
+  feedback: [
     startedAt: (Timestamp),
     reviewed: (Boolean),
     id: (String)
@@ -176,10 +177,10 @@ returns
 * Update child data
 
 ```
-PATCH /admin/children/{userId}
+PATCH /admin/children/{childId}
 
 payload {
-  assigneeId: (Integer) id of employee to be assigned to this user
+  assigneeId: (String) id of employee to be assigned to this user
 }
 
 returns 200/40x
@@ -196,7 +197,9 @@ GET /admin/feedback
 
 query parameters {
   childName: (String) Child name,
+  childId: (String) Child id,
   assigneeName: (String) Assignee name,
+  assigneeId: (String) Assignee id,
   reviewed: false/true,
   order: asc/desc,
   limit: (Integer),
@@ -209,7 +212,7 @@ returns {
     {
       id: (String),
       user: {
-        id: (Integer),
+        id: (String),
         name: (String),
         assigneeId: (String),
       }
@@ -232,9 +235,9 @@ returns
 {
   id: (String),
   user: {
-    id: (Integer),
+    id: (String),
     name: (String),
-    assigneeId: (Integer),
+    assigneeId: (String),
   }
   reviewed: (Boolean),
   startedAt: (Timestamp),
@@ -255,17 +258,17 @@ returns
 * Modify a feedback session's status.
 
 ```
-PATCH /admin/feedback/{sessionId}
+PATCH /admin/feedback/{feedbackId}
 
 payload
 {
-  reviewed: (Boolean, optional),
-  assigneeId: (Integer, optional)
+  reviewed: (Boolean) optional,
+  assigneeId: (String) optional,
 }
 
 returns {
-  reviewed: (Boolean, optional),
-  assigneeId: (Integer, optional)
+  reviewed: (Boolean) optional,
+  assigneeId: (String) optional,
 }
 ```
 
@@ -273,7 +276,7 @@ returns {
 
 Fetches attachment with contentId
 ```
-GET /admin/content/{contentId}/attachments
+GET /admin/content/{contentId}/attachment
 
 returns the file or 404
 ```
