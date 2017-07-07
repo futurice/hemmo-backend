@@ -32,8 +32,10 @@ export const updateUser = async (request, reply) => {
 
   const fields = {
     email: request.payload.email,
-    description: request.payload.description,
+    name: request.payload.name,
     image: request.payload.image,
+    locale: request.payload.locale,
+    password: request.payload.password,
   };
 
   // Only admins are allowed to modify user scope
@@ -45,6 +47,11 @@ export const updateUser = async (request, reply) => {
   if (fields.image) {
     const buf = Buffer.from(fields.image, 'base64');
     await resizeImage(buf).then(resized => (fields.image = resized));
+  }
+
+  // Hash password if present
+  if (fields.password) {
+    fields.password = await hashPassword(request.payload.password);
   }
 
   return dbUpdateUser(request.params.userId, fields).then(reply);

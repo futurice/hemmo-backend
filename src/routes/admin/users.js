@@ -1,4 +1,3 @@
-import { merge } from 'lodash';
 import Joi from 'joi';
 
 import { getAuthWithScope, doAuth } from '../../utils/auth';
@@ -12,79 +11,101 @@ import {
   verifyUser,
 } from '../../handlers/users';
 
-const validateUserId = {
-  validate: {
-    params: {
-      userId: Joi.string().required(),
-    },
+const userId = {
+  params: {
+    userId: Joi.string().required(),
   },
 };
 
-const validateRegistrationFields = {
-  validate: {
-    payload: {
-      email: Joi.string().email().required(),
-      name: Joi.string().required(),
-      password: Joi.string().required(),
-    },
+const registrationFields = {
+  payload: {
+    email: Joi.string().email().required(),
+    name: Joi.string().required(),
+    password: Joi.string().required(),
   },
 };
+
+const editProfileFields = {
+  payload: {
+    email: Joi.string().email(),
+    name: Joi.string(),
+    image: Joi.string(),
+    locale: Joi.string(),
+    password: Joi.string(),
+  },
+};
+
 
 const users = [
   // Get a list of all users
   {
     method: 'GET',
     path: '/admin/users',
-    config: getAuthWithScope('user'),
     handler: getUsers,
+    config: getAuthWithScope('user'),
   },
 
   // Get info about a specific user
   {
     method: 'GET',
     path: '/admin/users/{userId}',
-    config: merge({}, validateUserId, getAuthWithScope('user')),
     handler: getUser,
+    config: {
+      validate: userId,
+      ...getAuthWithScope('user'),
+    },
   },
 
   // Update user profile
   {
     method: 'PATCH',
     path: '/admin/users/{userId}',
-    config: merge({}, validateUserId, getAuthWithScope('user')),
     handler: updateUser,
+    config: {
+      validate: {
+        ...userId,
+        ...editProfileFields,
+      },
+      ...getAuthWithScope('user'),
+    },
   },
 
-  // Update user profile
+  // Verify newly registered user
   {
     method: 'PUT',
     path: '/admin/users/verify/{userId}',
-    config: merge({}, validateUserId, getAuthWithScope('user')),
     handler: verifyUser,
+    config: {
+      validate: userId,
+      ...getAuthWithScope('user'),
+    },
   },
 
   // Delete a user, admin only
   {
     method: 'DELETE',
     path: '/admin/users/{userId}',
-    config: merge({}, validateUserId, getAuthWithScope('admin')),
     handler: delUser,
+    config: {
+      validate: userId,
+      ...getAuthWithScope('user'),
+    },
   },
 
   // Authenticate as user
   {
     method: 'POST',
     path: '/admin/users/authenticate',
-    config: doAuth,
     handler: authUser,
+    config: doAuth,
   },
 
   // Register new user
   {
     method: 'POST',
     path: '/admin/users',
-    config: validateRegistrationFields,
     handler: registerUser,
+    config: { validate: registrationFields },
   },
 ];
 
