@@ -1,12 +1,12 @@
 const simpleFixtures = require('simple-fixtures');
 
-const userFields = {
-  scope: 'user',
+const employeeFields = {
+  scope: 'employee',
   email: 'internet.email',
   name: 'name.findName',
 };
 
 exports.seed = knex => (
-  // Generate several test users (no password = login disabled)
-  knex.batchInsert('users', simpleFixtures.generateFixtures(userFields, 10))
+  // Generate several test employees (no password = login disabled)
+  knex.batchInsert('employees', simpleFixtures.generateFixtures(employeeFields, 10))
 );

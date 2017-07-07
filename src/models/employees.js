@@ -1,35 +1,35 @@
 import uuid from 'uuid/v4';
 import knex from '../utils/db';
 
-const userListFields = ['id', 'email'];
+const employeeListFields = ['id', 'email'];
 
-export const dbGetUsers = () => (
-  knex('users')
-    .select(userListFields)
+export const dbGetEmployees = () => (
+  knex('employees')
+    .select(employeeListFields)
 );
 
-export const dbGetUser = id => (
-  knex('users')
+export const dbGetEmployee = id => (
+  knex('employees')
     .first()
     .where({ id })
 );
 
-export const dbUpdateUser = (id, fields) => (
-  knex('users')
+export const dbUpdateEmployee = (id, fields) => (
+  knex('employees')
     .update({ ...fields })
     .where({ id })
     .returning('*')
 );
 
-export const dbDelUser = id => (
-  knex('users')
+export const dbDelEmployee = id => (
+  knex('employees')
     .where({ id })
     .del()
 );
 
-export const dbCreateUser = ({ password, ...fields }) => (
+export const dbCreateEmployee = ({ password, ...fields }) => (
   knex.transaction(async (trx) => {
-    const user = await trx('users')
+    const employee = await trx('employees')
       .insert({
         ...fields,
         id: uuid(),
@@ -39,16 +39,16 @@ export const dbCreateUser = ({ password, ...fields }) => (
 
     await trx('secrets')
       .insert({
-        ownerId: user.id,
+        ownerId: employee.id,
         password,
       });
 
-    return user;
+    return employee;
   })
 );
 
-export const dbVerifyUser = id => (
-  knex('users')
+export const dbVerifyEmployee = id => (
+  knex('employees')
     .update({ verified: true })
     .where({ id })
     .returning('*')

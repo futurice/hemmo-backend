@@ -14,7 +14,7 @@ export default knex(config.db);
  *
  * Sample usage:
  *
- * knex('users')
+ * knex('employees')
  *   .where(likeFilter({
  *     name: 'foo',
  *     email: '@bar.com'

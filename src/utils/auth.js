@@ -20,7 +20,7 @@ export const validateJwt = (decoded, request, callback) => {
 };
 
 // Hapi pre handler which fetches all fields from JWT
-export const bindUserData = (request, reply) => {
+export const bindEmployeeData = (request, reply) => {
   const authHeader = request.headers.authorization;
 
   // strip "Bearer" word from header if present
@@ -30,39 +30,39 @@ export const bindUserData = (request, reply) => {
   reply(decoded);
 };
 
-// Hapi route config which makes sure user has authenticated with `scope`
+// Hapi route config which makes sure employee has authenticated with `scope`
 export const getAuthWithScope = scope => ({
   auth: { strategy: 'jwt', scope: ['admin', scope] },
-  pre: [{ method: bindUserData, assign: 'user' }],
+  pre: [{ method: bindEmployeeData, assign: 'employee' }],
 });
 
-export const comparePasswords = (passwordAttempt, user) => (
+export const comparePasswords = (passwordAttempt, employee) => (
   new Promise((resolve, reject) => (
-    bcrypt.compare(passwordAttempt, user.password, (err, isValid) => {
+    bcrypt.compare(passwordAttempt, employee.password, (err, isValid) => {
       if (!err && isValid) {
-        resolve(user);
+        resolve(employee);
       } else {
-        reject(`Incorrect password attempt by user with email '${user.email}'`);
+        reject(`Incorrect password attempt by employee with email '${employee.email}'`);
       }
     })
   ))
 );
 
-// Hapi 'pre' method which verifies supplied user credentials
+// Hapi 'pre' method which verifies supplied employee credentials
 export const preVerifyCredentials = ({ payload: { email, password: passwordAttempt } }, reply) => (
-  knex('users')
+  knex('employees')
     .first()
     .where({ email: email.toLowerCase().trim() })
-    .leftJoin('secrets', 'users.id', 'secrets.ownerId')
-    .then((user) => {
-      if (!user) {
-        return Promise.reject(`User with email '${email}' not found in database`);
+    .leftJoin('secrets', 'employees.id', 'secrets.ownerId')
+    .then((employee) => {
+      if (!employee) {
+        return Promise.reject(`Employee with email '${email}' not found in database`);
       }
-      if (!user.password) {
-        return Promise.reject(`User with email '${email}' lacks password: logins disabled`);
+      if (!employee.password) {
+        return Promise.reject(`Employee with email '${email}' lacks password: logins disabled`);
       }
 
-      return comparePasswords(passwordAttempt, user);
+      return comparePasswords(passwordAttempt, employee);
     })
     .then(reply)
     .catch(() => {
@@ -71,7 +71,7 @@ export const preVerifyCredentials = ({ payload: { email, password: passwordAttem
     })
 );
 
-// Hapi route config which performs user authentication
+// Hapi route config which performs employee authentication
 export const doAuth = ({
   validate: {
     payload: {
@@ -83,11 +83,11 @@ export const doAuth = ({
     ),
   },
   pre: [
-    { method: preVerifyCredentials, assign: 'user' },
+    { method: preVerifyCredentials, assign: 'employee' },
   ],
 });
 
-// Create a new JWT for user with `email` and `scope`
+// Create a new JWT for employee with `email` and `scope`
 export const createToken = fields => ({
   token: jwt.sign(fields, config.auth.secret, {
     algorithm: config.auth.options.algorithms[0],

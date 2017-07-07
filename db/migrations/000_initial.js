@@ -1,14 +1,14 @@
 exports.up = knex => (
   knex.schema
     /**
-     * Users table
+     * Employees table
      *
-     * Contains info on all users in the system
+     * Contains info on all employees in the system
      */
-    .createTableIfNotExists('users', (table) => {
+    .createTableIfNotExists('employees', (table) => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
-      table.enum('scope', ['admin', 'user']).notNullable();
+      table.enum('scope', ['admin', 'employee']).notNullable();
       table.text('email').notNullable().unique();
       table.text('name').notNullable();
       table.text('locale').notNullable().defaultTo('en');
@@ -16,18 +16,18 @@ exports.up = knex => (
     })
 
     /**
-     * Define a separate table for storing user secrets (such as password hashes).
+     * Define a separate table for storing employee secrets (such as password hashes).
      *
      * The rationale is:
      *   - Have to explicitly join/query password table to access secrets
-     *   - Don't have to filter out secrets in every 'users' table query
+     *   - Don't have to filter out secrets in every 'employees' table query
      *
-     * => Harder to accidentally leak out user secrets
+     * => Harder to accidentally leak out employee secrets
      *
-     * You may want to store other user secrets in this table as well.
+     * You may want to store other employee secrets in this table as well.
      */
     .createTableIfNotExists('secrets', (table) => {
-      table.text('ownerId').references('id').inTable('users').onDelete('CASCADE')
+      table.text('ownerId').references('id').inTable('employees').onDelete('CASCADE')
         .primary();
       table.text('password').notNullable();
     })
@@ -44,7 +44,7 @@ exports.up = knex => (
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.text('name').notNullable();
       table.integer('birthYear');
-      table.text('assigneeId').references('id').inTable('users').onDelete('SET NULL');
+      table.text('assigneeId').references('id').inTable('employees').onDelete('SET NULL');
     })
 
     /**
@@ -59,7 +59,7 @@ exports.up = knex => (
       table.text('childId').references('id').inTable('children').notNullable()
         .onDelete('CASCADE');
       table.boolean('reviewed').notNullable().defaultTo(false);
-      table.text('assigneeId').references('id').inTable('users').onDelete('SET NULL');
+      table.text('assigneeId').references('id').inTable('employees').onDelete('SET NULL');
     })
 
     /**
@@ -81,7 +81,7 @@ exports.up = knex => (
 
 exports.down = knex => (
   knex.schema
-    .dropTableIfExists('users')
+    .dropTableIfExists('employees')
     .dropTableIfExists('secrets')
     .dropTableIfExists('children')
     .dropTableIfExists('feedback')

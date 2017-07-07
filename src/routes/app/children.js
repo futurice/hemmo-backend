@@ -29,7 +29,7 @@ const routeConfigs = [
     handler: registerChild,
     config: {
       validate: registrationFields,
-      ...getAuthWithScope('user'),
+      ...getAuthWithScope('employee'),
     },
   },
 
@@ -40,7 +40,7 @@ const routeConfigs = [
     handler: updateChild,
     config: {
       validate: updateFields,
-      ...getAuthWithScope('user'),
+      ...getAuthWithScope('employee'),
     },
   },
 ];

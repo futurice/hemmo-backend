@@ -38,7 +38,7 @@ prompt.get(schema, (err, result) => {
         console.log(hashErr);
         process.exit(1);
       } else {
-        knex('users').insert({
+        knex('employees').insert({
           email: result.email,
           password: hash,
           scope: 'admin',

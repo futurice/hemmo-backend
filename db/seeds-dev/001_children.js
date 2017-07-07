@@ -2,7 +2,7 @@ const simpleFixtures = require('simple-fixtures');
 const faker = require('faker');
 
 exports.seed = async (knex) => {
-  const users = await knex('users').select('id');
+  const employees = await knex('employees').select('id');
 
   const childrenFields = {
     id: faker.random.uuid,
@@ -14,8 +14,8 @@ exports.seed = async (knex) => {
         return undefined;
       }
 
-      // Otherwise return random user id
-      return users[Math.floor(Math.random() * users.length)].id;
+      // Otherwise return random employee id
+      return employees[Math.floor(Math.random() * employees.length)].id;
     },
   };
 

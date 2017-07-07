@@ -56,11 +56,11 @@ const myRoutes = [
     handler: exampleHandler,
   },
 
-  // Example with path params and user authentication check
+  // Example with path params and employee authentication check
   {
     method: 'GET',
     path: '/example/{myId}',
-    config: getAuthWithScope('user'),
+    config: getAuthWithScope('employee'),
     handler: handlerWithId,
   },
   ...
@@ -127,16 +127,16 @@ const myRoutes = [
   {
     method: 'GET',
     path: '/example',
-    config: getAuthWithScope('user'),
+    config: getAuthWithScope('employee'),
     handler: exampleHandler,
   },
   ...
 ];
 ```
 
-#### Doing both input validation and user authentication
+#### Doing both input validation and employee authentication
 
-Notice how previously we've been doing only **either** input validation **or** user authentication?
+Notice how previously we've been doing only **either** input validation **or** employee authentication?
 
 There's a way to do both, by merging the configs:
 
@@ -152,7 +152,7 @@ const myRoutes = [
   {
     method: 'GET',
     path: '/example',
-    config: merge({}, exampleValidationConfig, getAuthWithScope('user')),
+    config: merge({}, exampleValidationConfig, getAuthWithScope('employee')),
     handler: exampleHandler,
   },
   ...
@@ -162,7 +162,7 @@ const myRoutes = [
 NOTE: Make sure to use an empty object as first argument to `merge({}, ...`, so that you do not
 mutate your other config variables!
 
-NOTE 2: ES6 object spread `config: {...exampleValidationConfig, ...getAuthWithScope('user'), ...}`
+NOTE 2: ES6 object spread `config: {...exampleValidationConfig, ...getAuthWithScope('employee'), ...}`
 would also work in many cases, but as it won't recursively merge objects, you may end up with only
 parts of the input configs.
 
@@ -180,8 +180,8 @@ request.params:
 request.payload:
   POST data payload
 
-request.pre.user:
-  Authenticated user data (if using getAuthWithScope())
+request.pre.employee:
+  Authenticated employee data (if using getAuthWithScope())
 
 request.headers:
   The raw request headers
@@ -219,20 +219,20 @@ Or do some more complex stuff:
 
 ...
 export const complexHandler = (request, reply) => {
-  if (request.pre && request.pre.user) {
+  if (request.pre && request.pre.employee) {
     // Authenticated
-    console.log(request.pre.user);
+    console.log(request.pre.employee);
 
-    const userId = request.pre.user.id;
+    const employeeId = request.pre.employee.id;
 
-    if (userId < 10) {
-      return reply(`<pre>Yay! User ID is below 10</pre>`);
+    if (employeeId < 10) {
+      return reply(`<pre>Yay! Employee ID is below 10</pre>`);
     }
 
-    return reply(`<pre>User ID is ${userId}</pre>`);
+    return reply(`<pre>Employee ID is ${employeeId}</pre>`);
   }
 
-  return reply(`<pre>User ID <b>unauthenticated!</b></pre>`);
+  return reply(`<pre>Employee ID <b>unauthenticated!</b></pre>`);
 };
 ```
 
@@ -254,5 +254,5 @@ export const dbGetItem = (id) => (
 ```
 
 That's it! This will fetch the first item from the table `tableName` with `tableName.id` matching
-`id`. See `src/models/users.js` for more simple DB query examples. Have a look at
+`id`. See `src/models/employees.js` for more simple DB query examples. Have a look at
 [knex.js documentation](http://knexjs.org/) for documentation on more complex DB queries.

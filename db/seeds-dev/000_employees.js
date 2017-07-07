@@ -4,31 +4,31 @@ const faker = require('faker');
 // 'foobar'
 const dummyPassword = '$2a$10$jqtfUwulMw6xqGUA.IsjkuAooNkAjPT3FJ9rRiUoSTsUpNTD8McxC';
 
-const userFields = {
+const employeeFields = {
   id: faker.random.uuid,
-  scope: 'user',
+  scope: 'employee',
   email: faker.internet.email,
   name: faker.name.findName,
   verified: () => Math.random() < 0.5,
 };
 
 exports.seed = knex => (
-  knex('users')
-    // Generate one test admin user
+  knex('employees')
+    // Generate one test admin employee
     .insert({
-      ...simpleFixtures.generateFixture(userFields),
+      ...simpleFixtures.generateFixture(employeeFields),
 
       email: 'foo@bar.com',
       scope: 'admin',
     }, 'id')
-    .then(ids => ids[0]) // Return first (only) user id
+    .then(ids => ids[0]) // Return first (only) employee id
 
-    // Set admin user password to 'foobar'
+    // Set admin employee password to 'foobar'
     .then(ownerId => knex('secrets').insert({
       ownerId,
       password: dummyPassword,
     }))
 
-    // Generate several test users (no password = login disabled)
-    .then(() => knex.batchInsert('users', simpleFixtures.generateFixtures(userFields, 10)))
+    // Generate several test employees (no password = login disabled)
+    .then(() => knex.batchInsert('employees', simpleFixtures.generateFixtures(employeeFields, 10)))
 );

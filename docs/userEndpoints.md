@@ -2,14 +2,14 @@
 
 This is documentation for the mobile-facing API.
 
-Users are required to register before accessing API endpoints. However, after registration, the received token can be used indefinitely and should be stored client side. If the token is lost, re-registration is required.
+Children are required to register before accessing API endpoints. However, after registration, the received token can be used indefinitely and should be stored client side. If the token is lost, re-registration is required.
 
-## User registration
+## Child registration
 
-Registers a new user to the service.
+Registers a new child to the service.
 
 ```
-POST /register => POST /app/children
+POST /app/children
 
 payload {
   name: (String)
@@ -26,7 +26,7 @@ Use the returned token in all subsequent requests in `Authorization` header in f
 ## Update child profile
 
 ```
-PUT /users/{childId} => PATCH /app/children/{childId}
+PATCH /app/children/{childId}
 
 payload {
   name: (String)
@@ -38,7 +38,7 @@ payload {
 * Creating session
 
 ```
-POST /session => POST /app/feedback
+POST /app/feedback
 
 Create a new feedback session.
 
@@ -50,7 +50,7 @@ returns {
 * Create new content
 
 ```
-POST /content => POST /app/content
+POST /app/content
 
 Create a new content (audio file, text answer...)
 
@@ -79,7 +79,7 @@ returns {
 * Update content
 
 ```
-PUT /content/{contentId} => PATCH /app/content/{contentId}
+PATCH /app/content/{contentId}
 
 Update content question, answer or contentType
 
@@ -101,7 +101,7 @@ returns {
 * Add/Replace attachment
 
 ```
-PUT /attachment/{contentId} => POST /app/content/{contentId}/attachment
+POST /app/content/{contentId}/attachment
 
 Upload a new attachment to content with id contentId.
 File should be uploaded as multipart/form data.

@@ -3,16 +3,16 @@
 This document describes the Hemmo Admin API. Employees of Pelary can
 register to the service as employees and see data from the mobile frontend.
 
-# Employee users
+# Employees
 
 ## Authentication
 
-* Register new employee user
+* Register new employees
 
 Registers the employee with provided credentials.
 
 ```
-POST /admin/users
+POST /admin/employees
 
 payload
 {
@@ -27,12 +27,12 @@ returns
 }
 ```
 
-* Authenticate employee user
+* Authenticate employees
 
 Authenticate the employee with provided credentials.
 
 ```
-POST /admin/users/authenticate
+POST /admin/employees/authenticate
 
 payload
 {
@@ -49,12 +49,12 @@ returns
 All below requests require authentication.
 Use the returned token in the `Authorization` header like so: `Bearer $TOKEN`
 
-## Employee user management
+## Employee management
 
-* Modify employee user profile
+* Modify employee profile
 
 ```
-PATCH /admin/users/{userId}
+PATCH /admin/employees/{employeeId}
 
 payload
 {
@@ -70,7 +70,7 @@ payload
 Fetches all employees. Supports filtering
 
 ```
-GET /admin/users
+GET /admin/employees
 
 query parameters {
   assignedChildName: (String) Child name,
@@ -100,7 +100,7 @@ returns {
 Get more detailed data about one employee.
 
 ```
-GET /admin/users/{userId}
+GET /admin/employees/{employeeId}
 
 query parameters {
   include: (String) Comma separated list of: (children),
@@ -115,12 +115,12 @@ returns
 }
 ```
 
-* Verify employee user
+* Verify employees
 
-Mark a new employee as verified (ie. allow newly registered employee user to log-in)
+Mark a new employee as verified (ie. allow newly registered employees to log-in)
 
 ```
-PUT /admin/users/verify/{userId}
+PUT /admin/employees/verify/{employeeId}
 
 returns
 {
@@ -128,7 +128,7 @@ returns
 }
 ```
 
-## Child user management
+## Child employee management
 
 * Get list of children
 
@@ -147,7 +147,7 @@ query parameters {
 
 returns
 {
-  users : [
+  employees : [
     {
       name: (String),
       id: (String),
@@ -185,7 +185,7 @@ returns
 PATCH /admin/children/{childId}
 
 payload {
-  assigneeId: (String) id of employee to be assigned to this user
+  assigneeId: (String) id of employee to be assigned to this employee
 }
 
 returns 200/40x
@@ -216,7 +216,7 @@ returns {
   [
     {
       id: (String),
-      user: {
+      employee: {
         id: (String),
         name: (String),
         assigneeId: (String),
@@ -239,7 +239,7 @@ GET /admin/feedback/{feedbackId}
 returns
 {
   id: (String),
-  user: {
+  employee: {
     id: (String),
     name: (String),
     assigneeId: (String),
