@@ -6,7 +6,6 @@ import {
 } from '../models/content';
 
 export const createContent = (request, reply) => (
-  console.log(request.payload) || 
   dbCreateContent(request.payload)
     .then(reply)
     .catch(err => reply(Boom.badImplementation(err)))

@@ -14,14 +14,6 @@ const childId = {
   },
 };
 
-const registrationFields = {
-  payload: {
-    email: Joi.string().email().required(),
-    name: Joi.string().required(),
-    password: Joi.string().required(),
-  },
-};
-
 const editProfileFields = {
   payload: {
     assigneeId: Joi.string().required(),
