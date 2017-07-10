@@ -14,7 +14,7 @@ export const dbCreateContent = fields => (
 
 export const dbUpdateContent = (id, fields) => (
   knex('content').update(fields)
-  
+
   .where({ id })
   .then(results => results[0])
 );

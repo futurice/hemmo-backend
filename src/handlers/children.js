@@ -9,7 +9,13 @@ import {
   dbUpdateChild,
 } from '../models/children';
 
-export const getChildren = (request, reply) => dbGetChildren(request.query).then(reply);
+import { countAndPaginate } from '../utils/db';
+
+export const getChildren = (request, reply) => countAndPaginate(
+  dbGetChildren(request.query),
+  request.query.limit,
+  request.query.offset,
+).then(reply);
 
 export const getChild = (request, reply) => dbGetChild(request.params.childId).then(reply);
 

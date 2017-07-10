@@ -8,17 +8,16 @@ export const dbGetChildren = filters => (
   ])
 
   .where(likeFilter({
-    name: filters.name,
-    assigneeName: filters.assigneeName,
+    'children.name': filters.name,
+    'employees.name': filters.assigneeName,
   }))
   .andWhere(exactFilter({
     assigneeId: filters.assigneeId,
   }))
-  .limit(filters.limit || 50)
-  .offset(filters.offset)
+
+  .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
 
   .orderBy(filters.orderBy || 'children.name', filters.order)
-  .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
 );
 
 export const dbGetChild = id => (
