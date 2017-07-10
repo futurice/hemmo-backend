@@ -8,7 +8,7 @@ export const dbGetEmployees = filters => (
     'id',
     'name',
     'email',
-    'verified',
+    'active',
   ])
 
   /* Filter the employees table */
