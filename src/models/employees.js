@@ -1,22 +1,25 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
-const employeeListFields = ['id', 'name', 'email', 'verified'];
-
 export const dbGetEmployees = filters => (
-  knex('employees')
-    .select(employeeListFields)
-    .where(likeFilter({
-      assignedChildName: filters.assignedChildName,
-      name: filters.name,
-      email: filters.email,
-    }))
-    .andWhere(exactFilter({
-      assignedChildId: filters.assignedChildId,
-    }))
-    .limit(filters.limit || 50)
-    .offset(filters.offset)
-    .orderBy(filters.orderBy || 'name', filters.order)
+  knex('employees').select([
+    'id',
+    'name',
+    'email',
+    'verified',
+  ])
+
+  /* Filter the employees table */
+  .where(likeFilter({
+    assignedChildName: filters.assignedChildName,
+    name: filters.name,
+    email: filters.email,
+  }))
+  .andWhere(exactFilter({
+    assignedChildId: filters.assignedChildId,
+  }))
+
+  .orderBy(filters.orderBy || 'name', filters.order)
 );
 
 export const dbGetEmployee = id => (

@@ -8,18 +8,13 @@ import {
   dbCreateFeedback,
 } from '../models/feedback';
 
-import config from '../utils/config';
+import { countAndPaginate } from '../utils/db';
 
-export const getFeedback = (request, reply) => dbGetFeedback(request.query).then(feedback =>
-  reply({
-    data: feedback.data,
-    meta: {
-      count: Number(feedback.cnt),
-      limit: request.query.limit || config.defaults.limit,
-      offset: request.query.offset || 0,
-    },
-  }),
-);
+export const getFeedback = (request, reply) => countAndPaginate(
+  dbGetFeedback(request.query),
+  request.query.limit,
+  request.query.offset,
+).then(reply);
 
 export const getSingleFeedback = (request, reply) =>
   dbGetSingleFeedback(request.params.feedbackId).then(reply);

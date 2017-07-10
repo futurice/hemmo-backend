@@ -81,7 +81,7 @@ export const exactFilter = (filters, anyField = false) => (origQuery) => {
  *   }
  * }
  */
-export const countAndPaginate = (limit = config.defaults.limit, offset = 0, q) => (
+export const countAndPaginate = (q, limit = config.defaults.limit, offset = 0) => (
   knex()
     .select([
       knex.raw('json_agg(limited."queryResults") as data'),
@@ -100,4 +100,12 @@ export const countAndPaginate = (limit = config.defaults.limit, offset = 0, q) =
     )
     .groupBy('limited.cnt')
     .then(results => results[0])
+    .then(result => ({
+      data: result.data,
+      meta: {
+        count: Number(result.cnt),
+        limit,
+        offset,
+      },
+    }))
 );
