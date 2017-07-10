@@ -47,4 +47,7 @@ export default {
       expiresIn: '24h',
     },
   },
+  defaults: {
+    limit: 30,
+  },
 };

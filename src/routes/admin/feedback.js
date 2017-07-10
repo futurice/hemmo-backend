@@ -22,12 +22,12 @@ const editProfileFields = {
 
 const filters = {
   query: {
-    assigneeName: Joi.string(),
-    assigneeId: Joi.string(),
-    childName: Joi.string(),
-    childId: Joi.string(),
+    assigneeName: Joi.string().allow(''),
+    assigneeId: Joi.string().allow(''),
+    childName: Joi.string().allow(''),
+    childId: Joi.string().allow(''),
     order: Joi.string().allow('asc', 'desc'),
-    orderBy: Joi.string().allow('name', 'email', 'createdAt', 'assigneeName'),
+    orderBy: Joi.string().allow('childName', 'createdAt', 'assigneeName'),
     limit: Joi.number().integer(),
     offset: Joi.number().integer(),
     reviewed: Joi.bool(),

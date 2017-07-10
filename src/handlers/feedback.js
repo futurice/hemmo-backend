@@ -8,7 +8,18 @@ import {
   dbCreateFeedback,
 } from '../models/feedback';
 
-export const getFeedback = (request, reply) => dbGetFeedback(request.query).then(reply);
+import config from '../utils/config';
+
+export const getFeedback = (request, reply) => dbGetFeedback(request.query).then(feedback =>
+  reply({
+    data: feedback.data,
+    meta: {
+      count: Number(feedback.cnt),
+      limit: request.query.limit || config.defaults.limit,
+      offset: request.query.offset || 0,
+    },
+  }),
+);
 
 export const getSingleFeedback = (request, reply) =>
   dbGetSingleFeedback(request.params.feedbackId).then(reply);
