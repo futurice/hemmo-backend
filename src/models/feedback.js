@@ -31,42 +31,42 @@ export const dbGetFeedback = filters => (
 );
 
 export const dbGetSingleFeedback = id => (
-  knex('feedback')
-    .first([
-      'feedback.*',
-      'children.name as childName',
-      'children.id as childId',
-      'children.assigneeId as assigneeId',
-      'employees.name as assigneeName',
-    ])
-    .where({ 'feedback.id': id })
-    .leftOuterJoin('children', 'feedback.childId', 'children.id')
-    .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
+  knex('feedback').first([
+    'feedback.*',
+    'children.name as childName',
+    'children.id as childId',
+    'children.assigneeId as assigneeId',
+    'employees.name as assigneeName',
+  ])
+
+  .where({ 'feedback.id': id })
+  .leftOuterJoin('children', 'feedback.childId', 'children.id')
+  .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
 );
 
 export const dbDelFeedback = id => (
-  knex('feedback')
-    .where({ id })
-    .del()
+  knex('feedback').del()
+
+  .where({ id })
 );
 
 export const dbCreateFeedback = async (childId) => {
   const child = await dbGetChild(childId);
 
-  return knex('feedback')
-    .insert({
-      id: uuid(),
-      childId,
-      assigneeId: child.assigneeId,
-    })
-    .returning('*')
-    .then(results => results[0]);
+  return knex('feedback').insert({
+    id: uuid(),
+    childId,
+    assigneeId: child.assigneeId,
+  })
+
+  .returning('*')
+  .then(results => results[0]);
 };
 
 export const dbUpdateFeedback = (id, fields) => (
-  knex('feedback')
-    .update({ ...fields })
-    .where({ id })
-    .returning('*')
-    .then(results => results[0])
+  knex('feedback').update(fields)
+
+  .where({ id })
+  .returning('*')
+  .then(results => results[0])
 );
