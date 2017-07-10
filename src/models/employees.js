@@ -1,6 +1,8 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
+const employeeListFields = ['id', 'name', 'email', 'active', 'createdAt'];
+
 export const dbGetEmployees = filters => (
   knex('employees').select([
     'id',
@@ -57,13 +59,4 @@ export const dbCreateEmployee = ({ password, ...fields }) => (
 
     return employee;
   })
-);
-
-export const dbVerifyEmployee = id => (
-  knex('employees').update({
-    verified: true,
-  })
-
-  .where({ id })
-  .returning('*')
 );

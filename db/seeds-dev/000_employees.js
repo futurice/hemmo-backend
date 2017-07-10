@@ -9,7 +9,7 @@ const employeeFields = {
   scope: 'employee',
   email: faker.internet.email,
   name: faker.name.findName,
-  verified: () => Math.random() < 0.5,
+  active: () => Math.random() < 0.5,
 };
 
 exports.seed = knex => (
@@ -20,7 +20,7 @@ exports.seed = knex => (
 
       email: 'foo@bar.com',
       scope: 'admin',
-      verified: true,
+      active: true,
     }, 'id')
     .then(ids => ids[0]) // Return first (only) employee id
 

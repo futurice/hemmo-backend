@@ -12,7 +12,7 @@ exports.up = knex => (
       table.text('email').notNullable().unique();
       table.text('name').notNullable();
       table.text('locale').notNullable().defaultTo('en');
-      table.boolean('verified').notNullable().defaultTo(false);
+      table.boolean('active').notNullable().defaultTo(false);
     })
 
     /**
