@@ -42,3 +42,24 @@ export const likeFilter = (filters, anyField = false) => (origQuery) => {
 
   return q;
 };
+
+export const exactFilter = (filters, anyField = false) => (origQuery) => {
+  let q = origQuery;
+
+  if (!filters) {
+    return q;
+  }
+
+  Object.keys(filters).filter(key => filters[key]).forEach((key, index) => {
+    if (!index) {
+      // first field with .whereRaw()
+      q = q.where({ [key]: filters[key] });
+    } else if (anyField) {
+      q = q.orWhere({ [key]: filters[key] });
+    } else {
+      q = q.andWhere({ [key]: filters[key] });
+    }
+  });
+
+  return q;
+};

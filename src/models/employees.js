@@ -1,5 +1,5 @@
 import uuid from 'uuid/v4';
-import knex, { likeFilter } from '../utils/db';
+import knex, { likeFilter, exactFilter } from '../utils/db';
 
 const employeeListFields = ['id', 'name', 'email', 'verified'];
 
@@ -7,10 +7,12 @@ export const dbGetEmployees = filters => (
   knex('employees')
     .select(employeeListFields)
     .where(likeFilter({
-      assignedChildId: filters.assignedChildId,
       assignedChildName: filters.assignedChildName,
       name: filters.name,
       email: filters.email,
+    }))
+    .andWhere(exactFilter({
+      assignedChildId: filters.assignedChildId,
     }))
     .limit(filters.limit || 50)
     .offset(filters.offset)

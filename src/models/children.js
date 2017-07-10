@@ -1,5 +1,5 @@
 import uuid from 'uuid/v4';
-import knex, { likeFilter } from '../utils/db';
+import knex, { likeFilter, exactFilter } from '../utils/db';
 
 export const dbGetChildren = filters => (
   knex('children')
@@ -7,6 +7,8 @@ export const dbGetChildren = filters => (
     .where(likeFilter({
       name: filters.name,
       assigneeName: filters.assigneeName,
+    }))
+    .andWhere(exactFilter({
       assigneeId: filters.assigneeId,
     }))
     .limit(filters.limit || 50)

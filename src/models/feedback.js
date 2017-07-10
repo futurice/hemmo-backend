@@ -1,5 +1,5 @@
 import uuid from 'uuid/v4';
-import knex, { likeFilter } from '../utils/db';
+import knex, { likeFilter, exactFilter } from '../utils/db';
 import { dbGetChild } from './children';
 
 export const dbGetFeedback = filters => (
@@ -14,10 +14,12 @@ export const dbGetFeedback = filters => (
     .where(likeFilter({
       name: filters.name,
       childName: filters.childName,
-      childId: filters.childId,
       assigneeName: filters.assigneeName,
-      assigneeId: filters.assigneeId,
-      reviewed: filters.reviewed,
+      'feedback.reviewed': filters.reviewed,
+    }))
+    .andWhere(exactFilter({
+      'feedback.childId': filters.childId,
+      'feedback.assigneeId': filters.assigneeId,
     }))
     .limit(filters.limit || 50)
     .offset(filters.offset)
