@@ -1,4 +1,4 @@
-import knex from 'knex';
+import init from 'knex';
 // import pg from 'pg';
 
 import config from './config';
@@ -6,7 +6,8 @@ import config from './config';
 // Use ssl by default
 // pg.defaults.ssl = true;
 
-export default knex(config.db);
+const knex = init(config.db);
+export default knex;
 
 /**
  * Builds SQL query with given filter object.
@@ -63,3 +64,40 @@ export const exactFilter = (filters, anyField = false) => (origQuery) => {
 
   return q;
 };
+
+/**
+ * Returns query results as JSON containing total row count before
+ * applying limit/offset
+ *
+ * Sample results:
+ * {
+ *   data: [
+ *     <Query results>
+ *   ],
+ *   meta: {
+ *     count: 100,
+ *     limit: 5,
+ *     offset: 5,
+ *   }
+ * }
+ */
+export const countAndPaginate = (limit = config.defaults.limit, offset = 0, q) => (
+  knex()
+    .select([
+      knex.raw('json_agg(limited."queryResults") as data'),
+      'limited.cnt',
+    ])
+    .from(limitQuery => limitQuery
+      /* Subquery: Limit & offset the query results */
+      .select([
+        'queryResults',
+        knex.raw('count("queryResults") over() as cnt'),
+      ])
+      .from(q.as('queryResults'))
+      .limit(limit)
+      .offset(offset)
+      .as('limited'),
+    )
+    .groupBy('limited.cnt')
+    .then(results => results[0])
+);
