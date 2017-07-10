@@ -99,7 +99,10 @@ export const countAndPaginate = (q, limit = config.defaults.limit, offset = 0) =
       .as('limited'),
     )
     .groupBy('limited.cnt')
-    .then(results => results[0])
+    .then(results => results[0] || {
+      data: [],
+      cnt: 0,
+    })
     .then(result => ({
       data: result.data,
       meta: {
