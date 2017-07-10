@@ -82,7 +82,7 @@ export const exactFilter = (filters, anyField = false) => (origQuery) => {
  * }
  */
 export const countAndPaginate = (q, limit = config.defaults.limit, offset = 0) => (
-  knex()
+  knex
     .select([
       knex.raw('json_agg(limited."queryResults") as data'),
       'limited.cnt',
