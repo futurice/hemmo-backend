@@ -24,7 +24,7 @@ const filters = {
   query: {
     assigneeName: Joi.string(),
     assigneeId: Joi.string(),
-    name: Joi.string(),
+    name: Joi.string().allow(''),
     birthYear: Joi.number().integer(),
     order: Joi.string().allow('asc', 'desc'),
     orderBy: Joi.string().allow('name', 'email', 'assigneeName'),
