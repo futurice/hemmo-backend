@@ -22,8 +22,8 @@ const editProfileFields = {
 
 const filters = {
   query: {
-    assigneeName: Joi.string(),
-    assigneeId: Joi.string(),
+    assigneeName: Joi.string().allow(''),
+    assigneeId: Joi.string().allow(''),
     name: Joi.string().allow(''),
     birthYear: Joi.number().integer(),
     order: Joi.string().allow('asc', 'desc'),
