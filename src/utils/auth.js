@@ -112,8 +112,7 @@ export const hashPassword = password => (
   })
 );
 
-export const generatePassword = () => {
-  return Array(8).fill("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz").map(x => {
-    return x[Math.floor(Math.random() * x.length)]
-  }).join('');
-};
+export const generatePassword = () =>
+  Array(8)
+  .fill('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
+  .map(x => x[Math.floor(Math.random() * x.length)]).join('');

@@ -1,8 +1,6 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
-const employeeListFields = ['id', 'name', 'email', 'active', 'createdAt'];
-
 export const dbGetEmployees = filters => (
   knex('employees').select([
     'id',

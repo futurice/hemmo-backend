@@ -7,21 +7,21 @@ import {
   updateEmployee,
   delEmployee,
   authEmployee,
-  registerEmployee
+  registerEmployee,
 } from '../../handlers/employees';
 
 const employeeId = {
   params: {
     employeeId: Joi.string().required(),
-  }
+  },
 };
 
 const registrationFields = {
   payload: {
     email: Joi.string().email().required(),
     name: Joi.string().required(),
-    active: Joi.boolean().required()
-  }
+    active: Joi.boolean().required(),
+  },
 };
 
 const editProfileFields = {
@@ -31,8 +31,8 @@ const editProfileFields = {
     image: Joi.string(),
     locale: Joi.string(),
     active: Joi.boolean(),
-    password: Joi.string()
-  }
+    password: Joi.string(),
+  },
 };
 
 const filters = {
@@ -46,7 +46,7 @@ const filters = {
     orderBy: Joi.string().allow('name', 'email', 'assignedChildName'),
     limit: Joi.number().integer(),
     offset: Joi.number().integer(),
-  }
+  },
 };
 
 const routeConfigs = [
@@ -57,8 +57,8 @@ const routeConfigs = [
     handler: getEmployees,
     config: {
       validate: filters,
-      ...getAuthWithScope('employee')
-    }
+      ...getAuthWithScope('employee'),
+    },
   },
 
   // Get info about a specific employee
@@ -68,8 +68,8 @@ const routeConfigs = [
     handler: getEmployee,
     config: {
       validate: employeeId,
-      ...getAuthWithScope('employee')
-    }
+      ...getAuthWithScope('employee'),
+    },
   },
 
   // Update employee profile
@@ -80,10 +80,10 @@ const routeConfigs = [
     config: {
       validate: {
         ...employeeId,
-        ...editProfileFields
+        ...editProfileFields,
       },
-      ...getAuthWithScope('employee')
-    }
+      ...getAuthWithScope('employee'),
+    },
   },
 
   // Delete a employee, admin only
@@ -93,8 +93,8 @@ const routeConfigs = [
     handler: delEmployee,
     config: {
       validate: employeeId,
-      ...getAuthWithScope('admin')
-    }
+      ...getAuthWithScope('admin'),
+    },
   },
 
   // Authenticate as employee
@@ -102,7 +102,7 @@ const routeConfigs = [
     method: 'POST',
     path: '/admin/employees/authenticate',
     handler: authEmployee,
-    config: doAuth
+    config: doAuth,
   },
 
   // Register new employee, admin only
@@ -112,8 +112,8 @@ const routeConfigs = [
     handler: registerEmployee,
     config: {
       validate: registrationFields,
-      ...getAuthWithScope('admin')
-    }
+      ...getAuthWithScope('admin'),
+    },
   },
 ];
 

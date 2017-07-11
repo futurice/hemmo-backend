@@ -61,8 +61,8 @@ export const updateEmployee = async (request, reply) => {
     fields.password = await hashPassword(request.payload.password);
   }
 
-  return dbUpdateEmployee(request.params.employeeId, fields).then(result => {
-    reply(result.shift())
+  return dbUpdateEmployee(request.params.employeeId, fields).then((result) => {
+    reply(result.shift());
   });
 };
 
@@ -103,5 +103,5 @@ export const registerEmployee = (request, reply) => {
       } else {
         reply(Boom.badImplementation(err));
       }
-    })
+    });
 };
