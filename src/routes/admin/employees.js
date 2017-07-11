@@ -7,7 +7,7 @@ import {
   updateEmployee,
   delEmployee,
   authEmployee,
-  registerEmployee,
+  registerEmployee
 } from '../../handlers/employees';
 
 const employeeId = {
@@ -112,9 +112,25 @@ const routeConfigs = [
     handler: registerEmployee,
     config: {
       validate: registrationFields,
-      ...getAuthWithScope('admin'),
+      ...getAuthWithScope('admin')
     },
   },
+
+  // Reset user's password
+  {
+    method: 'PUT',
+    path: '/admin/employees/{employeeId}/password',
+    handler: resetEmployeePassword,
+    config: {
+      validate: {
+        ...employeeId,
+      },
+      response: {
+        emptyStatusCode: 204
+      },
+      ...getAuthWithScope('admin')
+    }
+  }
 ];
 
 export default routeConfigs;

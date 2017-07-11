@@ -9,6 +9,7 @@ import {
   dbUpdateEmployee,
   dbCreateEmployee,
   dbVerifyEmployee,
+  dbResetPassword,
 } from '../models/employees';
 
 import { countAndPaginate } from '../utils/db';
@@ -104,4 +105,17 @@ export const registerEmployee = (request, reply) => {
         reply(Boom.badImplementation(err));
       }
     });
+};
+
+export const resetEmployeePassword = (request, reply) => {
+  const password = generatePassword();
+
+  hashPassword(password)
+    .then(passwordHash => dbResetPassword(request.params.employeeId, {
+      password: passwordHash
+    })
+    .then(reply))
+    .catch((err) => {
+      reply(Boom.badImplementation(err));
+    })
 };
