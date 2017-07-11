@@ -74,7 +74,7 @@ const routeConfigs = [
 
   // Update employee profile
   {
-    method: 'PUT',
+    method: 'PATCH',
     path: '/admin/employees/{employeeId}',
     handler: updateEmployee,
     config: {
