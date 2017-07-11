@@ -6,7 +6,14 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
   dotenv.config({ silent: true });
 }
 
-const requiredEnvironmentVariables = ['DATABASE_URL', 'SECRET'];
+const requiredEnvironmentVariables = [
+  'DATABASE_URL',
+  'SECRET',
+  'SMTP_HOST',
+  'SMTP_USER',
+  'SMTP_PASSWORD',
+  'SMTP_TLS',
+];
 
 if (
   env.NODE_ENV &&
@@ -49,5 +56,11 @@ export default {
   },
   defaults: {
     limit: 30,
+  },
+  smtp: {
+    host: env.SMTP_HOST,
+    user: env.SMTP_USER,
+    password: env.SMTP_PASSWORD,
+    tls: env.SMTP_TLS === 'true',
   },
 };
