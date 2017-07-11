@@ -1,7 +1,7 @@
 import Boom from 'boom';
 
 import { resizeImage } from '../utils/image';
-import { createToken, hashPassword } from '../utils/auth';
+import { createToken, hashPassword, generatePassword } from '../utils/auth';
 import {
   dbGetEmployees,
   dbGetEmployee,
@@ -13,8 +13,8 @@ import {
 
 import { countAndPaginate } from '../utils/db';
 
-const unverifiedErrorMsg = `ERROR: Employee has not been verified!
-Another employee has to verify you as an admin employee through hemmo-admin settings before you can log-in.`;
+const nonActivedErrorMsg = `ERROR: Employee has not been active!
+An admin has to set your account active through hemmo-admin settings before you can log-in.`;
 
 export const getEmployees = (request, reply) => countAndPaginate(
   dbGetEmployees(request.query),
@@ -61,7 +61,9 @@ export const updateEmployee = async (request, reply) => {
     fields.password = await hashPassword(request.payload.password);
   }
 
-  return dbUpdateEmployee(request.params.employeeId, fields).then(reply);
+  return dbUpdateEmployee(request.params.employeeId, fields).then(result => {
+    reply(result.shift())
+  });
 };
 
 export const verifyEmployee = (request, reply) => (
@@ -72,25 +74,27 @@ export const authEmployee = async (request, reply) => {
   // Make sure employee is verified
   const employee = await dbGetEmployee(request.pre.employee.id);
 
-  if (!employee.verified) {
-    return reply(Boom.forbidden(unverifiedErrorMsg));
+  if (!employee.active) {
+    return reply(Boom.forbidden(nonActivedErrorMsg));
   }
 
   return reply(createToken({
     id: request.pre.employee.id,
     email: request.pre.employee.email,
-    scope: 'employee',
+    scope: employee.scope,
   }));
 };
 
-export const registerEmployee = (request, reply) => (
-  hashPassword(request.payload.password)
+export const registerEmployee = (request, reply) => {
+  const password = generatePassword();
+
+  hashPassword(password)
     .then(passwordHash => dbCreateEmployee({
       ...request.payload,
       email: request.payload.email.toLowerCase().trim(),
       password: passwordHash,
       scope: 'employee',
-      verified: false,
+      active: request.payload.active,
     })
     .then(reply))
     .catch((err) => {
@@ -100,4 +104,4 @@ export const registerEmployee = (request, reply) => (
         reply(Boom.badImplementation(err));
       }
     })
-);
+};
