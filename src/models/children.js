@@ -5,6 +5,7 @@ export const dbGetChildren = filters => (
   knex('children').select([
     'children.*',
     'employees.name as assigneeName',
+    'prevFeedback.prevFeedbackDate',
   ])
 
   .where(likeFilter({
@@ -17,6 +18,19 @@ export const dbGetChildren = filters => (
 
   .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
 
+  // Previous feedback
+  .leftOuterJoin(
+    knex('feedback').select([
+      'createdAt as prevFeedbackDate',
+      'childId',
+    ])
+    .orderBy('createdAt', 'desc')
+    .as('prevFeedback'),
+
+    'children.id',
+    'prevFeedback.childId',
+  )
+
   .orderBy(filters.orderBy || 'children.name', filters.order)
 );
 
@@ -24,10 +38,25 @@ export const dbGetChild = id => (
   knex('children').first([
     'children.*',
     'employees.name as assigneeName',
+    'prevFeedback.prevFeedbackDate',
   ])
 
   .where({ 'children.id': id })
   .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
+
+  // Previous feedback
+  .leftOuterJoin(
+    knex('feedback').select([
+      'createdAt as prevFeedbackDate',
+      'childId',
+    ])
+    .orderBy('createdAt', 'desc')
+    .as('prevFeedback'),
+
+    'children.id',
+    'prevFeedback.childId',
+  )
+
 );
 
 export const dbDelChild = id => (

@@ -7,6 +7,7 @@ exports.seed = async (knex) => {
 
   const feedbackFields = {
     id: faker.random.uuid,
+    createdAt: faker.date.past,
     childId: () => {
       // randomly select child
       child = children[Math.floor(Math.random() * children.length)];

@@ -44,6 +44,8 @@ exports.up = knex => (
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.text('name').notNullable();
       table.integer('birthYear');
+      table.boolean('showAlerts').defaultTo(true);
+      table.timestamp('alertDismissedAt').defaultTo(knex.fn.now());
       table.text('assigneeId').references('id').inTable('employees').onDelete('SET NULL');
     })
 
@@ -55,7 +57,6 @@ exports.up = knex => (
     .createTableIfNotExists('feedback', (table) => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
-      table.timestamp('updatedAt').defaultTo(knex.fn.now());
       table.text('childId').references('id').inTable('children').notNullable()
         .onDelete('CASCADE');
       table.boolean('reviewed').notNullable().defaultTo(false);
@@ -71,7 +72,6 @@ exports.up = knex => (
     .createTableIfNotExists('content', (table) => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
-      table.timestamp('updatedAt').defaultTo(knex.fn.now());
       table.text('feedbackId').references('id').inTable('feedback').notNullable()
         .onDelete('CASCADE');
       table.json('moods');

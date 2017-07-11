@@ -17,6 +17,8 @@ exports.seed = async (knex) => {
       // Otherwise return random employee id
       return employees[Math.floor(Math.random() * employees.length)].id;
     },
+    showAlerts: () => Math.random() < 0.5,
+    alertDismissedAt: faker.date.past,
   };
 
   // Generate several test children
