@@ -31,7 +31,7 @@ const editProfileFields = {
     image: Joi.string(),
     locale: Joi.string(),
     active: Joi.boolean(),
-    password: Joi.string(),
+    password: Joi.string().allow(''),
     resetPassword: Joi.boolean()
   }
 };

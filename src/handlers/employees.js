@@ -68,12 +68,8 @@ export const updateEmployee = async (request, reply) => {
   });
 };
 
-export const verifyEmployee = (request, reply) => (
-  dbVerifyEmployee(request.params.employeeId).then(reply)
-);
-
 export const authEmployee = async (request, reply) => {
-  // Make sure employee is verified
+  // Make sure employee is active
   const employee = await dbGetEmployee(request.pre.employee.id);
 
   if (!employee.active) {

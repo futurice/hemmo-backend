@@ -38,7 +38,7 @@ export const dbUpdateEmployee = (id, fields, password) => (
     if (password) {
       await trx('secrets')
         .update({ password: password })
-        .where({ ownerId: employee.id });
+        .where({ ownerId: id });
     }
 
     return employee;
