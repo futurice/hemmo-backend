@@ -8,8 +8,7 @@ import {
   dbDelEmployee,
   dbUpdateEmployee,
   dbCreateEmployee,
-  dbVerifyEmployee,
-  dbResetPassword,
+  dbVerifyEmployee
 } from '../models/employees';
 
 import { countAndPaginate } from '../utils/db';
@@ -42,9 +41,11 @@ export const updateEmployee = async (request, reply) => {
     email: request.payload.email,
     name: request.payload.name,
     image: request.payload.image,
-    locale: request.payload.locale,
-    password: request.payload.password,
+    locale: request.payload.locale
   };
+
+  const password = (request.payload.resetPassword) ? generatePassword() : request.payload.password;
+  let hashedPassword = null;
 
   // Only admins are allowed to modify employee scope
   if (request.pre.employee.scope === 'admin') {
@@ -58,12 +59,12 @@ export const updateEmployee = async (request, reply) => {
   }
 
   // Hash password if present
-  if (fields.password) {
-    fields.password = await hashPassword(request.payload.password);
+  if (password) {
+    hashedPassword = await hashPassword(password);
   }
 
-  return dbUpdateEmployee(request.params.employeeId, fields).then((result) => {
-    reply(result.shift());
+  return dbUpdateEmployee(request.params.employeeId, fields, hashedPassword).then(result => {
+    reply(result)
   });
 };
 
@@ -105,17 +106,4 @@ export const registerEmployee = (request, reply) => {
         reply(Boom.badImplementation(err));
       }
     });
-};
-
-export const resetEmployeePassword = (request, reply) => {
-  const password = generatePassword();
-
-  hashPassword(password)
-    .then(passwordHash => dbResetPassword(request.params.employeeId, {
-      password: passwordHash
-    })
-    .then(reply))
-    .catch((err) => {
-      reply(Boom.badImplementation(err));
-    })
 };

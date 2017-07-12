@@ -32,7 +32,8 @@ const editProfileFields = {
     locale: Joi.string(),
     active: Joi.boolean(),
     password: Joi.string(),
-  },
+    resetPassword: Joi.boolean()
+  }
 };
 
 const filters = {
@@ -115,22 +116,6 @@ const routeConfigs = [
       ...getAuthWithScope('admin')
     },
   },
-
-  // Reset user's password
-  {
-    method: 'PUT',
-    path: '/admin/employees/{employeeId}/password',
-    handler: resetEmployeePassword,
-    config: {
-      validate: {
-        ...employeeId,
-      },
-      response: {
-        emptyStatusCode: 204
-      },
-      ...getAuthWithScope('admin')
-    }
-  }
 ];
 
 export default routeConfigs;
