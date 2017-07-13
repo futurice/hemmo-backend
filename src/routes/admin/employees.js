@@ -7,6 +7,7 @@ import {
   updateEmployee,
   delEmployee,
   authEmployee,
+  renewAuth,
   registerEmployee
 } from '../../handlers/employees';
 
@@ -104,6 +105,14 @@ const routeConfigs = [
     path: '/admin/employees/authenticate',
     handler: authEmployee,
     config: doAuth,
+  },
+
+  // Renew authentication token
+  {
+    method: 'GET',
+    path: '/admin/employees/authenticate/renew',
+    handler: renewAuth,
+    config: getAuthWithScope('employee')
   },
 
   // Register new employee, admin only
