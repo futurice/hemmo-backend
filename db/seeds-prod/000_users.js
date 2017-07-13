@@ -6,7 +6,9 @@ const employeeFields = {
   name: 'name.findName',
 };
 
-exports.seed = knex => (
+exports.seed = knex =>
   // Generate several test employees (no password = login disabled)
-  knex.batchInsert('employees', simpleFixtures.generateFixtures(employeeFields, 10))
-);
+  knex.batchInsert(
+    'employees',
+    simpleFixtures.generateFixtures(employeeFields, 10),
+  );

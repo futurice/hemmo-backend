@@ -1,13 +1,13 @@
 const simpleFixtures = require('simple-fixtures');
 const faker = require('faker');
 
-exports.seed = async (knex) => {
+exports.seed = async knex => {
   const employees = await knex('employees').select('id');
 
   const childrenFields = {
     id: faker.random.uuid,
     name: faker.name.findName,
-    birthYear: () => Math.floor(2013 - (Math.random() * 10)),
+    birthYear: () => Math.floor(2013 - Math.random() * 10),
     assigneeId: () => {
       // 20% chance of not having any assignee
       if (Math.random() < 0.2) {
@@ -22,5 +22,8 @@ exports.seed = async (knex) => {
   };
 
   // Generate several test children
-  return knex.batchInsert('children', simpleFixtures.generateFixtures(childrenFields, 100));
+  return knex.batchInsert(
+    'children',
+    simpleFixtures.generateFixtures(childrenFields, 100),
+  );
 };
