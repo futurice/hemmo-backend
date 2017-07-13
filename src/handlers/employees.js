@@ -78,7 +78,24 @@ export const authEmployee = async (request, reply) => {
 
   return reply(createToken({
     id: request.pre.employee.id,
+    name: request.pre.employee.name,
     email: request.pre.employee.email,
+    scope: employee.scope,
+  }));
+};
+
+export const renewAuth = async(request, reply) => {
+  // Make sure employee is active
+  const employee = await dbGetEmployee(request.pre.employee.id);
+
+  if (!employee.active) {
+    return reply(Boom.forbidden(nonActivedErrorMsg));
+  }
+
+  return reply(createToken({
+    id: employee.id,
+    name: employee.name,
+    email: employee.email,
     scope: employee.scope,
   }));
 };
