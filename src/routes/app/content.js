@@ -1,10 +1,7 @@
 import Joi from 'joi';
 
 import { getAuthWithScope } from '../../utils/auth';
-import {
-  createContent,
-  updateContent,
-} from '../../handlers/content';
+import { createContent, updateContent } from '../../handlers/content';
 
 const contentFields = {
   payload: {

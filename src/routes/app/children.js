@@ -1,10 +1,7 @@
 import Joi from 'joi';
 
 import { getAuthWithScope } from '../../utils/auth';
-import {
-  updateChild,
-  registerChild,
-} from '../../handlers/children';
+import { updateChild, registerChild } from '../../handlers/children';
 
 const updateFields = {
   params: {

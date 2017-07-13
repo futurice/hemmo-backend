@@ -13,7 +13,12 @@ export const validateJwt = (decoded, request, callback) => {
   const invalidToken = !decoded.id || !decoded.scope;
 
   if (invalidToken) {
-    callback(new Error('JWT is missing some fields and not valid! Please log out and in again.'), false);
+    callback(
+      new Error(
+        'JWT is missing some fields and not valid! Please log out and in again.',
+      ),
+      false,
+    );
   } else {
     callback(null, true);
   }
@@ -36,30 +41,38 @@ export const getAuthWithScope = scope => ({
   pre: [{ method: bindEmployeeData, assign: 'employee' }],
 });
 
-export const comparePasswords = (passwordAttempt, employee) => (
-  new Promise((resolve, reject) => (
+export const comparePasswords = (passwordAttempt, employee) =>
+  new Promise((resolve, reject) =>
     bcrypt.compare(passwordAttempt, employee.password, (err, isValid) => {
       if (!err && isValid) {
         resolve(employee);
       } else {
-        reject(`Incorrect password attempt by employee with email '${employee.email}'`);
+        reject(
+          `Incorrect password attempt by employee with email '${employee.email}'`,
+        );
       }
-    })
-  ))
-);
+    }),
+  );
 
 // Hapi 'pre' method which verifies supplied employee credentials
-export const preVerifyCredentials = ({ payload: { email, password: passwordAttempt } }, reply) => (
+export const preVerifyCredentials = (
+  { payload: { email, password: passwordAttempt } },
+  reply,
+) =>
   knex('employees')
     .first()
     .where({ email: email.toLowerCase().trim() })
     .leftJoin('secrets', 'employees.id', 'secrets.ownerId')
-    .then((employee) => {
+    .then(employee => {
       if (!employee) {
-        return Promise.reject(`Employee with email '${email}' not found in database`);
+        return Promise.reject(
+          `Employee with email '${email}' not found in database`,
+        );
       }
       if (!employee.password) {
-        return Promise.reject(`Employee with email '${email}' lacks password: logins disabled`);
+        return Promise.reject(
+          `Employee with email '${email}' lacks password: logins disabled`,
+        );
       }
 
       return comparePasswords(passwordAttempt, employee);
@@ -68,24 +81,20 @@ export const preVerifyCredentials = ({ payload: { email, password: passwordAttem
     .catch(() => {
       // TODO: log err to server console
       reply(Boom.unauthorized('Incorrect email or password!'));
-    })
-);
+    });
 
 // Hapi route config which performs employee authentication
-export const doAuth = ({
+export const doAuth = {
   validate: {
     payload: {
       email: Joi.string().required(),
       password: Joi.string().required(),
     },
-    failAction: (request, reply) => (
-      reply(Boom.unauthorized('Incorrect email or password!'))
-    ),
+    failAction: (request, reply) =>
+      reply(Boom.unauthorized('Incorrect email or password!')),
   },
-  pre: [
-    { method: preVerifyCredentials, assign: 'employee' },
-  ],
-});
+  pre: [{ method: preVerifyCredentials, assign: 'employee' }],
+};
 
 // Create a new JWT for employee with `email` and `scope`
 export const createToken = fields => ({
@@ -95,7 +104,7 @@ export const createToken = fields => ({
 });
 
 // Return promise which resolves to hash of given password
-export const hashPassword = password => (
+export const hashPassword = password =>
   new Promise((resolve, reject) => {
     bcrypt.genSalt(config.auth.saltRounds, (saltErr, salt) => {
       if (saltErr) {
@@ -109,10 +118,10 @@ export const hashPassword = password => (
         }
       });
     });
-  })
-);
+  });
 
 export const generatePassword = () =>
   Array(8)
-  .fill('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
-  .map(x => x[Math.floor(Math.random() * x.length)]).join('');
+    .fill('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
+    .map(x => x[Math.floor(Math.random() * x.length)])
+    .join('');

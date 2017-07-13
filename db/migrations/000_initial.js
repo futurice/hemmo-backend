@@ -1,11 +1,11 @@
-exports.up = knex => (
+exports.up = knex =>
   knex.schema
     /**
      * Employees table
      *
      * Contains info on all employees in the system
      */
-    .createTableIfNotExists('employees', (table) => {
+    .createTableIfNotExists('employees', table => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.enum('scope', ['admin', 'employee']).notNullable();
@@ -14,7 +14,6 @@ exports.up = knex => (
       table.text('locale').notNullable().defaultTo('en');
       table.boolean('active').notNullable().defaultTo(false);
     })
-
     /**
      * Define a separate table for storing employee secrets (such as password hashes).
      *
@@ -26,12 +25,15 @@ exports.up = knex => (
      *
      * You may want to store other employee secrets in this table as well.
      */
-    .createTableIfNotExists('secrets', (table) => {
-      table.text('ownerId').references('id').inTable('employees').onDelete('CASCADE')
+    .createTableIfNotExists('secrets', table => {
+      table
+        .text('ownerId')
+        .references('id')
+        .inTable('employees')
+        .onDelete('CASCADE')
         .primary();
       table.text('password').notNullable();
     })
-
     /**
      * Children table
      *
@@ -39,51 +41,63 @@ exports.up = knex => (
      * Children don't have a password - the only way to authenticate is by remembering
      * the generated JWT at registration time.
      */
-    .createTableIfNotExists('children', (table) => {
+    .createTableIfNotExists('children', table => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.text('name').notNullable();
       table.integer('birthYear');
       table.boolean('showAlerts').defaultTo(true);
       table.timestamp('alertDismissedAt').defaultTo(knex.fn.now());
-      table.text('assigneeId').references('id').inTable('employees').onDelete('SET NULL');
+      table
+        .text('assigneeId')
+        .references('id')
+        .inTable('employees')
+        .onDelete('SET NULL');
     })
-
     /**
      * Feedback sessions
      *
      * Each time a child uses the Hemmo app, a new feedback session is created
      */
-    .createTableIfNotExists('feedback', (table) => {
+    .createTableIfNotExists('feedback', table => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
-      table.text('childId').references('id').inTable('children').notNullable()
+      table
+        .text('childId')
+        .references('id')
+        .inTable('children')
+        .notNullable()
         .onDelete('CASCADE');
       table.boolean('reviewed').notNullable().defaultTo(false);
-      table.text('assigneeId').references('id').inTable('employees').onDelete('SET NULL');
+      table
+        .text('assigneeId')
+        .references('id')
+        .inTable('employees')
+        .onDelete('SET NULL');
     })
-
     /**
      * Feedback content
      *
      * Each time a child submits feedback through the Hemmo app (i.e. moves on to the next screen),
      * a new content row is added with feedbackId set to the feedback session id.
      */
-    .createTableIfNotExists('content', (table) => {
+    .createTableIfNotExists('content', table => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
-      table.text('feedbackId').references('id').inTable('feedback').notNullable()
+      table
+        .text('feedbackId')
+        .references('id')
+        .inTable('feedback')
+        .notNullable()
         .onDelete('CASCADE');
       table.json('moods');
       table.json('questions');
-    })
-);
+    });
 
-exports.down = knex => (
+exports.down = knex =>
   knex.schema
     .dropTableIfExists('employees')
     .dropTableIfExists('secrets')
     .dropTableIfExists('children')
     .dropTableIfExists('feedback')
-    .dropTableIfExists('content')
-);
+    .dropTableIfExists('content');

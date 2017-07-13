@@ -1,7 +1,7 @@
 const simpleFixtures = require('simple-fixtures');
 const faker = require('faker');
 
-exports.seed = async (knex) => {
+exports.seed = async knex => {
   const children = await knex('children').select(['id', 'assigneeId']);
   let child = {};
 
@@ -26,5 +26,8 @@ exports.seed = async (knex) => {
   };
 
   // Generate several test children
-  return knex.batchInsert('feedback', simpleFixtures.generateFixtures(feedbackFields, 100));
+  return knex.batchInsert(
+    'feedback',
+    simpleFixtures.generateFixtures(feedbackFields, 100),
+  );
 };

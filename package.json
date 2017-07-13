@@ -22,6 +22,7 @@
     "build": "mkdir -p dist && babel src --out-dir dist --source-maps",
     "watch": "NODE_ENV=development nodemon --exec babel-node src/backend_kit.js",
     "register:admin": "babel-node bin/register_admin.js",
+    "precommit": "lint-staged",
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
     "test": "jest",
@@ -31,6 +32,12 @@
     "db:seed": "babel-node node_modules/.bin/knex --knexfile db/knexfile.js seed:run",
     "db:wipe": "babel-node bin/wipe_db.js",
     "db:init": "npm run db:wipe && npm run db:migrate && npm run db:seed"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --single-quote --trailing-comma all --write",
+      "git add"
+    ]
   },
   "version": "0.0.1",
   "main": "src/server.js",
@@ -77,10 +84,13 @@
     "eslint-plugin-import": "^2.6.1",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
+    "husky": "^0.14.3",
     "jest": "^20.0.4",
     "lab": "^14.1.0",
     "lab-babel": "^1.1.1",
+    "lint-staged": "^4.0.1",
     "mock-knex": "^0.3.7",
-    "nodemon": "^1.9.2"
+    "nodemon": "^1.9.2",
+    "prettier": "^1.5.2"
   }
 }
