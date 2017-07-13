@@ -21,7 +21,7 @@ export default knex;
  *     email: '@bar.com'
  *   }))
  */
-export const likeFilter = (filters, anyField = false) => (origQuery) => {
+export const likeFilter = (filters, anyField = false) => origQuery => {
   let q = origQuery;
 
   if (!filters) {
@@ -31,20 +31,29 @@ export const likeFilter = (filters, anyField = false) => (origQuery) => {
   Object.keys(filters).filter(key => filters[key]).forEach((key, index) => {
     if (!index) {
       // first field with .whereRaw()
-      q = q.whereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [key, filters[key]]);
+      q = q.whereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
+        key,
+        filters[key],
+      ]);
     } else if (anyField) {
       // if anyField true, additional fields use .orWhereRaw() (any field must match)
-      q = q.orWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [key, filters[key]]);
+      q = q.orWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
+        key,
+        filters[key],
+      ]);
     } else {
       // by default additional fields use .andWhereRaw() (all fields must match)
-      q = q.andWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [key, filters[key]]);
+      q = q.andWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
+        key,
+        filters[key],
+      ]);
     }
   });
 
   return q;
 };
 
-export const exactFilter = (filters, anyField = false) => (origQuery) => {
+export const exactFilter = (filters, anyField = false) => origQuery => {
   let q = origQuery;
 
   if (!filters) {
@@ -81,28 +90,36 @@ export const exactFilter = (filters, anyField = false) => (origQuery) => {
  *   }
  * }
  */
-export const countAndPaginate = (q, limit = config.defaults.limit, offset = 0) => (
+export const countAndPaginate = (
+  q,
+  limit = config.defaults.limit,
+  offset = 0,
+) =>
   knex
     .select([
       knex.raw('json_agg(limited."queryResults") as data'),
       'limited.cnt',
     ])
-    .from(limitQuery => limitQuery
-      /* Subquery: Limit & offset the query results */
-      .select([
-        'queryResults',
-        knex.raw('count("queryResults") over() as cnt'),
-      ])
-      .from(q.as('queryResults'))
-      .limit(limit)
-      .offset(offset)
-      .as('limited'),
+    .from(limitQuery =>
+      limitQuery
+        /* Subquery: Limit & offset the query results */
+        .select([
+          'queryResults',
+          knex.raw('count("queryResults") over() as cnt'),
+        ])
+        .from(q.as('queryResults'))
+        .limit(limit)
+        .offset(offset)
+        .as('limited'),
     )
     .groupBy('limited.cnt')
-    .then(results => results[0] || {
-      data: [],
-      cnt: 0,
-    })
+    .then(
+      results =>
+        results[0] || {
+          data: [],
+          cnt: 0,
+        },
+    )
     .then(result => ({
       data: result.data,
       meta: {
@@ -110,5 +127,4 @@ export const countAndPaginate = (q, limit = config.defaults.limit, offset = 0) =
         limit,
         offset,
       },
-    }))
-);
+    }));

@@ -16,35 +16,53 @@ import { countAndPaginate } from '../utils/db';
 const nonActivedErrorMsg = `ERROR: Employee has not been active!
 An admin has to set your account active through hemmo-admin settings before you can log-in.`;
 
-export const getEmployees = (request, reply) => countAndPaginate(
-  dbGetEmployees(request.query),
-  request.query.limit,
-  request.query.offset,
-).then(reply);
+export const getEmployees = (request, reply) =>
+  countAndPaginate(
+    dbGetEmployees(request.query),
+    request.query.limit,
+    request.query.offset,
+  ).then(reply);
 
-export const getEmployee = (request, reply) => dbGetEmployee(request.params.employeeId).then(reply);
+export const getEmployee = (request, reply) =>
+  dbGetEmployee(request.params.employeeId).then(reply);
 
 export const delEmployee = (request, reply) => {
-  if (request.pre.employee.scope !== 'admin' && request.pre.employee.id !== request.params.employeeId) {
-    return reply(Boom.unauthorized('Unprivileged employees can only delete own employeeId!'));
+  if (
+    request.pre.employee.scope !== 'admin' &&
+    request.pre.employee.id !== request.params.employeeId
+  ) {
+    return reply(
+      Boom.unauthorized(
+        'Unprivileged employees can only delete own employeeId!',
+      ),
+    );
   }
 
   return dbDelEmployee(request.params.employeeId).then(reply);
 };
 
 export const updateEmployee = async (request, reply) => {
-  if (request.pre.employee.scope !== 'admin' && request.pre.employee.id !== request.params.employeeId) {
-    return reply(Boom.unauthorized('Unprivileged employees can only perform updates on own employeeId!'));
+  if (
+    request.pre.employee.scope !== 'admin' &&
+    request.pre.employee.id !== request.params.employeeId
+  ) {
+    return reply(
+      Boom.unauthorized(
+        'Unprivileged employees can only perform updates on own employeeId!',
+      ),
+    );
   }
 
   const fields = {
     email: request.payload.email,
     name: request.payload.name,
     image: request.payload.image,
-    locale: request.payload.locale
+    locale: request.payload.locale,
   };
 
-  const password = (request.payload.resetPassword) ? generatePassword() : request.payload.password;
+  const password = request.payload.resetPassword
+    ? generatePassword()
+    : request.payload.password;
   let hashedPassword = null;
 
   // Only admins are allowed to modify employee scope
@@ -63,8 +81,12 @@ export const updateEmployee = async (request, reply) => {
     hashedPassword = await hashPassword(password);
   }
 
-  return dbUpdateEmployee(request.params.employeeId, fields, hashedPassword).then(result => {
-    reply(result)
+  return dbUpdateEmployee(
+    request.params.employeeId,
+    fields,
+    hashedPassword,
+  ).then(result => {
+    reply(result);
   });
 };
 
@@ -76,15 +98,17 @@ export const authEmployee = async (request, reply) => {
     return reply(Boom.forbidden(nonActivedErrorMsg));
   }
 
-  return reply(createToken({
-    id: request.pre.employee.id,
-    name: request.pre.employee.name,
-    email: request.pre.employee.email,
-    scope: employee.scope,
-  }));
+  return reply(
+    createToken({
+      id: request.pre.employee.id,
+      name: request.pre.employee.name,
+      email: request.pre.employee.email,
+      scope: employee.scope,
+    }),
+  );
 };
 
-export const renewAuth = async(request, reply) => {
+export const renewAuth = async (request, reply) => {
   // Make sure employee is active
   const employee = await dbGetEmployee(request.pre.employee.id);
 
@@ -92,27 +116,30 @@ export const renewAuth = async(request, reply) => {
     return reply(Boom.forbidden(nonActivedErrorMsg));
   }
 
-  return reply(createToken({
-    id: employee.id,
-    name: employee.name,
-    email: employee.email,
-    scope: employee.scope,
-  }));
+  return reply(
+    createToken({
+      id: employee.id,
+      name: employee.name,
+      email: employee.email,
+      scope: employee.scope,
+    }),
+  );
 };
 
 export const registerEmployee = (request, reply) => {
   const password = generatePassword();
 
   hashPassword(password)
-    .then(passwordHash => dbCreateEmployee({
-      ...request.payload,
-      email: request.payload.email.toLowerCase().trim(),
-      password: passwordHash,
-      scope: 'employee',
-      active: request.payload.active,
-    })
-    .then(reply))
-    .catch((err) => {
+    .then(passwordHash =>
+      dbCreateEmployee({
+        ...request.payload,
+        email: request.payload.email.toLowerCase().trim(),
+        password: passwordHash,
+        scope: 'employee',
+        active: request.payload.active,
+      }).then(reply),
+    )
+    .catch(err => {
       if (err.constraint === 'employees_email_unique') {
         reply(Boom.conflict('Account already exists'));
       } else {

@@ -1,34 +1,28 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
-export const dbGetEmployees = filters => (
-  knex('employees').select([
-    'id',
-    'name',
-    'email',
-    'active',
-  ])
+export const dbGetEmployees = filters =>
+  knex('employees')
+    .select(['id', 'name', 'email', 'active'])
+    /* Filter the employees table */
+    .where(
+      likeFilter({
+        assignedChildName: filters.assignedChildName,
+        name: filters.name,
+        email: filters.email,
+      }),
+    )
+    .andWhere(
+      exactFilter({
+        assignedChildId: filters.assignedChildId,
+      }),
+    )
+    .orderBy(filters.orderBy || 'name', filters.order);
 
-  /* Filter the employees table */
-  .where(likeFilter({
-    assignedChildName: filters.assignedChildName,
-    name: filters.name,
-    email: filters.email,
-  }))
-  .andWhere(exactFilter({
-    assignedChildId: filters.assignedChildId,
-  }))
+export const dbGetEmployee = id => knex('employees').first().where({ id });
 
-  .orderBy(filters.orderBy || 'name', filters.order)
-);
-
-export const dbGetEmployee = id => (
-  knex('employees').first()
-    .where({ id })
-);
-
-export const dbUpdateEmployee = (id, fields, password) => (
-  knex.transaction(async (trx) => {
+export const dbUpdateEmployee = (id, fields, password) =>
+  knex.transaction(async trx => {
     const employee = await trx('employees')
       .update(fields)
       .where({ id })
@@ -42,17 +36,14 @@ export const dbUpdateEmployee = (id, fields, password) => (
     }
 
     return employee;
-  })
-);
+  });
 
-export const dbDelEmployee = id => (
-  knex('employees').del()
-    .where({ id })
-);
+export const dbDelEmployee = id => knex('employees').del().where({ id });
 
-export const dbCreateEmployee = ({ password, ...fields }) => (
-  knex.transaction(async (trx) => {
-    const employee = await trx('employees').insert({
+export const dbCreateEmployee = ({ password, ...fields }) =>
+  knex.transaction(async trx => {
+    const employee = await trx('employees')
+      .insert({
         ...fields,
         id: uuid(),
       })
@@ -65,5 +56,4 @@ export const dbCreateEmployee = ({ password, ...fields }) => (
     });
 
     return employee;
-  })
-);
+  });
