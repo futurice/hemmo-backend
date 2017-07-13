@@ -4,6 +4,9 @@
 
 import Hoek from 'hoek';
 import compose from './server';
+import initSchedules from './utils/schedules';
+
+initSchedules();
 
 compose
   .then((server) => {
