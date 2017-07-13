@@ -3,7 +3,10 @@
         "jest": true,
         "node": true,
     },
-    "extends": "airbnb",
+    "extends": [
+        "airbnb",
+        "prettier",
+    ],
     "rules": {
       "import/prefer-default-export": 0,
     },
