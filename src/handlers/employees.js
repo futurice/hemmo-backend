@@ -8,7 +8,7 @@ import {
   dbDelEmployee,
   dbUpdateEmployee,
   dbCreateEmployee,
-  dbVerifyEmployee,
+  dbVerifyEmployee
 } from '../models/employees';
 
 import { countAndPaginate } from '../utils/db';
@@ -41,9 +41,11 @@ export const updateEmployee = async (request, reply) => {
     email: request.payload.email,
     name: request.payload.name,
     image: request.payload.image,
-    locale: request.payload.locale,
-    password: request.payload.password,
+    locale: request.payload.locale
   };
+
+  const password = (request.payload.resetPassword) ? generatePassword() : request.payload.password;
+  let hashedPassword = null;
 
   // Only admins are allowed to modify employee scope
   if (request.pre.employee.scope === 'admin') {
@@ -57,21 +59,17 @@ export const updateEmployee = async (request, reply) => {
   }
 
   // Hash password if present
-  if (fields.password) {
-    fields.password = await hashPassword(request.payload.password);
+  if (password) {
+    hashedPassword = await hashPassword(password);
   }
 
-  return dbUpdateEmployee(request.params.employeeId, fields).then((result) => {
-    reply(result.shift());
+  return dbUpdateEmployee(request.params.employeeId, fields, hashedPassword).then(result => {
+    reply(result)
   });
 };
 
-export const verifyEmployee = (request, reply) => (
-  dbVerifyEmployee(request.params.employeeId).then(reply)
-);
-
 export const authEmployee = async (request, reply) => {
-  // Make sure employee is verified
+  // Make sure employee is active
   const employee = await dbGetEmployee(request.pre.employee.id);
 
   if (!employee.active) {
