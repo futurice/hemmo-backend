@@ -7,7 +7,7 @@ import {
   updateEmployee,
   delEmployee,
   authEmployee,
-  registerEmployee,
+  registerEmployee
 } from '../../handlers/employees';
 
 const employeeId = {
@@ -31,8 +31,9 @@ const editProfileFields = {
     image: Joi.string(),
     locale: Joi.string(),
     active: Joi.boolean(),
-    password: Joi.string(),
-  },
+    password: Joi.string().allow(''),
+    resetPassword: Joi.boolean()
+  }
 };
 
 const filters = {
@@ -112,7 +113,7 @@ const routeConfigs = [
     handler: registerEmployee,
     config: {
       validate: registrationFields,
-      ...getAuthWithScope('admin'),
+      ...getAuthWithScope('admin')
     },
   },
 ];

@@ -24,31 +24,40 @@ export const dbGetEmployees = filters => (
 
 export const dbGetEmployee = id => (
   knex('employees').first()
-
-  .where({ id })
+    .where({ id })
 );
 
-export const dbUpdateEmployee = (id, fields) => (
-  knex('employees').update(fields)
+export const dbUpdateEmployee = (id, fields, password) => (
+  knex.transaction(async (trx) => {
+    const employee = await trx('employees')
+      .update(fields)
+      .where({ id })
+      .returning('*')
+      .then(results => results[0]);
 
-  .where({ id })
-  .returning('*')
+    if (password) {
+      await trx('secrets')
+        .update({ password: password })
+        .where({ ownerId: id });
+    }
+
+    return employee;
+  })
 );
 
 export const dbDelEmployee = id => (
   knex('employees').del()
-
-  .where({ id })
+    .where({ id })
 );
 
 export const dbCreateEmployee = ({ password, ...fields }) => (
   knex.transaction(async (trx) => {
     const employee = await trx('employees').insert({
-      ...fields,
-      id: uuid(),
-    })
-    .returning('*')
-    .then(results => results[0]); // return only first result
+        ...fields,
+        id: uuid(),
+      })
+      .returning('*')
+      .then(results => results[0]); // return only first result
 
     await trx('secrets').insert({
       ownerId: employee.id,
