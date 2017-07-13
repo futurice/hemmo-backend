@@ -7,8 +7,7 @@ import {
   dbGetEmployee,
   dbDelEmployee,
   dbUpdateEmployee,
-  dbCreateEmployee,
-  dbVerifyEmployee,
+  dbCreateEmployee
 } from '../models/employees';
 
 import { countAndPaginate } from '../utils/db';

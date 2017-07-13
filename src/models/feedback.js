@@ -14,8 +14,8 @@ export const dbGetFeedback = filters => (
   /* Filter the feedback table */
   .where(likeFilter({
     name: filters.name,
-    childName: filters.childName,
-    assigneeName: filters.assigneeName,
+    'children.name': filters.childName,
+    'employees.name': filters.assigneeName,
     'feedback.reviewed': filters.reviewed,
   }))
   .andWhere(exactFilter({
