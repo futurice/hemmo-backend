@@ -36,7 +36,7 @@ export const dbGetChildren = filters => {
     )
     .orderBy(filters.orderBy || 'children.name', filters.order)
 
-    if (filters.alert === 1) {
+    if (filters && filters.alert === 1) {
       query.whereRaw(`feedback.created < to_timestamp(${threeMonthsAgo})`);
     }
 
