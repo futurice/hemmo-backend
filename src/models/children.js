@@ -1,6 +1,7 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
+
 export const dbGetChildren = filters => {
   let threeMonthsAgo = new Date();
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
@@ -42,21 +43,12 @@ export const dbGetChildren = filters => {
     return query;
 };
 
-export const dbGetChild = id => (
-  knex('children').first([
-    'children.*',
-    'employees.name as assigneeName',
-    'prevFeedback.prevFeedbackDate',
-  ])
-
-  .where({ 'children.id': id })
-  .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
-
-  // Previous feedback
-  .leftOuterJoin(
-    knex('feedback').select([
-      'createdAt as prevFeedbackDate',
-      'childId',
+export const dbGetChild = id =>
+  knex('children')
+    .first([
+      'children.*',
+      'employees.name as assigneeName',
+      'prevFeedback.prevFeedbackDate',
     ])
     .where({ 'children.id': id })
     .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
