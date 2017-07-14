@@ -27,9 +27,10 @@ const filters = {
     name: Joi.string().allow(''),
     birthYear: Joi.number().integer(),
     order: Joi.string().allow('asc', 'desc'),
-    orderBy: Joi.string().allow('name', 'email', 'assigneeName'),
+    orderBy: Joi.string().allow('name', 'email', 'assigneeName', 'alert'),
     limit: Joi.number().integer(),
     offset: Joi.number().integer(),
+    alert: Joi.number().integer()
   },
 };
 

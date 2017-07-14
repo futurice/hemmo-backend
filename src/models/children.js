@@ -1,42 +1,62 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
-export const dbGetChildren = filters =>
-  knex('children')
+export const dbGetChildren = filters => {
+  let threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+  threeMonthsAgo = Math.round(threeMonthsAgo.getTime() / 1000);
+
+  let query = knex('children')
     .select([
       'children.*',
       'employees.name as assigneeName',
-      'prevFeedback.prevFeedbackDate',
+      'feedback.created as lastFeedbackDate',
+      knex.raw(`case when feedback.created < to_timestamp(${threeMonthsAgo}) then 1 else 0 end as alert`),
     ])
-    .where(
-      likeFilter({
-        'children.name': filters.name,
-        'employees.name': filters.assigneeName,
-      }),
-    )
-    .andWhere(
-      exactFilter({
-        assigneeId: filters.assigneeId,
-      }),
-    )
+    .where(likeFilter({
+      'children.name': filters.name,
+      'employees.name': filters.assigneeName,
+    }))
+    .andWhere(exactFilter({
+      assigneeId: filters.assigneeId
+    }))
     .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
     // Previous feedback
     .leftOuterJoin(
-      knex('feedback')
-        .select(['createdAt as prevFeedbackDate', 'childId'])
-        .orderBy('createdAt', 'desc')
-        .as('prevFeedback'),
-      'children.id',
-      'prevFeedback.childId',
-    )
-    .orderBy(filters.orderBy || 'children.name', filters.order);
+      knex('feedback').select([
+        'createdAt as created',
+        'childId',
+      ])
+      .orderBy('createdAt', 'desc')
+      .as('feedback'),
 
-export const dbGetChild = id =>
-  knex('children')
-    .first([
-      'children.*',
-      'employees.name as assigneeName',
-      'prevFeedback.prevFeedbackDate',
+      'children.id',
+      'feedback.childId',
+    )
+    .orderBy(filters.orderBy || 'children.name', filters.order)
+
+    if (filters.alert === 1) {
+      query.whereRaw(`feedback.created < to_timestamp(${threeMonthsAgo})`);
+    }
+
+    return query;
+};
+
+export const dbGetChild = id => (
+  knex('children').first([
+    'children.*',
+    'employees.name as assigneeName',
+    'prevFeedback.prevFeedbackDate',
+  ])
+
+  .where({ 'children.id': id })
+  .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
+
+  // Previous feedback
+  .leftOuterJoin(
+    knex('feedback').select([
+      'createdAt as prevFeedbackDate',
+      'childId',
     ])
     .where({ 'children.id': id })
     .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
