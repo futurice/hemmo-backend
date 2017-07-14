@@ -12,7 +12,7 @@ export const dbGetChildren = filters => {
       'children.*',
       'employees.name as assigneeName',
       'feedback.created as lastFeedbackDate',
-      knex.raw(`case when feedback.created < to_timestamp(${threeMonthsAgo}) then 1 else 0 end as alert`),
+      knex.raw(`case when feedback.created < to_timestamp(?) then 1 else 0 end as alert`, threeMonthsAgo),
     ])
     .where(likeFilter({
       'children.name': filters.name,
