@@ -39,10 +39,31 @@ export const dbGetSingleFeedback = id =>
       'children.id as childId',
       'children.assigneeId as assigneeId',
       'employees.name as assigneeName',
+      knex.raw(
+        'COALESCE(' +
+          'json_agg("feedbackAttachments") ' +
+          // Fix for attachments array containing null if no attachments found
+          'FILTER (WHERE "feedbackAttachments".id IS NOT NULL), ' +
+          "'[]') as attachments",
+      ),
     ])
     .where({ 'feedback.id': id })
     .leftOuterJoin('children', 'feedback.childId', 'children.id')
-    .leftOuterJoin('employees', 'children.assigneeId', 'employees.id');
+    .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
+    .leftOuterJoin(
+      knex('attachments')
+        .select(['id', 'mime', 'feedbackId'])
+        .as('feedbackAttachments'),
+      'feedback.id',
+      'feedbackAttachments.feedbackId',
+    )
+    .groupBy([
+      'feedback.id',
+      'children.name',
+      'children.id',
+      'children.assigneeId',
+      'employees.name',
+    ]);
 
 export const dbDelFeedback = id => knex('feedback').del().where({ id });
 

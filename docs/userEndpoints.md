@@ -35,82 +35,69 @@ payload {
 
 ## Data Endpoints
 
-* Creating session
+* Creating feedback
 
 ```
 POST /app/feedback
 
 Create a new feedback session.
 
-returns {
-  sessionId: (String) id for the newly created session
-}
-```
-
-* Create new content
-
-```
-POST /app/content
-
-Create a new content (audio file, text answer...)
-
-Required headers: {
-  Authorization: token,
-}
-
 request payload {
-  feedbackId: (String),
-  questions: [
+  activities: [
     {
-        question: (String),
+        main: (String),
+        sub: (String),
         like: (Number),
-        answer: (String),
-        attachmentId: (String)
     }
   ] OPTIONAL
   moods: Array(String) OPTIONAL
 }
 
 returns {
-  contentId: (String) Content id of the created content
+  feedbackId: (String) id for the newly created feedback session,
+  activities: [...],
+  moods: [...],
 }
 ```
 
-* Update content
+* Modify feedback
 
 ```
-PATCH /app/content/{contentId}
+PATCH /app/feedback/{feedbackId}
 
-Update content question, answer or contentType
-
-request headers {
-  Authorization: token (String),
-}
+Updates an existing feedback session.
 
 request payload {
-  feedbackId: (String),
-  questions: (String) OPTIONAL,
+  activities: [
+    {
+        main: (String),
+        sub: (String),
+        like: (Number),
+    }
+  ] OPTIONAL
   moods: Array(String) OPTIONAL
 }
 
 returns {
-  contentId: (String)
+  feedbackId: (String) id for the newly created feedback session,
+  activities: [...],
+  moods: [...],
 }
 ```
 
-* Add/Replace attachment
+* Add attachment to feedback
 
 ```
-POST /app/content/{contentId}/attachment
+POST /app/feedback/{feedbackId}/attachments
 
-Upload a new attachment to content with id contentId.
-File should be uploaded as multipart/form data.
+Upload a new attachment to feedback session with id feedbackId.
+File should be uploaded as type `multipart/form` inside the `data` field.
 
 request headers {
   Authorization: token (String),
 }
 
 returns {
-  contentId
+  attachmentId
 }
 ```
