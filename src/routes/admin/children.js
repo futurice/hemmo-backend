@@ -16,7 +16,9 @@ const childId = {
 
 const editProfileFields = {
   payload: {
-    assigneeId: Joi.string().required(),
+    assigneeId: Joi.string().allow(null),
+    showAlerts: Joi.boolean(),
+    alertDismissedAt: Joi.string()
   },
 };
 
