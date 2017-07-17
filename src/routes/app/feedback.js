@@ -1,5 +1,26 @@
+import Joi from 'joi';
+
 import { getAuthWithScope } from '../../utils/auth';
-import { createFeedback } from '../../handlers/feedback';
+import { createFeedback, updateFeedback } from '../../handlers/feedback';
+
+const fields = {
+  payload: {
+    activities: Joi.array().items(
+      Joi.object().keys({
+        main: Joi.string(),
+        sub: Joi.string(),
+        like: Joi.number(),
+      }),
+    ),
+    moods: Joi.array().items(Joi.string()),
+  },
+};
+
+const feedbackId = {
+  params: {
+    feedbackId: Joi.string(),
+  },
+};
 
 const routeConfigs = [
   // Create new feedback session
@@ -7,7 +28,24 @@ const routeConfigs = [
     method: 'POST',
     path: '/app/feedback',
     handler: createFeedback,
-    config: getAuthWithScope('child'),
+    config: {
+      validate: fields,
+      ...getAuthWithScope('child'),
+    },
+  },
+
+  // Modify feedback session
+  {
+    method: 'PATCH',
+    path: '/app/feedback/{feedbackId}',
+    handler: updateFeedback,
+    config: {
+      validate: {
+        ...fields,
+        ...feedbackId,
+      },
+      ...getAuthWithScope('child'),
+    },
   },
 ];
 

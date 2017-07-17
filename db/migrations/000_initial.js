@@ -68,6 +68,8 @@ exports.up = knex =>
         .inTable('children')
         .notNullable()
         .onDelete('CASCADE');
+      table.json('activities').defaultTo('[]');
+      table.json('moods').defaultTo('[]');
       table.boolean('reviewed').notNullable().defaultTo(false);
       table
         .text('assigneeId')
@@ -76,12 +78,11 @@ exports.up = knex =>
         .onDelete('SET NULL');
     })
     /**
-     * Feedback content
+     * Attachments
      *
-     * Each time a child submits feedback through the Hemmo app (i.e. moves on to the next screen),
-     * a new content row is added with feedbackId set to the feedback session id.
+     * Attachments can be added to feedback. Attachments can be of any filetype.
      */
-    .createTableIfNotExists('content', table => {
+    .createTableIfNotExists('attachments', table => {
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table
@@ -90,8 +91,8 @@ exports.up = knex =>
         .inTable('feedback')
         .notNullable()
         .onDelete('CASCADE');
-      table.json('moods');
-      table.json('questions');
+      table.text('mime').notNullable();
+      table.binary('data').notNullable();
     });
 
 exports.down = knex =>
@@ -100,4 +101,4 @@ exports.down = knex =>
     .dropTableIfExists('secrets')
     .dropTableIfExists('children')
     .dropTableIfExists('feedback')
-    .dropTableIfExists('content');
+    .dropTableIfExists('attachments');
