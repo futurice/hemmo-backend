@@ -73,9 +73,12 @@ export const dbCreateChild = fields =>
     .returning(['id', 'assigneeId', 'name'])
     .then(results => results[0]);
 
-export const dbUpdateChild = (id, fields) =>
+export const dbUpdateChild = (id, fields) => 
   knex('children')
     .update(fields)
     .where({ id })
-    .returning(['id', 'assigneeId', 'name'])
-    .then(results => results[0]);
+    .then(() => {
+      return dbGetChild(id);
+    });
+
+;
