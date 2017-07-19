@@ -95,6 +95,7 @@
     "lab-babel": "^1.1.1",
     "lint-staged": "^4.0.1",
     "mock-knex": "^0.3.7",
-    "nodemon": "^1.9.2"
+    "nodemon": "^1.9.2",
+    "prettier": "^1.5.3"
   }
 }
