@@ -25,7 +25,7 @@
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
     "precommit": "lint-staged",
-    "prettier": "prettier --single-quote --trailing-comma all --write db/**/*.js src/**/*.js",
+    "prettier": "prettier --single-quote --trailing-comma all --write \"{,!(node_modules)/**/}*.js\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "db:migrate": "babel-node node_modules/.bin/knex --knexfile db/knexfile.js migrate:latest",

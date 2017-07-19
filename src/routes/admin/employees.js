@@ -8,7 +8,7 @@ import {
   delEmployee,
   authEmployee,
   renewAuth,
-  registerEmployee
+  registerEmployee,
 } from '../../handlers/employees';
 
 const employeeId = {
@@ -33,8 +33,8 @@ const editProfileFields = {
     locale: Joi.string(),
     active: Joi.boolean(),
     password: Joi.string().allow(''),
-    resetPassword: Joi.boolean()
-  }
+    resetPassword: Joi.boolean(),
+  },
 };
 
 const filters = {
@@ -112,7 +112,7 @@ const routeConfigs = [
     method: 'GET',
     path: '/admin/employees/authenticate/renew',
     handler: renewAuth,
-    config: getAuthWithScope('employee')
+    config: getAuthWithScope('employee'),
   },
 
   // Register new employee, admin only
@@ -122,7 +122,7 @@ const routeConfigs = [
     handler: registerEmployee,
     config: {
       validate: registrationFields,
-      ...getAuthWithScope('admin')
+      ...getAuthWithScope('admin'),
     },
   },
 ];

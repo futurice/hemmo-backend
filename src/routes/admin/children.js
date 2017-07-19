@@ -18,7 +18,7 @@ const editProfileFields = {
   payload: {
     assigneeId: Joi.string().allow(null),
     showAlerts: Joi.boolean(),
-    alertDismissedAt: Joi.string()
+    alertDismissedAt: Joi.string(),
   },
 };
 
@@ -32,7 +32,7 @@ const filters = {
     orderBy: Joi.string().allow('name', 'email', 'assigneeName', 'alert'),
     limit: Joi.number().integer(),
     offset: Joi.number().integer(),
-    alert: Joi.number().integer()
+    alert: Joi.number().integer(),
   },
 };
 
