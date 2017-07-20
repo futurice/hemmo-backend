@@ -97,15 +97,19 @@ export const authEmployee = async (request, reply) => {
     return reply(Boom.forbidden(nonActivedErrorMsg));
   }
 
-  return reply(
-    createToken({
-      id: request.pre.employee.id,
-      name: request.pre.employee.name,
-      email: request.pre.employee.email,
-      scope: employee.scope,
-    }),
-  );
+  const token = createToken({
+    id: request.pre.employee.id,
+    name: request.pre.employee.name,
+    email: request.pre.employee.email,
+    scope: employee.scope,
+  });
+
+  return reply(token).state('token', token.token, {isSecure: process.env.COOKIE_SECURE});
 };
+
+export const logoutEmployee = (request, reply) => (
+  reply('').state('token', '')
+);
 
 export const renewAuth = async (request, reply) => {
   // Make sure employee is active
@@ -115,14 +119,14 @@ export const renewAuth = async (request, reply) => {
     return reply(Boom.forbidden(nonActivedErrorMsg));
   }
 
-  return reply(
-    createToken({
-      id: employee.id,
-      name: employee.name,
-      email: employee.email,
-      scope: employee.scope,
-    }),
-  );
+  const token = createToken({
+    id: employee.id,
+    name: employee.name,
+    email: employee.email,
+    scope: employee.scope,
+  });
+
+  return reply(token).state('token', token.token, {isSecure: process.env.COOKIE_SECURE});
 };
 
 export const registerEmployee = (request, reply) => {
