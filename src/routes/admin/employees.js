@@ -8,7 +8,7 @@ import {
   delEmployee,
   authEmployee,
   renewAuth,
-  registerEmployee
+  registerEmployee,
 } from '../../handlers/employees';
 
 const employeeId = {
