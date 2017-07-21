@@ -16,15 +16,8 @@ const routeConfigs = [
     path: '/admin/attachments/{attachmentId}',
     handler: getAttachment,
     config: {
-      //auth: {
-      //  strategies: ['cookie']
-      //},
-      state: {
-        parse: true,
-        failAction: 'error',
-      },
       validate: attachmentId,
-      //...getAuthWithScope('employee'),
+      ...getAuthWithScope('employee'),
     },
   },
 ];

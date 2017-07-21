@@ -104,7 +104,7 @@ export const authEmployee = async (request, reply) => {
     scope: employee.scope,
   });
 
-  return reply(token).state('token', token.token, {isSecure: process.env.COOKIE_SECURE});
+  return reply(token);
 };
 
 export const logoutEmployee = (request, reply) => (
@@ -126,7 +126,7 @@ export const renewAuth = async (request, reply) => {
     scope: employee.scope,
   });
 
-  return reply(token).state('token', token.token, {isSecure: process.env.COOKIE_SECURE});
+  return reply(token);
 };
 
 export const registerEmployee = (request, reply) => {
