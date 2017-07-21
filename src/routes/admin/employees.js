@@ -8,6 +8,7 @@ import {
   delEmployee,
   authEmployee,
   renewAuth,
+  registerEmployee
 } from '../../handlers/employees';
 
 const employeeId = {
@@ -104,14 +105,6 @@ const routeConfigs = [
     path: '/admin/employees/authenticate',
     handler: authEmployee,
     config: doAuth,
-  },
-
-  // Logout an employee
-  {
-    method: 'POST',
-    path: '/admin/employees/logout',
-    handler: logoutEmployee,
-    config: getAuthWithScope('employee')
   },
 
   // Renew authentication token

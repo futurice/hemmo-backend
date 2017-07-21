@@ -107,10 +107,6 @@ export const authEmployee = async (request, reply) => {
   return reply(token);
 };
 
-export const logoutEmployee = (request, reply) => (
-  reply('').state('token', '')
-);
-
 export const renewAuth = async (request, reply) => {
   // Make sure employee is active
   const employee = await dbGetEmployee(request.pre.employee.id);
