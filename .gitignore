@@ -29,6 +29,10 @@ build/Release
 # Build distribution files
 dist
 
+# IntelliJ
+.idea
+*.iml
+
 # Dependency directories
 node_modules
 jspm_packages

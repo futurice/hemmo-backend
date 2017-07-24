@@ -9,12 +9,14 @@ const updateFields = {
   },
   payload: {
     name: Joi.string().required(),
+    birthYear: Joi.number().integer(),
   },
 };
 
 const registrationFields = {
   payload: {
     name: Joi.string().required(),
+    birthYear: Joi.number().integer(),
   },
 };
 
