@@ -6,7 +6,7 @@ import {
   dbDelFeedback,
   dbUpdateFeedback,
   dbCreateFeedback,
-  dbGetFeedbackMoods,
+  dbGetFeedbackGivenMoods,
 } from '../models/feedback';
 
 import { countAndPaginate } from '../utils/db';
@@ -18,9 +18,9 @@ export const getFeedback = (request, reply) =>
     request.query.offset,
   ).then(reply);
 
-export const getFeedbackMoods = (request, reply) => {
+export const getFeedbackGivenMoods = (request, reply) => {
   countAndPaginate(
-    dbGetFeedbackMoods(request.query),
+    dbGetFeedbackGivenMoods(request.query),
     request.query.limit,
     request.query.offset,
   ).then(reply);

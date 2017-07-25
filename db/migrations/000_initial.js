@@ -68,6 +68,7 @@ exports.up = knex =>
         .inTable('children')
         .notNullable()
         .onDelete('CASCADE');
+      table.integer('givenMood').defaultTo(null);
       table.json('activities').defaultTo('[]');
       table.json('moods').defaultTo('[]');
       table.boolean('reviewed').notNullable().defaultTo(false);

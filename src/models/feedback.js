@@ -31,11 +31,11 @@ export const dbGetFeedback = filters =>
     .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
     .orderBy(filters.orderBy || 'children.name', filters.order);
 
-export const dbGetFeedbackMoods = filters =>
+export const dbGetFeedbackGivenMoods = filters =>
   knex('feedback')
     .select([
       'feedback.id',
-      'feedback.mood',
+      'feedback.givenMood',
       'feedback.createdAt'
     ])
     /* Filter the feedback table */

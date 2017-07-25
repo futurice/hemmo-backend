@@ -6,7 +6,7 @@ import {
   getSingleFeedback,
   updateFeedback,
   delFeedback,
-  getFeedbackMoods
+  getFeedbackGivenMoods
 } from '../../handlers/feedback';
 
 const feedbackId = {
@@ -52,7 +52,7 @@ const routeConfigs = [
   {
     method: 'GET',
     path: '/admin/feedback/moods',
-    handler: getFeedbackMoods,
+    handler: getFeedbackGivenMoods,
     config: {
       validate: filters,
       ...getAuthWithScope('employee'),
