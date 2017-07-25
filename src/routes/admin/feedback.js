@@ -14,9 +14,10 @@ const feedbackId = {
   },
 };
 
-const editProfileFields = {
+const editFeedbackFields = {
   payload: {
-    assigneeId: Joi.string().required(),
+    assigneeId: Joi.string().allow(null),
+    reviewed: Joi.boolean()
   },
 };
 
@@ -65,7 +66,7 @@ const routeConfigs = [
     config: {
       validate: {
         ...feedbackId,
-        ...editProfileFields,
+        ...editFeedbackFields,
       },
       ...getAuthWithScope('employee'),
     },

@@ -97,14 +97,14 @@ export const authEmployee = async (request, reply) => {
     return reply(Boom.forbidden(nonActivedErrorMsg));
   }
 
-  return reply(
-    createToken({
-      id: request.pre.employee.id,
-      name: request.pre.employee.name,
-      email: request.pre.employee.email,
-      scope: employee.scope,
-    }),
-  );
+  const token = createToken({
+    id: request.pre.employee.id,
+    name: request.pre.employee.name,
+    email: request.pre.employee.email,
+    scope: employee.scope,
+  });
+
+  return reply(token);
 };
 
 export const renewAuth = async (request, reply) => {
@@ -115,14 +115,14 @@ export const renewAuth = async (request, reply) => {
     return reply(Boom.forbidden(nonActivedErrorMsg));
   }
 
-  return reply(
-    createToken({
-      id: employee.id,
-      name: employee.name,
-      email: employee.email,
-      scope: employee.scope,
-    }),
-  );
+  const token = createToken({
+    id: employee.id,
+    name: employee.name,
+    email: employee.email,
+    scope: employee.scope,
+  });
+
+  return reply(token);
 };
 
 export const registerEmployee = (request, reply) => {

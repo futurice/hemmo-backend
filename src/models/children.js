@@ -39,9 +39,9 @@ export const dbGetChildren = filters => {
     )
     .orderBy(filters.orderBy || 'children.name', filters.order);
 
-  if (filters && filters.alert === 1) {
-    query.whereRaw(`feedback.created < to_timestamp(?)`, threeMonthsAgo);
-  }
+    if (filters && filters.alert === 1) {
+      query.whereRaw(`"feedback"."createdAt" < to_timestamp(?)`, threeMonthsAgo);
+    }
 
   return query;
 };
