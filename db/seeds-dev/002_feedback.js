@@ -40,6 +40,12 @@ exports.seed = async knex => {
       return child.id;
     },
 
+    /*givenMood: () => {
+      const int=  Math.random();
+
+      return int < 0.3 ? -1 : (int > 0.6 ? 1 : 0); 
+    },*/
+
     activities: () =>
       // choose a random sample of activities, each activity has a 50% chance of
       // having `like` set to -1, 0 or 1

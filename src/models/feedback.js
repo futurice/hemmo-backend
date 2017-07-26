@@ -31,6 +31,33 @@ export const dbGetFeedback = filters =>
     .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
     .orderBy(filters.orderBy || 'children.name', filters.order);
 
+export const dbGetFeedbackGivenMoods = filters =>
+  knex('feedback')
+    .select([
+      'feedback.id',
+      'feedback.givenMood',
+      'feedback.createdAt'
+    ])
+    /* Filter the feedback table */
+    .where(
+      likeFilter({
+        name: filters.name,
+        'children.name': filters.childName,
+        'employees.name': filters.assigneeName,
+        'feedback.reviewed': filters.reviewed,
+      }),
+    )
+    .andWhere(
+      exactFilter({
+        'feedback.childId': filters.childId,
+        'feedback.assigneeId': filters.assigneeId,
+      }),
+    )
+    /* Join referred children and their assignees to table */
+    .leftOuterJoin('children', 'feedback.childId', 'children.id')
+    .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
+    .orderBy(filters.orderBy || 'children.name', filters.order);
+
 export const dbGetSingleFeedback = id =>
   knex('feedback')
     .first([

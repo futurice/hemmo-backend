@@ -6,6 +6,7 @@ import {
   getSingleFeedback,
   updateFeedback,
   delFeedback,
+  getFeedbackGivenMoods
 } from '../../handlers/feedback';
 
 const feedbackId = {
@@ -17,7 +18,8 @@ const feedbackId = {
 const editFeedbackFields = {
   payload: {
     assigneeId: Joi.string().allow(null),
-    reviewed: Joi.boolean()
+    reviewed: Joi.boolean().allow(null),
+    givenMood: Joi.number().integer().allow(null),
   },
 };
 
@@ -41,6 +43,17 @@ const routeConfigs = [
     method: 'GET',
     path: '/admin/feedback',
     handler: getFeedback,
+    config: {
+      validate: filters,
+      ...getAuthWithScope('employee'),
+    },
+  },
+
+  // Get a list of moods
+  {
+    method: 'GET',
+    path: '/admin/feedback/moods',
+    handler: getFeedbackGivenMoods,
     config: {
       validate: filters,
       ...getAuthWithScope('employee'),
