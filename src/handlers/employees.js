@@ -90,7 +90,8 @@ export const updateEmployee = async (request, reply) => {
       sendMail({
         to: result.email,
         subject: 'New password for Hemmo Admin',
-        body: `An administrator has reset your password. Your new password is: ${password}.\n\nIt's recommended to change this after you have logged in.`
+        body: `An administrator has reset your password. Your new password is: ${password}.\n\n
+              It's recommended to change this after you have logged in.`
       });
     }
     
@@ -149,7 +150,10 @@ export const registerEmployee = (request, reply) => {
         sendMail({
           to: result.email,
           subject: 'Credentials for Hemmo Admin',
-          body: `An account has been created for you at Hemmo Admin. You can login with following details\n\nUser name: ${result.email}\nPassword: ${password}.\n\nIt's recommended to change this password after you have logged in.`
+          body: `An account has been created for you at Hemmo Admin. You can login with following details\n\n
+                User name: ${result.email}\n
+                Password: ${password}.\n\n
+                It's recommended to change this password after you have logged in.`
         });
 
         reply(result);
