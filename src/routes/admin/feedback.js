@@ -18,7 +18,8 @@ const feedbackId = {
 const editFeedbackFields = {
   payload: {
     assigneeId: Joi.string().allow(null),
-    reviewed: Joi.boolean()
+    reviewed: Joi.boolean().allow(null),
+    givenMood: Joi.number().integer().allow(null),
   },
 };
 
