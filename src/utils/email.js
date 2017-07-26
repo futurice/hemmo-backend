@@ -3,12 +3,12 @@ import moment from 'moment';
 import emailjs from 'emailjs';
 import knex from './db';
 import { dbGetFeedback } from '../models/feedback';
-import { smtp } from './config';
+import config from './config';
 
-export function sendMail(email, server = emailjs.server.connect(smtp)) {
+export function sendMail(email, server = emailjs.server.connect(config.smtp)) {
   server.send(
     {
-      from: smtp.user,
+      from: config.smtp.user,
       text: email.body,
       to: email.to,
       subject: email.subject,

@@ -11,6 +11,7 @@ import {
 } from '../models/employees';
 
 import { countAndPaginate } from '../utils/db';
+import { sendMail } from '../utils/email';
 
 const nonActivedErrorMsg = `ERROR: Employee has not been active!
 An admin has to set your account active through hemmo-admin settings before you can log-in.`;
@@ -85,6 +86,14 @@ export const updateEmployee = async (request, reply) => {
     fields,
     hashedPassword,
   ).then(result => {
+    if (hashedPassword) {
+      sendMail({
+        to: result.email,
+        subject: 'New password for Hemmo Admin',
+        body: `An administrator has reset your password. Your new password is: ${password}.\n\nIt's recommended to change this after you have logged in.`
+      });
+    }
+    
     reply(result);
   });
 };
@@ -136,7 +145,15 @@ export const registerEmployee = (request, reply) => {
         password: passwordHash,
         scope: 'employee',
         active: request.payload.active,
-      }).then(reply),
+      }).then(result => {
+        sendMail({
+          to: result.email,
+          subject: 'Credentials for Hemmo Admin',
+          body: `An account has been created for you at Hemmo Admin. You can login with following details\n\nUser name: ${result.email}\nPassword: ${password}.\n\nIt's recommended to change this password after you have logged in.`
+        });
+
+        reply(result);
+      }),
     )
     .catch(err => {
       if (err.constraint === 'employees_email_unique') {
