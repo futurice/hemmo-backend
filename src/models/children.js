@@ -16,6 +16,14 @@ export const dbGetChildren = filters => {
         threeMonthsAgo,
       ),
     ])
+    .leftJoin('employees', 'children.assigneeId', 'employees.id')
+    .leftJoin(
+      knex('feedback')
+        .select(['childId', knex.raw(`MAX("createdAt") as "createdAt"`)])
+        .groupBy('feedback.childId')
+        .as('feedback'),
+      'children.id', 'feedback.childId',
+    )
     .where(
       likeFilter({
         'children.name': filters.name,
@@ -27,16 +35,7 @@ export const dbGetChildren = filters => {
         assigneeId: filters.assigneeId,
       }),
     )
-    .leftOuterJoin('employees', 'children.assigneeId', 'employees.id')
-    // Previous feedback
-    .leftOuterJoin(
-      knex('feedback')
-        .select(['createdAt', 'childId'])
-        .orderBy('createdAt', 'desc')
-        .as('feedback'),
-      'children.id',
-      'feedback.childId',
-    )
+    .orderBy('alert', 'desc')
     .orderBy(filters.orderBy || 'children.name', filters.order);
 
     if (filters && filters.alert === 1) {
