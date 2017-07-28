@@ -36,6 +36,6 @@ export const updateFeedback = (request, reply) =>
   dbUpdateFeedback(request.params.feedbackId, request.payload).then(reply);
 
 export const createFeedback = (request, reply) =>
-  dbCreateFeedback(request.pre.employee.id)
+  dbCreateFeedback(request.pre.employee.id, request.payload)
     .then(reply)
     .catch(err => reply(Boom.badImplementation(err)));

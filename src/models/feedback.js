@@ -33,11 +33,7 @@ export const dbGetFeedback = filters =>
 
 export const dbGetFeedbackGivenMoods = filters =>
   knex('feedback')
-    .select([
-      'feedback.id',
-      'feedback.givenMood',
-      'feedback.createdAt'
-    ])
+    .select(['feedback.id', 'feedback.givenMood', 'feedback.createdAt'])
     /* Filter the feedback table */
     .where(
       likeFilter({
@@ -94,11 +90,14 @@ export const dbGetSingleFeedback = id =>
 
 export const dbDelFeedback = id => knex('feedback').del().where({ id });
 
-export const dbCreateFeedback = async childId => {
+export const dbCreateFeedback = async (childId, fields) => {
   const child = await dbGetChild(childId);
 
   return knex('feedback')
     .insert({
+      ...fields,
+      activities: fields.activities && JSON.stringify(fields.activities),
+      moods: fields.moods && JSON.stringify(fields.moods),
       id: uuid(),
       childId,
       assigneeId: child.assigneeId,
@@ -109,7 +108,11 @@ export const dbCreateFeedback = async childId => {
 
 export const dbUpdateFeedback = (id, fields) =>
   knex('feedback')
-    .update(fields)
+    .update({
+      ...fields,
+      activities: fields.activities && JSON.stringify(fields.activities),
+      moods: fields.moods && JSON.stringify(fields.moods),
+    })
     .where({ id })
     .returning('*')
     .then(results => results[0]);
