@@ -11,12 +11,14 @@ import {
 
 import { countAndPaginate } from '../utils/db';
 
-export const getChildren = (request, reply) =>
-  countAndPaginate(
+export const getChildren = (request, reply) => {
+  return countAndPaginate(
     dbGetChildren(request.query),
     request.query.limit,
     request.query.offset,
   ).then(reply);
+}
+  
 
 export const getChild = (request, reply) =>
   dbGetChild(request.params.childId).then(reply);
