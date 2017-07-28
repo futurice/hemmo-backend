@@ -11,7 +11,7 @@ import {
 
 import { countAndPaginate } from '../utils/db';
 
-export const getChildren = (request, reply) => 
+export const getChildren = (request, reply) =>
   countAndPaginate(
     dbGetChildren(request.query),
     request.query.limit,
