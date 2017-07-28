@@ -101,7 +101,7 @@ export const countAndPaginate = (
     ])
     .from(limitQuery =>
       limitQuery
-        // Subquery: Limit & offset the query results 
+        /* Subquery: Limit & offset the query results */
         .select([
           'queryResults',
           knex.raw('count("queryResults") over() as cnt'),
@@ -112,14 +112,9 @@ export const countAndPaginate = (
         .as('limited'),
     )
     .groupBy('limited.cnt')
-    .then(
-      results =>
-        {
-          console.log(results)
-          return results[0] || {
-          data: [],
-          cnt: 0,
-        }
+    .then(results => results[0] || {
+        data: [],
+        cnt: 0,
       }
     )
     .then(result => ({
