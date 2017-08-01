@@ -124,7 +124,7 @@ export const countAndPaginate = (
       data: result.data,
       meta: {
         count: Number(result.cnt),
-        limit,
-        offset,
+        limit: Number(limit),
+        offset: Number(offset),
       },
     }));

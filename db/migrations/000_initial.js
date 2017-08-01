@@ -6,12 +6,11 @@ exports.up = knex =>
      * Structured tree where employees belongs in the organisation
      */
      .createTableIfNotExists('organisation', table => {
-      table.text('id').primary();
+      table.increments('id').primary();
       table.text('name');
       table.integer('leftId');
       table.integer('rightId');
     })
-
     /**
      * Employees table
      *
@@ -25,8 +24,7 @@ exports.up = knex =>
       table.text('name').notNullable();
       table.text('locale').notNullable().defaultTo('en');
       table.boolean('active').notNullable().defaultTo(false);
-      table
-        .text('organisationId')
+      table.integer('organisationId')
         .references('id')
         .inTable('organisation')
         .onDelete('SET NULL');
