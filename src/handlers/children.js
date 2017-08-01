@@ -16,7 +16,8 @@ export const getChildren = (request, reply) =>
     dbGetChildren(request.query),
     request.query.limit,
     request.query.offset,
-  ).then(reply);
+  ).then(reply)
+  
 
 export const getChild = (request, reply) =>
   dbGetChild(request.params.childId).then(reply);

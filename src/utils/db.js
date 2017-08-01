@@ -94,8 +94,7 @@ export const countAndPaginate = (
   q,
   limit = config.defaults.limit,
   offset = 0,
-) =>
-  knex
+) => knex
     .select([
       knex.raw('json_agg(limited."queryResults") as data'),
       'limited.cnt',
@@ -108,17 +107,15 @@ export const countAndPaginate = (
           knex.raw('count("queryResults") over() as cnt'),
         ])
         .from(q.as('queryResults'))
-        .limit(limit)
         .offset(offset)
+        .limit(limit)
         .as('limited'),
     )
     .groupBy('limited.cnt')
-    .then(
-      results =>
-        results[0] || {
-          data: [],
-          cnt: 0,
-        },
+    .then(results => results[0] || {
+        data: [],
+        cnt: 0,
+      }
     )
     .then(result => ({
       data: result.data,

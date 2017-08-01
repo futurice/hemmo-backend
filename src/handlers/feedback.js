@@ -35,6 +35,7 @@ export const delFeedback = (request, reply) =>
 export const updateFeedback = (request, reply) =>
   dbUpdateFeedback(request.params.feedbackId, request.payload).then(reply);
 
+
 export const createFeedback = (request, reply) =>
   dbCreateFeedback(request.pre.employee.id, request.payload)
     .then(reply)
