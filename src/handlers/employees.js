@@ -58,6 +58,7 @@ export const updateEmployee = async (request, reply) => {
     name: request.payload.name,
     image: request.payload.image,
     locale: request.payload.locale,
+    organisationId: request.payload.organisationId,
   };
 
   const password = request.payload.resetPassword

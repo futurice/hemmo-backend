@@ -22,6 +22,7 @@ const registrationFields = {
     email: Joi.string().email().required(),
     name: Joi.string().required(),
     active: Joi.boolean().required(),
+    organisationId: Joi.number().integer().allow(null),
   },
 };
 
@@ -34,6 +35,7 @@ const editProfileFields = {
     active: Joi.boolean(),
     password: Joi.string().allow(''),
     resetPassword: Joi.boolean(),
+    organisationId: Joi.number().integer().allow(null),
   },
 };
 
@@ -45,7 +47,7 @@ const filters = {
     email: Joi.string(),
     name: Joi.string().allow(''),
     order: Joi.string().allow('asc', 'desc'),
-    orderBy: Joi.string().allow('name', 'email', 'assignedChildName'),
+    orderBy: Joi.string().allow('name', 'email', 'assignedChildName', 'organisationName'),
     limit: Joi.number().integer(),
     offset: Joi.number().integer(),
   },
