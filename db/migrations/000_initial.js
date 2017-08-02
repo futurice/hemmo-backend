@@ -1,6 +1,17 @@
 exports.up = knex =>
   knex.schema
     /**
+     * Organisation tree
+     *
+     * Structured tree where employees belongs in the organisation
+     */
+     .createTableIfNotExists('organisation', table => {
+      table.increments('id').primary();
+      table.text('name');
+      table.integer('leftId');
+      table.integer('rightId');
+    })
+    /**
      * Employees table
      *
      * Contains info on all employees in the system
@@ -13,6 +24,10 @@ exports.up = knex =>
       table.text('name').notNullable();
       table.text('locale').notNullable().defaultTo('en');
       table.boolean('active').notNullable().defaultTo(false);
+      table.integer('organisationId')
+        .references('id')
+        .inTable('organisation')
+        .onDelete('SET NULL');
     })
     /**
      * Define a separate table for storing employee secrets (such as password hashes).
@@ -102,4 +117,5 @@ exports.down = knex =>
     .dropTableIfExists('secrets')
     .dropTableIfExists('children')
     .dropTableIfExists('feedback')
-    .dropTableIfExists('attachments');
+    .dropTableIfExists('attachments')
+    .dropTableIfExists('organisation');
