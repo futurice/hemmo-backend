@@ -3,7 +3,8 @@ import knex, { likeFilter, exactFilter } from '../utils/db';
 
 export const dbGetEmployees = filters =>
   knex('employees')
-    .select(['id', 'name', 'email', 'active'])
+    .select(['employees.*', 'organisation.name as organisationName'])
+    .leftJoin('organisation', 'employees.organisationId', 'organisation.id')
     /* Filter the employees table */
     .where(
       likeFilter({
@@ -19,9 +20,15 @@ export const dbGetEmployees = filters =>
     )
     .orderBy(filters.orderBy || 'name', filters.order);
 
-export const dbGetEmployee = id => knex('employees').first().where({ id });
+export const dbGetEmployee = id =>
+  knex('employees')
+    .select(['employees.*', 'organisation.id as organisationId', 'organisation.name as organisationName'])
+    .leftJoin('organisation', 'employees.organisationId', 'organisation.id')
+    .where({ 'employees.id': id })
+    .returning('*')
+    .then(results => results[0]);
 
-export const dbUpdateEmployee = (id, fields, password) =>
+export const dbUpdateEmployee = (id, fields, password) => 
   knex.transaction(async trx => {
     const employee = await trx('employees')
       .update(fields)
