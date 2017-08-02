@@ -3,7 +3,10 @@ import knex, { likeFilter, exactFilter } from '../utils/db';
 
 export const dbGetOrganisations = filters =>
   knex('organisation')
-    .select('*')
+    .distinct(['organisation.*', 'employees.count as memberCount'])
+    .select()
+    .leftJoin('employees', 'employees.organisationId', 'organisation.id')
+    .groupBy('organisation.id')
     .orderBy(filters.orderBy || 'leftId', filters.order);
 
 export const dbGetSingleOrganisation = (id) =>
