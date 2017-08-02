@@ -3,7 +3,7 @@ import knex, { likeFilter, exactFilter } from '../utils/db';
 
 export const dbGetEmployees = filters =>
   knex('employees')
-    .select(['employees.id', 'employees.name', 'employees.email', 'employees.active', 'organisation.name as organisationName'])
+    .select(['employees.*', 'organisation.name as organisationName'])
     .leftJoin('organisation', 'employees.organisationId', 'organisation.id')
     /* Filter the employees table */
     .where(
