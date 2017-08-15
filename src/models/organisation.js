@@ -3,7 +3,7 @@ import knex, { likeFilter, exactFilter } from '../utils/db';
 
 export const dbGetOrganisations = filters =>
   knex('organisation')
-    .distinct(['organisation.*', 'employees.count as memberCount'])
+    .distinct(['organisation.*', 'employees.count as membersTotal', knex.raw('SUM(employees.active::integer) as "membersActive"')])
     .select()
     .leftJoin('employees', 'employees.organisationId', 'organisation.id')
     .groupBy('organisation.id')

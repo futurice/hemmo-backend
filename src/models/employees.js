@@ -3,8 +3,10 @@ import knex, { likeFilter, exactFilter } from '../utils/db';
 
 export const dbGetEmployees = filters =>
   knex('employees')
+    .countDistinct('children.id as childrenCount')
     .select(['employees.*', 'organisation.name as organisationName'])
     .leftJoin('organisation', 'employees.organisationId', 'organisation.id')
+    .leftJoin('children', 'employees.id', 'children.assigneeId')
     /* Filter the employees table */
     .where(
       likeFilter({
@@ -18,6 +20,7 @@ export const dbGetEmployees = filters =>
         assignedChildId: filters.assignedChildId,
       }),
     )
+    .groupBy('employees.id', 'organisation.name')
     .orderBy(filters.orderBy || 'name', filters.order);
 
 export const dbGetEmployee = id =>
