@@ -11,7 +11,7 @@ export const dbGetEmployees = filters =>
     .where(
       likeFilter({
         assignedChildName: filters.assignedChildName,
-        name: filters.name,
+        'employees.name': filters.name,
         email: filters.email,
       }),
     )
@@ -21,7 +21,7 @@ export const dbGetEmployees = filters =>
       }),
     )
     .groupBy('employees.id', 'organisation.name')
-    .orderBy(filters.orderBy || 'name', filters.order);
+    .orderBy(filters.orderBy || 'employees.name', filters.order);
 
 export const dbGetEmployee = id =>
   knex('employees')
