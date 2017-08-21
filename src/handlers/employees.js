@@ -53,21 +53,23 @@ export const updateEmployee = async (request, reply) => {
     );
   }
 
+  let password = null;
+  let hashedPassword = null;
+  const isAdmin = request.pre.employee.scope === 'admin';
   const fields = {
     email: request.payload.email,
     name: request.payload.name,
     image: request.payload.image,
     locale: request.payload.locale,
-    organisationId: request.payload.organisationId,
+    organisationId: isAdmin ? request.payload.organisationId : null,  // only admins can modify organisation unit
   };
 
-  const password = request.payload.resetPassword
-    ? generatePassword()
-    : request.payload.password;
-  let hashedPassword = null;
+  if (request.payload.resetPassword && isAdmin) {
+    password = generatePassword();
+  }
 
   // Only admins are allowed to modify employee scope
-  if (request.pre.employee.scope === 'admin') {
+  if (isAdmin) {
     fields.scope = request.payload.scope;
   }
 
