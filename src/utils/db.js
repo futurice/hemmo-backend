@@ -110,8 +110,8 @@ export const countAndPaginateRaw = (
       data: result[0],
       meta: {
         count: result[1],
-        limit,
-        offset
+        limit: parseInt(limit),
+        offset: parseInt(offset)
       }
     };
   });
