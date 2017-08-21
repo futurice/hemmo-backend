@@ -124,7 +124,7 @@ const routeConfigs = [
     handler: registerEmployee,
     config: {
       validate: registrationFields,
-      ...getAuthWithScope('admin'),
+      ...getAuthWithScope('employee'),
     },
   },
 ];

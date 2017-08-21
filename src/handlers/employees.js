@@ -18,7 +18,7 @@ An admin has to set your account active through hemmo-admin settings before you 
 
 export const getEmployees = (request, reply) =>
   countAndPaginate(
-    dbGetEmployees(request.query),
+    dbGetEmployees(request.query, request.pre.employee.id, request.pre.employee.scope),
     request.query.limit,
     request.query.offset,
   ).then(reply);

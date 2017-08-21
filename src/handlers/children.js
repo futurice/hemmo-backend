@@ -9,14 +9,14 @@ import {
   dbUpdateChild,
 } from '../models/children';
 
-import { countAndPaginate } from '../utils/db';
+import { countAndPaginate, countAndPaginateRaw } from '../utils/db';
 
 export const getChildren = (request, reply) =>
-  countAndPaginate(
-    dbGetChildren(request.query),
+  countAndPaginateRaw(
+    dbGetChildren(request.query, request.pre.employee.id, request.pre.employee.scope),
     request.query.limit,
     request.query.offset,
-  ).then(reply)
+  ).then(reply);
   
 
 export const getChild = (request, reply) =>

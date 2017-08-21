@@ -76,6 +76,49 @@ export const exactFilter = (filters, anyField = false) => origQuery => {
 
 /**
  * Returns query results as JSON containing total row count before
+ * applying limit/offset. This is mean to be used when whole query is in RAW
+ *
+ * Sample results:
+ * {
+ *   data: [
+ *     <Query results>
+ *   ],
+ *   meta: {
+ *     count: 100,
+ *     limit: 5,
+ *     offset: 5,
+ *   }
+ * }
+ */
+export const countAndPaginateRaw = (
+  sql,
+  limit = config.defaults.limit,
+  offset = 0
+) => {
+  let bindings = sql.bindings.slice();
+  bindings.push(offset);
+  bindings.push(limit);
+
+  const total = knex.raw(`select count(*) as total ${sql.query}`, sql.bindings)
+    .then(result => parseInt(result.rows[0].total));
+
+  const limited = knex.raw(`${sql.select} ${sql.query} offset ? limit ?`, bindings)
+    .then(result => result.rows);
+
+  return Promise.all([limited, total]).then((result) => {
+    return {
+      data: result[0],
+      meta: {
+        count: result[1],
+        limit,
+        offset
+      }
+    };
+  });
+};
+
+/**
+ * Returns query results as JSON containing total row count before
  * applying limit/offset
  *
  * Sample results:
