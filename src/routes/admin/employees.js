@@ -23,6 +23,7 @@ const registrationFields = {
     name: Joi.string().required(),
     active: Joi.boolean().required(),
     organisationId: Joi.number().integer().allow(null),
+    scope: Joi.string().allow(null),
   },
 };
 
@@ -36,6 +37,7 @@ const editProfileFields = {
     password: Joi.string().allow(''),
     resetPassword: Joi.boolean(),
     organisationId: Joi.number().integer().allow(null),
+    scope: Joi.string().allow(null),
   },
 };
 
