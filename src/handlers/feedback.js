@@ -33,7 +33,6 @@ export const delFeedback = (request, reply) =>
   dbDelFeedback(request.params.feedbackId).then(reply);
 
 export const updateFeedback = (request, reply) => {
-console.log(request.payload)
   return dbUpdateFeedback(request.params.feedbackId, request.payload).then(reply);
 }
 
