@@ -8,11 +8,11 @@ import {
   dbCreateOrganisation,
 } from '../models/organisation';
 
-import { countAndPaginate } from '../utils/db';
+import { countAndPaginateRaw } from '../utils/db';
 
 export const getOrganisations = (request, reply) =>
-  countAndPaginate(
-    dbGetOrganisations(request.query),
+  countAndPaginateRaw(
+    dbGetOrganisations(request.query, request.pre.employee.id, request.pre.employee.scope),
     request.query.limit,
     request.query.offset,
   ).then(reply);

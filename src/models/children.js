@@ -1,48 +1,63 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
-export const dbGetChildren = filters => {
+export const dbGetChildren = (filters, employeeId, scope) => {
+  const isAdmin = scope === 'admin';
+  const order = filters.order === 'desc' ? 'desc' : 'asc';
+  let bindings = [];
   let threeMonthsAgo = new Date();
+  let query;
+
   threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-  threeMonthsAgo = Math.round(threeMonthsAgo.getTime() / 1000);
+  threeMonthsAgo = Math.round(threeMonthsAgo.getTime() / 1000).toString();
 
-  let query = knex('children')
-    .select([
-      'children.*',
-      'employees.name as assigneeName',
-      'feedback.createdAt as lastFeedbackDate',
-      knex.raw(
-        `case when "feedback"."createdAt" < to_timestamp(?) and "children"."showAlerts" = true then 1 else 0 end as alert`,
-        threeMonthsAgo,
-      ),
-    ])
-    .leftJoin('employees', 'children.assigneeId', 'employees.id')
-    .leftJoin(
-      knex('feedback')
-        .select(['childId', knex.raw(`MAX("createdAt") as "createdAt"`)])
-        .groupBy('feedback.childId')
-        .as('feedback'),
-      'children.id', 'feedback.childId',
-    )
-    .where(
-      likeFilter({
-        'children.name': filters.name,
-        'employees.name': filters.assigneeName,
-      }),
-    )
-    .andWhere(
-      exactFilter({
-        assigneeId: filters.assigneeId,
-      }),
-    )
-    .orderBy('alert', 'desc')
-    .orderBy(filters.orderBy || 'children.name', filters.order);
+  const select = `select (case when f."createdAt" < to_timestamp(${threeMonthsAgo}) and c."showAlerts" = true then 1 else 0 end) as alert, c.*, e.name as "assigneeName", f."createdAt" as "lastFeedbackDate"`;
 
-    if (filters && filters.alert === 1) {
-      query.whereRaw(`"feedback"."createdAt" < to_timestamp(?)`, threeMonthsAgo);
-    }
+  // Base query to get only assigned children
+  if (filters.assigneeId) {
+    query = `from employees e, children c
+        left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
+        where c."assigneeId" = '${employeeId}'
+          and c."assigneeId" = e.id`;
+  }
 
-  return query;
+  // Base query to see as much as allowed
+  else if (!filters.assigneeId && !isAdmin) {
+    query = `from employees e, organisation parent, organisation child, employees ce, children c
+        left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
+        where e.id = '${employeeId}'
+          and e."organisationId" = parent.id
+          and child."leftId" between parent."leftId" and parent."rightId"
+          and ce."organisationId" = child.id
+          and c."assigneeId" = e.id`;
+  }
+  // Base query if user is an admin no restrictions by assignee ID
+  else if (!filters.assigneeId && isAdmin) {
+    query = `from employees e, children c
+        left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
+        where c."assigneeId" = e.id`;
+  }
+
+  // Additional search filters
+  if (filters.name) {
+    bindings.push(filters.name);
+    query += ` and LOWER(c.name) LIKE '%' || LOWER(?) || '%'`;
+  } 
+
+  if (filters.assigneeName) {
+    bindings.push(filters.assigneeName);
+    query += ` and LOWER(e.name) LIKE '%' || LOWER(?) || '%'`;
+  }
+
+  // Sorting
+  bindings.push(filters.orderBy || 'c.name');
+  query += ` order by 1 desc, ? ${order}`;
+
+  return {
+    select,
+    query,
+    bindings,
+  };
 };
 
 export const dbGetChild = id =>

@@ -9,11 +9,11 @@ import {
   dbGetFeedbackGivenMoods,
 } from '../models/feedback';
 
-import { countAndPaginate } from '../utils/db';
+import { countAndPaginateRaw } from '../utils/db';
 
 export const getFeedback = (request, reply) =>
-  countAndPaginate(
-    dbGetFeedback(request.query),
+  countAndPaginateRaw(
+    dbGetFeedback(request.query, request.pre.employee.id, request.pre.employee.scope),
     request.query.limit,
     request.query.offset,
   ).then(reply);
@@ -32,8 +32,9 @@ export const getSingleFeedback = (request, reply) =>
 export const delFeedback = (request, reply) =>
   dbDelFeedback(request.params.feedbackId).then(reply);
 
-export const updateFeedback = (request, reply) =>
-  dbUpdateFeedback(request.params.feedbackId, request.payload).then(reply);
+export const updateFeedback = (request, reply) => {
+  return dbUpdateFeedback(request.params.feedbackId, request.payload).then(reply);
+}
 
 
 export const createFeedback = (request, reply) =>

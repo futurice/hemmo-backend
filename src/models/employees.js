@@ -1,8 +1,8 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
-export const dbGetEmployees = filters =>
-  knex('employees')
+export const dbGetEmployees = (filters, employeeId, scope) => {
+  let q = knex('employees')
     .countDistinct('children.id as childrenCount')
     .select(['employees.*', 'organisation.name as organisationName'])
     .leftJoin('organisation', 'employees.organisationId', 'organisation.id')
@@ -11,7 +11,7 @@ export const dbGetEmployees = filters =>
     .where(
       likeFilter({
         assignedChildName: filters.assignedChildName,
-        name: filters.name,
+        'employees.name': filters.name,
         email: filters.email,
       }),
     )
@@ -21,7 +21,18 @@ export const dbGetEmployees = filters =>
       }),
     )
     .groupBy('employees.id', 'organisation.name')
-    .orderBy(filters.orderBy || 'name', filters.order);
+    .orderBy(filters.orderBy || 'employees.name', filters.order);
+
+  // If employee doesn't have admin rights restrict what (s)he can see
+  if (scope !== 'admin') {
+    q.leftOuterJoin('employees as employee', 'employees.id', 'employees.id');
+    q.innerJoin('organisation as org2', 'employee.organisationId', 'org2.id');
+    q.andWhere('employee.id', employeeId);
+    q.andWhere(knex.raw(`organisation."leftId" >= org2."leftId" AND organisation."rightId" <= org2."rightId"`));
+  }
+
+  return q;
+}
 
 export const dbGetEmployee = id =>
   knex('employees')

@@ -1,13 +1,37 @@
 import uuid from 'uuid/v4';
 import knex, { likeFilter, exactFilter } from '../utils/db';
 
-export const dbGetOrganisations = filters =>
-  knex('organisation')
-    .distinct(['organisation.*', 'employees.count as membersTotal', knex.raw('SUM(employees.active::integer) as "membersActive"')])
-    .select()
-    .leftJoin('employees', 'employees.organisationId', 'organisation.id')
-    .groupBy('organisation.id')
-    .orderBy(filters.orderBy || 'leftId', filters.order);
+export const dbGetOrganisations = (filters, employeeId, scope) => {
+  const isAdmin = scope === 'admin';
+  const order = filters.order === 'desc' ? 'desc' : 'asc';
+  let bindings = [];
+  let query;
+
+  const select = `select o1.*, e.count as "membersTotal", sum(e.active::integer) as "membersActive" `;
+
+  if (isAdmin) {
+    query = `from organisation o1
+      left join employees e on e."organisationId" = o1.id
+      group by o1.id`;
+  }
+  else {
+    query = `from organisation o1, organisation o2, employees e
+      where e.id = '${employeeId}'
+      and e."organisationId" = o2.id
+      and o1."leftId" between o2."leftId" and o2."rightId"
+      group by o1.id`;
+  }
+
+  // Sorting
+  bindings.push(filters.orderBy || 'o2."lefId"');
+  query += ` order by ? ${order}`;
+
+  return {
+    select,
+    query,
+    bindings,
+  };
+};
 
 export const dbGetSingleOrganisation = (id) =>
   knex('organisation')
