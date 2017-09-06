@@ -17,23 +17,35 @@ exports.seed = knex =>
   knex('employees')
     // Generate one test admin employee
     .insert(
-      {
-        ...simpleFixtures.generateFixture(employeeFields),
+      [
+        {
+          ...simpleFixtures.generateFixture(employeeFields),
 
-        email: 'foo@bar.com',
-        scope: 'admin',
-        active: true,
-      },
+          email: 'foo@bar.com',
+          scope: 'admin',
+          active: true,
+        },
+        {
+          ...simpleFixtures.generateFixture(employeeFields),
+
+          email: 'employee@bar.com',
+          scope: 'employee',
+          active: true,
+        },
+      ],
       'id',
     )
-    .then(ids => ids[0]) // Return first (only) employee id
-    // Set admin employee password to 'foobar'
-    .then(ownerId =>
-      knex('secrets').insert({
-        ownerId,
-        password: dummyPassword,
-      }),
-    )
+    // Set admin & employee password to 'foobar'
+    .then(ids => {
+      const fields = ids.map(id => {
+        return {
+          ownerId: id,
+          password: dummyPassword,
+        }
+      });
+
+      return knex('secrets').insert(fields);
+    })
     // Generate several test employees (no password = login disabled)
     .then(() =>
       knex.batchInsert(

@@ -36,7 +36,7 @@ const routeConfigs = [
     path: '/admin/organisations',
     handler: getOrganisations,
     config: {
-      ...getAuthWithScope('admin'),
+      ...getAuthWithScope('employee'),
     },
   },
 
