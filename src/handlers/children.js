@@ -13,11 +13,14 @@ import { countAndPaginate, countAndPaginateRaw } from '../utils/db';
 
 export const getChildren = (request, reply) =>
   countAndPaginateRaw(
-    dbGetChildren(request.query, request.pre.employee.id, request.pre.employee.scope),
+    dbGetChildren(
+      request.query,
+      request.pre.employee.id,
+      request.pre.employee.scope,
+    ),
     request.query.limit,
     request.query.offset,
   ).then(reply);
-  
 
 export const getChild = (request, reply) =>
   dbGetChild(request.params.childId).then(reply);
@@ -26,7 +29,10 @@ export const delChild = (request, reply) =>
   dbDelChild(request.params.childId).then(reply);
 
 export const registerChild = (request, reply) =>
-  dbCreateChild(request.payload)
+  dbCreateChild({
+    ...request.payload,
+    assigneeId: request.pre.employee.id,
+  })
     .then(child =>
       reply({
         ...child,
