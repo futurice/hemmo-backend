@@ -35,6 +35,7 @@ export default {
     host: env.HOST || '0.0.0.0',
     port: env.PORT || 3001,
   },
+  adminUrl: env.ADMIN_URL || 'http://hemmo.pelastakaalapset.fi',
   db: {
     debug: false, // Toggle db debugging
     client: 'pg',

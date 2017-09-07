@@ -62,6 +62,7 @@ export const dbGetChild = id =>
     .first([
       'children.*',
       'employees.name as assigneeName',
+      'employees.email as assigneeEmail',
       'prevFeedback.prevFeedbackDate',
     ])
     .where({ 'children.id': id })

@@ -6,6 +6,7 @@ import { dbGetFeedback } from '../models/feedback';
 import config from './config';
 
 export function sendMail(email, server = emailjs.server.connect(config.smtp)) {
+  console.log(`Sending message ${JSON.stringify(email)}`);
   server.send(
     {
       from: config.smtp.user,
@@ -24,7 +25,7 @@ export function sendMail(email, server = emailjs.server.connect(config.smtp)) {
 }
 
 export function sendAll(emails) {
-  const server = emailjs.server.connect(smtp);
+  const server = emailjs.server.connect(config.smtp);
 
   emails.forEach(email => sendMail(email, server));
 }
@@ -33,6 +34,7 @@ function allEmails() {
   return knex.select('email').from('employees').distinct().pluck('email');
 }
 
+/*
 export function notifyUnreviewed() {
   allEmails().then(allUsersEmailsList => {
     const allUsersEmails = allUsersEmailsList.join(',');
@@ -77,3 +79,4 @@ export function notifyUnreviewed() {
     });
   });
 }
+*/

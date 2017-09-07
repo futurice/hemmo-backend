@@ -1,5 +1,10 @@
 import Boom from 'boom';
 
+import { sendMail } from '../utils/email';
+import config from '../utils/config';
+
+import { dbGetChild } from '../models/children';
+
 import {
   dbGetFeedback,
   dbGetSingleFeedback,
@@ -42,7 +47,22 @@ export const updateFeedback = (request, reply) => {
   );
 };
 
-export const createFeedback = (request, reply) =>
+export const createFeedback = async (request, reply) => {
+  const child = await dbGetChild(request.pre.employee.id);
+
   dbCreateFeedback(request.pre.employee.id, request.payload)
-    .then(reply)
+    .then(feedback => {
+      if (child.assigneeEmail) {
+        sendMail({
+          to: child.assigneeEmail,
+          subject: `New feedback from ${child.name}`,
+          body: `${child.name} has sent you feedback through Hemmo.\n\n
+
+Please review the feedback via the following URL: ${config.adminUrl}/children/${child.id}/feedback/${feedback.id}`,
+        });
+      }
+
+      return reply(feedback);
+    })
     .catch(err => reply(Boom.badImplementation(err)));
+};
