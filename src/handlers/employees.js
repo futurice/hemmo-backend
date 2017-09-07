@@ -70,6 +70,8 @@ export const updateEmployee = async (request, reply) => {
 
   if (request.payload.resetPassword && isAdmin) {
     password = generatePassword();
+  } else if (request.payload.password) {
+    password = request.payload.password;
   }
 
   // Only admins are allowed to modify employee scope
@@ -93,7 +95,7 @@ export const updateEmployee = async (request, reply) => {
     fields,
     hashedPassword,
   ).then(result => {
-    if (hashedPassword) {
+    if (request.payload.resetPassword && isAdmin && hashedPassword) {
       sendMail({
         to: result.email,
         subject: 'New password for Hemmo Admin',
