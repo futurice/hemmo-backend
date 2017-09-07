@@ -18,7 +18,11 @@ An admin has to set your account active through hemmo-admin settings before you 
 
 export const getEmployees = (request, reply) =>
   countAndPaginate(
-    dbGetEmployees(request.query, request.pre.employee.id, request.pre.employee.scope),
+    dbGetEmployees(
+      request.query,
+      request.pre.employee.id,
+      request.pre.employee.scope,
+    ),
     request.query.limit,
     request.query.offset,
   ).then(reply);
@@ -61,7 +65,7 @@ export const updateEmployee = async (request, reply) => {
     name: request.payload.name,
     image: request.payload.image,
     locale: request.payload.locale,
-    organisationId: isAdmin ? request.payload.organisationId : null,  // only admins can modify organisation unit
+    organisationId: isAdmin ? request.payload.organisationId : null, // only admins can modify organisation unit
   };
 
   if (request.payload.resetPassword && isAdmin) {
@@ -93,11 +97,11 @@ export const updateEmployee = async (request, reply) => {
       sendMail({
         to: result.email,
         subject: 'New password for Hemmo Admin',
-        body: `An administrator has reset your password. Your new password is: ${password}.\n\n
-              It's recommended to change this after you have logged in.`
+        body: `An administrator has reset your password. Your new password is: ${password}\n\n
+              It's recommended to change this after you have logged in.`,
       });
     }
-    
+
     reply(result);
   });
 };
@@ -155,8 +159,8 @@ export const registerEmployee = (request, reply) => {
           subject: 'Credentials for Hemmo Admin',
           body: `An account has been created for you at Hemmo Admin. You can login with following details\n\n
                 User name: ${result.email}\n
-                Password: ${password}.\n\n
-                It's recommended to change this password after you have logged in.`
+                Password: ${password}\n\n
+                It's recommended to change this password after you have logged in.`,
         });
 
         reply(result);
