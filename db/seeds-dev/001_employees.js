@@ -41,7 +41,7 @@ exports.seed = knex =>
         return {
           ownerId: id,
           password: dummyPassword,
-        }
+        };
       });
 
       return knex('secrets').insert(fields);

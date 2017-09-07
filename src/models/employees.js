@@ -28,21 +28,29 @@ export const dbGetEmployees = (filters, employeeId, scope) => {
     q.leftOuterJoin('employees as employee', 'employees.id', 'employees.id');
     q.innerJoin('organisation as org2', 'employee.organisationId', 'org2.id');
     q.andWhere('employee.id', employeeId);
-    q.andWhere(knex.raw(`organisation."leftId" >= org2."leftId" AND organisation."rightId" <= org2."rightId"`));
+    q.andWhere(
+      knex.raw(
+        `organisation."leftId" >= org2."leftId" AND organisation."rightId" <= org2."rightId"`,
+      ),
+    );
   }
 
   return q;
-}
+};
 
 export const dbGetEmployee = id =>
   knex('employees')
-    .select(['employees.*', 'organisation.id as organisationId', 'organisation.name as organisationName'])
+    .select([
+      'employees.*',
+      'organisation.id as organisationId',
+      'organisation.name as organisationName',
+    ])
     .leftJoin('organisation', 'employees.organisationId', 'organisation.id')
     .where({ 'employees.id': id })
     .returning('*')
     .then(results => results[0]);
 
-export const dbUpdateEmployee = (id, fields, password) => 
+export const dbUpdateEmployee = (id, fields, password) =>
   knex.transaction(async trx => {
     const employee = await trx('employees')
       .update(fields)

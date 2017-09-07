@@ -93,26 +93,28 @@ export const exactFilter = (filters, anyField = false) => origQuery => {
 export const countAndPaginateRaw = (
   sql,
   limit = config.defaults.limit,
-  offset = 0
+  offset = 0,
 ) => {
   let bindings = sql.bindings.slice();
   bindings.push(offset);
   bindings.push(limit);
 
-  const total = knex.raw(`select count(*) as total ${sql.query}`, sql.bindings)
+  const total = knex
+    .raw(`select count(*) as total ${sql.query}`, sql.bindings)
     .then(result => parseInt(result.rows[0].total));
 
-  const limited = knex.raw(`${sql.select} ${sql.query} offset ? limit ?`, bindings)
+  const limited = knex
+    .raw(`${sql.select} ${sql.query} offset ? limit ?`, bindings)
     .then(result => result.rows);
 
-  return Promise.all([limited, total]).then((result) => {
+  return Promise.all([limited, total]).then(result => {
     return {
       data: result[0],
       meta: {
         count: result[1],
         limit: parseInt(limit),
-        offset: parseInt(offset)
-      }
+        offset: parseInt(offset),
+      },
     };
   });
 };
@@ -137,7 +139,8 @@ export const countAndPaginate = (
   q,
   limit = config.defaults.limit,
   offset = 0,
-) => knex
+) =>
+  knex
     .select([
       knex.raw('json_agg(limited."queryResults") as data'),
       'limited.cnt',
@@ -155,10 +158,12 @@ export const countAndPaginate = (
         .as('limited'),
     )
     .groupBy('limited.cnt')
-    .then(results => results[0] || {
-        data: [],
-        cnt: 0,
-      }
+    .then(
+      results =>
+        results[0] || {
+          data: [],
+          cnt: 0,
+        },
     )
     .then(result => ({
       data: result.data,

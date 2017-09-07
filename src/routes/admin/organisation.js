@@ -6,7 +6,7 @@ import {
   getSingleOrganisation,
   updateOrganisation,
   delOrganisation,
-  createOrganisation
+  createOrganisation,
 } from '../../handlers/organisation';
 
 const organisationId = {

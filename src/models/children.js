@@ -19,10 +19,8 @@ export const dbGetChildren = (filters, employeeId, scope) => {
         left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
         where c."assigneeId" = '${employeeId}'
           and c."assigneeId" = e.id`;
-  }
-
-  // Base query to see as much as allowed
-  else if (!filters.assigneeId && !isAdmin) {
+  } else if (!filters.assigneeId && !isAdmin) {
+    // Base query to see as much as allowed
     query = `from employees e, organisation parent, organisation child, employees ce, children c
         left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
         where e.id = '${employeeId}'
@@ -30,9 +28,8 @@ export const dbGetChildren = (filters, employeeId, scope) => {
           and child."leftId" between parent."leftId" and parent."rightId"
           and ce."organisationId" = child.id
           and c."assigneeId" = e.id`;
-  }
-  // Base query if user is an admin no restrictions by assignee ID
-  else if (!filters.assigneeId && isAdmin) {
+  } else if (!filters.assigneeId && isAdmin) {
+    // Base query if user is an admin no restrictions by assignee ID
     query = `from employees e, children c
         left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
         where c."assigneeId" = e.id`;
@@ -42,7 +39,7 @@ export const dbGetChildren = (filters, employeeId, scope) => {
   if (filters.name) {
     bindings.push(filters.name);
     query += ` and LOWER(c.name) LIKE '%' || LOWER(?) || '%'`;
-  } 
+  }
 
   if (filters.assigneeName) {
     bindings.push(filters.assigneeName);

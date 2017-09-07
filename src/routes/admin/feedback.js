@@ -6,7 +6,7 @@ import {
   getSingleFeedback,
   updateFeedback,
   delFeedback,
-  getFeedbackGivenMoods
+  getFeedbackGivenMoods,
 } from '../../handlers/feedback';
 
 const feedbackId = {

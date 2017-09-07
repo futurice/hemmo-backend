@@ -16,19 +16,16 @@ export const dbGetFeedback = (filters, employeeId, scope) => {
       left join employees e on f."assigneeId" = e.id
       where f."assigneeId" = '${employeeId}'
         and c.id = f."childId"`;
-  }
-
-  // Base query to see as much as allowed
-  else if (!filters.assigneeId && !isAdmin) {
+  } else if (!filters.assigneeId && !isAdmin) {
+    // Base query to see as much as allowed
     query = `from organisation parent, organisation child, employees ce, employees e, children c, feedback f
       where f."assigneeId" = '${employeeId}'
         and ce."organisationId" = parent.id
         and child."leftId" between parent."leftId" and parent."rightId"
         and e."organisationId" = child.id
         and c.id = f."childId"`;
-  }
-  // Base query if user is an admin no restrictions by assignee ID
-  else if (!filters.assigneeId && isAdmin) {
+  } else if (!filters.assigneeId && isAdmin) {
+    // Base query if user is an admin no restrictions by assignee ID
     query = `from children c, feedback f
       left join employees e on f."assigneeId" = e.id
       where c.id = f."childId"`;
@@ -55,7 +52,6 @@ export const dbGetFeedback = (filters, employeeId, scope) => {
     bindings,
   };
 };
-
 
 export const dbGetFeedbackGivenMoods = filters =>
   knex('feedback')
@@ -144,4 +140,4 @@ export const dbUpdateFeedback = async (id, fields) => {
     .then(results => results[0]);
 
   return dbGetSingleFeedback(update.id);
-}
+};

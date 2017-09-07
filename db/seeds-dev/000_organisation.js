@@ -29,7 +29,7 @@ exports.seed = async knex => {
       name: 'City 3.1',
       leftId: 10,
       rightId: 11,
-    }
+    },
   ];
 
   return knex.batchInsert('organisation', organisationFields, 1);

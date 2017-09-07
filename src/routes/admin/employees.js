@@ -49,7 +49,12 @@ const filters = {
     email: Joi.string(),
     name: Joi.string().allow(''),
     order: Joi.string().allow('asc', 'desc'),
-    orderBy: Joi.string().allow('name', 'email', 'assignedChildName', 'organisationName'),
+    orderBy: Joi.string().allow(
+      'name',
+      'email',
+      'assignedChildName',
+      'organisationName',
+    ),
     limit: Joi.number().integer(),
     offset: Joi.number().integer(),
   },
