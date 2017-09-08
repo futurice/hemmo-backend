@@ -23,10 +23,10 @@ export const dbGetChildren = (filters, employeeId, scope) => {
     // Base query to see as much as allowed
     query = `from employees e, organisation parent, organisation child, employees ce, children c
         left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
-        where e.id = '${employeeId}'
-          and e."organisationId" = parent.id
+        where ce.id = '${employeeId}'
+          and ce."organisationId" = parent.id
           and child."leftId" between parent."leftId" and parent."rightId"
-          and ce."organisationId" = child.id
+          and e."organisationId" = child.id
           and c."assigneeId" = e.id`;
   } else if (!filters.assigneeId && isAdmin) {
     // Base query if user is an admin no restrictions by assignee ID
@@ -34,7 +34,7 @@ export const dbGetChildren = (filters, employeeId, scope) => {
         left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
         where c."assigneeId" = e.id`;
   }
-
+console.log(select + query)
   // Additional search filters
   if (filters.name) {
     bindings.push(filters.name);
