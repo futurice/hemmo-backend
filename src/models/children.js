@@ -34,7 +34,7 @@ export const dbGetChildren = (filters, employeeId, scope) => {
         left join (select "childId", max("createdAt") as "createdAt" from feedback group by "childId") f on f."childId" = c.id
         where c."assigneeId" = e.id`;
   }
-console.log(select + query)
+
   // Additional search filters
   if (filters.name) {
     bindings.push(filters.name);
@@ -44,6 +44,10 @@ console.log(select + query)
   if (filters.assigneeName) {
     bindings.push(filters.assigneeName);
     query += ` and LOWER(e.name) LIKE '%' || LOWER(?) || '%'`;
+  }
+
+  if (filters && filters.alert === 1) {
+    query += ` and f."createdAt" < to_timestamp(${threeMonthsAgo})`;
   }
 
   // Sorting
