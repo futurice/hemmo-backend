@@ -10,7 +10,7 @@ exports.seed = knex =>
     .insert(
       [
         {
-          id: faker.random.uuid,
+          id: faker.random.uuid(),
           email: 'teppo.testi@pelastakaalapset.fi',
           name: 'Teppo Testi',
           scope: 'admin',
