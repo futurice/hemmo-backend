@@ -17,17 +17,13 @@ nvm use 6.2.0
 Look up instructions for your specific OS/distribution.
 
 ## Initialize DB
+To create a `database` within the Postgres instance installed on your machine, owned by user `postgres` which by default is a `Superuser`, run the following:
 ```
-$ psql --user postgres
+$ createdb hemmo --user postgres
 ```
 
 NOTE: If you get errors when running the above command:
 [Troubleshooting PostgreSQL connection errors](/docs/POSTGRESQL.md)
-
-```
-postgres=# CREATE DATABASE hemmo;
-postgres=# \q
-```
 
 ```
 $ yarn db:migrate
