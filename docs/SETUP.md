@@ -6,6 +6,11 @@
 ```
 $ yarn
 ```
+Note that if you don't have the node version specified in `package.json`, you can use Node Version Manager to install and use it instead. So, for a `6.2.0` engine specified, you can use `nvm`:
+```
+nvm install 6.2.0
+nvm use 6.2.0
+```
 
 ## Install PostgreSQL
 
