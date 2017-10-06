@@ -65,7 +65,7 @@ export const updateEmployee = async (request, reply) => {
     name: request.payload.name,
     image: request.payload.image,
     locale: request.payload.locale,
-    active: JSON.parse(request.payload.active),
+    active: request.payload.active,
     organisationId: isAdmin ? request.payload.organisationId : null, // only admins can modify organisation unit
   };
 
