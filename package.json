@@ -9,7 +9,7 @@
     "url": "git+https://github.com/Futurice/hemmo-backend.git"
   },
   "engines": {
-    "node": "6.2.0"
+    "node": ">=6.2.0"
   },
   "keywords": [
     "Node",
