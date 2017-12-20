@@ -111,7 +111,10 @@ export const dbGetSingleFeedback = id =>
       'employees.name',
     ]);
 
-export const dbDelFeedback = id => knex('feedback').del().where({ id });
+export const dbDelFeedback = id =>
+  knex('feedback')
+    .del()
+    .where({ id });
 
 export const dbCreateFeedback = async (childId, fields) => {
   const child = await dbGetChild(childId);

@@ -12,4 +12,7 @@ export const dbCreateAttachment = (feedbackId, data, type) =>
     .returning(['id', 'feedbackId', 'mime'])
     .then(results => results[0]);
 
-export const dbGetAttachment = id => knex('attachments').first().where({ id });
+export const dbGetAttachment = id =>
+  knex('attachments')
+    .first()
+    .where({ id });

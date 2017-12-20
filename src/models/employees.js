@@ -67,7 +67,10 @@ export const dbUpdateEmployee = (id, fields, password) =>
     return employee;
   });
 
-export const dbDelEmployee = id => knex('employees').del().where({ id });
+export const dbDelEmployee = id =>
+  knex('employees')
+    .del()
+    .where({ id });
 
 export const dbCreateEmployee = ({ password, ...fields }) =>
   knex.transaction(async trx => {

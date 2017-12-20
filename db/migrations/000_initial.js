@@ -20,10 +20,19 @@ exports.up = knex =>
       table.text('id').primary();
       table.timestamp('createdAt').defaultTo(knex.fn.now());
       table.enum('scope', ['admin', 'employee']).notNullable();
-      table.text('email').notNullable().unique();
+      table
+        .text('email')
+        .notNullable()
+        .unique();
       table.text('name').notNullable();
-      table.text('locale').notNullable().defaultTo('en');
-      table.boolean('active').notNullable().defaultTo(false);
+      table
+        .text('locale')
+        .notNullable()
+        .defaultTo('en');
+      table
+        .boolean('active')
+        .notNullable()
+        .defaultTo(false);
       table
         .integer('organisationId')
         .references('id')
@@ -87,7 +96,10 @@ exports.up = knex =>
       table.integer('givenMood').defaultTo(null);
       table.json('activities').defaultTo('[]');
       table.json('moods').defaultTo('[]');
-      table.boolean('reviewed').notNullable().defaultTo(false);
+      table
+        .boolean('reviewed')
+        .notNullable()
+        .defaultTo(false);
       table
         .text('assigneeId')
         .references('id')

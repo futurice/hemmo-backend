@@ -33,7 +33,10 @@ export const dbGetOrganisations = (filters, employeeId, scope) => {
 };
 
 export const dbGetSingleOrganisation = id =>
-  knex('organisation').where({ id }).returning('*').then(results => results[0]);
+  knex('organisation')
+    .where({ id })
+    .returning('*')
+    .then(results => results[0]);
 
 export const dbUpdateOrganisation = (id, fields) =>
   knex.transaction(async trx => {

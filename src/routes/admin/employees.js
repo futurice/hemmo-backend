@@ -19,24 +19,32 @@ const employeeId = {
 
 const registrationFields = {
   payload: {
-    email: Joi.string().email().required(),
+    email: Joi.string()
+      .email()
+      .required(),
     name: Joi.string().required(),
     active: Joi.boolean().required(),
-    organisationId: Joi.number().integer().allow(null),
+    organisationId: Joi.number()
+      .integer()
+      .allow(null),
     scope: Joi.string().allow(null),
   },
 };
 
 const editProfileFields = {
   payload: {
-    email: Joi.string().email().required(),
+    email: Joi.string()
+      .email()
+      .required(),
     name: Joi.string().required(),
     image: Joi.string(),
     locale: Joi.string(),
     active: Joi.string(),
     password: Joi.string().allow(''),
     resetPassword: Joi.boolean(),
-    organisationId: Joi.number().integer().allow(null),
+    organisationId: Joi.number()
+      .integer()
+      .allow(null),
     scope: Joi.string().allow(null),
   },
 };

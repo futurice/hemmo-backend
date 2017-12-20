@@ -11,14 +11,18 @@ import {
 
 const organisationId = {
   params: {
-    organisationId: Joi.number().integer().required(),
+    organisationId: Joi.number()
+      .integer()
+      .required(),
   },
 };
 
 const createOrganisationFields = {
   payload: {
     position: Joi.string().required(),
-    parent: Joi.number().integer().required(),
+    parent: Joi.number()
+      .integer()
+      .required(),
     name: Joi.string().required(),
   },
 };

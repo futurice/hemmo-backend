@@ -81,7 +81,10 @@ export const dbGetChild = id =>
       'prevFeedback.childId',
     );
 
-export const dbDelChild = id => knex('children').del().where({ id });
+export const dbDelChild = id =>
+  knex('children')
+    .del()
+    .where({ id });
 
 export const dbCreateChild = fields =>
   knex('children')
@@ -93,6 +96,9 @@ export const dbCreateChild = fields =>
     .then(results => results[0]);
 
 export const dbUpdateChild = (id, fields) =>
-  knex('children').update(fields).where({ id }).then(() => {
-    return dbGetChild(id);
-  });
+  knex('children')
+    .update(fields)
+    .where({ id })
+    .then(() => {
+      return dbGetChild(id);
+    });

@@ -28,27 +28,29 @@ export const likeFilter = (filters, anyField = false) => origQuery => {
     return q;
   }
 
-  Object.keys(filters).filter(key => filters[key]).forEach((key, index) => {
-    if (!index) {
-      // first field with .whereRaw()
-      q = q.whereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
-        key,
-        filters[key],
-      ]);
-    } else if (anyField) {
-      // if anyField true, additional fields use .orWhereRaw() (any field must match)
-      q = q.orWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
-        key,
-        filters[key],
-      ]);
-    } else {
-      // by default additional fields use .andWhereRaw() (all fields must match)
-      q = q.andWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
-        key,
-        filters[key],
-      ]);
-    }
-  });
+  Object.keys(filters)
+    .filter(key => filters[key])
+    .forEach((key, index) => {
+      if (!index) {
+        // first field with .whereRaw()
+        q = q.whereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
+          key,
+          filters[key],
+        ]);
+      } else if (anyField) {
+        // if anyField true, additional fields use .orWhereRaw() (any field must match)
+        q = q.orWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
+          key,
+          filters[key],
+        ]);
+      } else {
+        // by default additional fields use .andWhereRaw() (all fields must match)
+        q = q.andWhereRaw("LOWER(??) LIKE '%' || LOWER(?) || '%'", [
+          key,
+          filters[key],
+        ]);
+      }
+    });
 
   return q;
 };
@@ -60,16 +62,18 @@ export const exactFilter = (filters, anyField = false) => origQuery => {
     return q;
   }
 
-  Object.keys(filters).filter(key => filters[key]).forEach((key, index) => {
-    if (!index) {
-      // first field with .whereRaw()
-      q = q.where({ [key]: filters[key] });
-    } else if (anyField) {
-      q = q.orWhere({ [key]: filters[key] });
-    } else {
-      q = q.andWhere({ [key]: filters[key] });
-    }
-  });
+  Object.keys(filters)
+    .filter(key => filters[key])
+    .forEach((key, index) => {
+      if (!index) {
+        // first field with .whereRaw()
+        q = q.where({ [key]: filters[key] });
+      } else if (anyField) {
+        q = q.orWhere({ [key]: filters[key] });
+      } else {
+        q = q.andWhere({ [key]: filters[key] });
+      }
+    });
 
   return q;
 };

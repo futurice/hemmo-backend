@@ -58,7 +58,9 @@ export const createFeedback = async (request, reply) => {
           subject: `New feedback from ${child.name}`,
           body: `${child.name} has sent you feedback through Hemmo.\n\n
 
-Please review the feedback via the following URL: ${config.adminUrl}/children/${child.id}/feedback/${feedback.id}`,
+Please review the feedback via the following URL: ${config.adminUrl}/children/${
+            child.id
+          }/feedback/${feedback.id}`,
         });
       }
 

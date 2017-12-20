@@ -48,7 +48,9 @@ export const comparePasswords = (passwordAttempt, employee) =>
         resolve(employee);
       } else {
         reject(
-          `Incorrect password attempt by employee with email '${employee.email}'`,
+          `Incorrect password attempt by employee with email '${
+            employee.email
+          }'`,
         );
       }
     }),

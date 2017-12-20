@@ -31,7 +31,11 @@ export function sendAll(emails) {
 }
 
 function allEmails() {
-  return knex.select('email').from('employees').distinct().pluck('email');
+  return knex
+    .select('email')
+    .from('employees')
+    .distinct()
+    .pluck('email');
 }
 
 /*
