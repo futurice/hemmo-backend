@@ -38,8 +38,23 @@ export const getFeedbackGivenMoods = (request, reply) => {
 export const getSingleFeedback = (request, reply) =>
   dbGetSingleFeedback(request.params.feedbackId).then(reply);
 
-export const delFeedback = (request, reply) =>
-  dbDelFeedback(request.params.feedbackId).then(reply);
+export const delFeedback = async (request, reply) => {
+  if (request.pre.employee.scope !== 'admin') {
+    const feedback = await dbGetSingleFeedback(request.params.feedbackId);
+
+    if (!feedback) {
+      return Boom.notFound('Feedback not found');
+    }
+
+    if (feedback.assigneeId !== request.pre.employee.id) {
+      return Boom.forbidden(
+        "Non-admin employee cannot delete other employees' feedback.",
+      );
+    }
+  }
+
+  return dbDelFeedback(request.params.feedbackId).then(reply);
+};
 
 export const updateFeedback = (request, reply) => {
   return dbUpdateFeedback(request.params.feedbackId, request.payload).then(

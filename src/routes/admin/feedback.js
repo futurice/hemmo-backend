@@ -94,7 +94,7 @@ const routeConfigs = [
     handler: delFeedback,
     config: {
       validate: feedbackId,
-      ...getAuthWithScope('admin'),
+      ...getAuthWithScope('employee'),
     },
   },
 ];
