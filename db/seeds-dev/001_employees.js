@@ -10,6 +10,7 @@ const employeeFields = {
   scope: 'employee',
   email: faker.internet.email,
   name: faker.name.findName,
+  organisationId: () => Math.floor(Math.random() * 6 + 1),
   active: () => Math.random() < 0.5,
 };
 
@@ -21,6 +22,7 @@ exports.seed = knex =>
         {
           ...simpleFixtures.generateFixture(employeeFields),
 
+          organisationId: null,
           email: 'foo@bar.com',
           scope: 'admin',
           active: true,

@@ -66,7 +66,6 @@ export const updateEmployee = async (request, reply) => {
     image: request.payload.image,
     locale: request.payload.locale,
     active: request.payload.active,
-    organisationId: isAdmin ? request.payload.organisationId : null, // only admins can modify organisation unit
   };
 
   if (request.payload.resetPassword && isAdmin) {
@@ -78,6 +77,18 @@ export const updateEmployee = async (request, reply) => {
   // Only admins are allowed to modify employee scope
   if (isAdmin) {
     fields.scope = request.payload.scope;
+  }
+
+  // Only admins are allowed to modify organisationId
+  if (isAdmin) {
+    fields.organisationId = request.payload.organisationId;
+
+    // Enforce that non-admin users belong to an organisation
+    if (fields.scope !== 'admin' && fields.organisationId === null) {
+      return reply(
+        Boom.forbidden('Non-admin users must belong to an organisation.'),
+      );
+    }
   }
 
   // If request contains an image, resize it to max 512x512 pixels
@@ -146,6 +157,21 @@ export const renewAuth = async (request, reply) => {
 };
 
 export const registerEmployee = (request, reply) => {
+  const isAdmin = request.pre.employee.scope === 'admin';
+
+  let employeeScope = 'employee';
+  if (isAdmin && request.payload.scope === 'admin') {
+    // Only admins can create admin users
+    employeeScope = 'admin';
+  }
+
+  // Enforce that non-admin users belong to an organisation
+  if (employeeScope !== 'admin' && request.payload.organisationId === null) {
+    return reply(
+      Boom.forbidden('Non-admin users must belong to an organisation.'),
+    );
+  }
+
   const password = generatePassword();
 
   hashPassword(password)
@@ -154,7 +180,7 @@ export const registerEmployee = (request, reply) => {
         ...request.payload,
         email: request.payload.email.toLowerCase().trim(),
         password: passwordHash,
-        scope: 'employee',
+        scope: employeeScope,
         active: request.payload.active,
       }).then(result => {
         sendMail({
