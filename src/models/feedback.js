@@ -43,6 +43,11 @@ export const dbGetFeedback = (filters, employeeId, scope) => {
     query += ` and LOWER(c.name) LIKE '%' || LOWER(?) || '%'`;
   }
 
+  if (filters.childId) {
+    bindings.push(filters.childId);
+    query += ` and c.id = ?`;
+  }
+
   // Sorting
   bindings.push(filters.orderBy || 'c.name');
   query += ` order by ? ${order}`;
