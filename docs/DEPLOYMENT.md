@@ -39,3 +39,7 @@ You will have to manually run the seed data if it is needed:
 # Get URL from e.g. Heroku dashboard
 DATABASE_URL=postgres://user:pass@hostname/dbname yarn db:seed
 ```
+
+### Production
+
+See https://confluence.futurice.com/display/start/Hemmo+Deployment for more info.
